@@ -28,14 +28,14 @@ The TRS-80 Models 100 and 102 and the Tandy 200 all share the same tokenized BAS
 
 Converting this to NEC BASIC should not be difficult.
 
-## Why Lex?
+## Lex?
 
 This program is written in
-[Flex](https://web.stanford.edu/class/archive/cs/cs143/cs143.1128/handouts/050%20Flex%20In%20A%20Nutshell.pdf)
-lexical analyzer because it made implementation trivial. It's mostly
+[Flex](https://web.stanford.edu/class/archive/cs/cs143/cs143.1128/handouts/050%20Flex%20In%20A%20Nutshell.pdf),
+a lexical analyzer, because it made implementation trivial. It's mostly
 just a table of keywords and the corresponding byte they should emit.
-Lex also makes special cases, like quoted strings and REMarks, very
-easy. The downside is that one must have flex installed to compile.
+Flex handles special cases, like quoted strings and REMarks, easily.
+The downside is that one must have flex installed to compile.
 Here is the basic method of compilation:
 
 ```
@@ -47,7 +47,22 @@ sets up useful defaults, like a `main()` routine.
 
 ## More information
 
-* Then format of for tokenized BASIC in the Model 100/102 and Tandy
-  200: http://fileformats.archiveteam.org/wiki/Tandy_200_BASIC_tokenized_file
+* The file format of tokenized BASIC in the Model 100/102 and Tandy 200: 
+  http://fileformats.archiveteam.org/wiki/Tandy_200_BASIC_tokenized_file
 
+## Alternatives
 
+Here are some other ways that you can tokenize Model 100 BASIC on a host system. 
+
+* Robert Pigford wrote a Model 100 tokenizer that runs in Microsoft Windows.
+  Includes PowerBASIC source code. 
+  http://www.club100.org/memfiles/index.php?&direction=0&order=nom&directory=Robert%20Pigford/TOKENIZE
+
+* Mike Stein's entoke.exe is a tokenizer for Microsoft DOS.
+  http://www.club100.org/memfiles/index.php?&direction=0&order=nom&directory=Mike%20Stein
+  
+* The Model 100's ROM disassembly shows that the tokenization code is quite short.
+  http://www.club100.org/memfiles/index.php?action=downloadfile&filename=m100_dis.txt&directory=Ken%20Pettit/M100%20ROM%20Disassembly
+  
+* The VirtualT emulator can be scripted to tokenize a program through telnet.
+  https://sourceforge.net/projects/virtualt/
