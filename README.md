@@ -28,9 +28,17 @@ The TRS-80 Models 100 and 102 and the Tandy 200 all share the same tokenized BAS
 
 ## Why Lex?
 
-This program is written using the Flex lexer because it made the program trivial. It's mostly just a table of keywords and the corresponding byte they should emit. Lex also makes special cases, like quoted strings and REMarks, very easy. The downside is that one must have flex installed to compile. Here is the basic method:
+This program is written in
+[Flex](https://web.stanford.edu/class/archive/cs/cs143/cs143.1128/handouts/050%20Flex%20In%20A%20Nutshell.pdf)
+lexical analyzer because it made implementation trivial. It's mostly
+just a table of keywords and the corresponding byte they should emit.
+Lex also makes special cases, like quoted strings and REMarks, very
+easy. The downside is that one must have flex installed to compile.
+Here is the basic method of compilation:
+
 ```
-flex tokenize.lex && gcc lex.yy.c -lfl
+flex tokenize.lex  &&  gcc lex.yy.c -lfl
 ```
 
-Flex creates the file lex.yy.c from tokenize.lex. Linking with libfl lets us use defaults for some of the setup, like a `main()` routine.
+Flex creates the file lex.yy.c from tokenize.lex. Linking with libfl
+sets up useful defaults, like a `main()` routine.
