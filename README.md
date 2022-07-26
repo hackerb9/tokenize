@@ -26,6 +26,8 @@ tokenize < INPUT.DO > OUTPUT.BA
 
 The TRS-80 Models 100 and 102 and the Tandy 200 all share the same tokenized BASIC, so this will work for any of them. However, other similar machines, such as the NEC PC-8201/8300, have a different BASIC tokenization format. 
 
+Converting this to NEC BASIC should not be difficult.
+
 ## Why Lex?
 
 This program is written in
@@ -42,3 +44,10 @@ flex tokenize.lex  &&  gcc lex.yy.c -lfl
 
 Flex creates the file lex.yy.c from tokenize.lex. Linking with libfl
 sets up useful defaults, like a `main()` routine.
+
+## More information
+
+* Then format of for tokenized BASIC in the Model 100/102 and Tandy
+  200: http://fileformats.archiveteam.org/wiki/Tandy_200_BASIC_tokenized_file
+
+
