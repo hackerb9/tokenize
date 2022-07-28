@@ -1,17 +1,39 @@
-# tokenize
+# tandy-tokenize
 
-A tokenizer for TRS-80 Model 100 BASIC
+A tokenizer for TRS-80 Model 100 BASIC language. (Also works for the
+Tandy 102 and Tandy 200.)
 
 ## Introduction
 
-The Tandy/Radio-Shack Model 100 computer can save its BASIC files in
-ASCII or in a "tokenized" format where the keywords — such as `FOR`, `IF`, `PRINT`, `REM` — are converted to a single byte. Not only is this more compact, but it loads much faster. Programs for the Model 100 are generally distributed in ASCII format, but that has two downsides: ① the user must LOAD and re-SAVE the file on their machine to tokenize it and ② the machine may not have enough storage space for downloading or tokenizing the ASCII version.
+The Tandy/Radio-Shack Model 100 portable computer can save its BASIC
+files in ASCII (plain text) or in a "tokenized" format where the
+keywords — such as `FOR`, `IF`, `PRINT`, `REM` — are converted to a
+single byte. Not only is this more compact, but it loads much faster.
+Programs for the Model 100 are generally distributed in ASCII format,
+but that has two downsides: ① the user must LOAD and re-SAVE the file
+on their machine to tokenize it and ② the machine may not have enough
+storage space for downloading or tokenizing the ASCII version.
 
-This program solves that problem by tokenizing on the host computer before downloading to the Model 100.
+This program solves that problem by tokenizing on the host computer
+before downloading to the Model 100.
 
-ASCII formatted BASIC files generally have the extension `.DO` so that
-the Model 100 will see them as text documents. Tokenized BASIC files
-usually have the extension `.BA`. 
+ASCII formatted BASIC files generally are given the extension `.DO` so
+that the Model 100 will see them as text documents. Other common
+extensions are `.BA`, `.100`, and `.200`. Tokenized BASIC files use
+the extension `.BA`.
+
+## Compilation
+
+You can just run `make` on most machines. Alternately, you can compile
+by hand:
+
+```bash
+flex tandy-tokenize.lex  &&  gcc -o tandy-tokenize lex.yy.c -lfl
+```
+
+Flex creates the file lex.yy.c from tokenize.lex. Linking with libfl
+sets up useful defaults, like a `main()` routine.
+
 
 ## Usage
 
@@ -19,16 +41,23 @@ The program reads from stdin and writes to stdout, so you'll need
 to use redirection like so:
 
 ``` bash
-tokenize < INPUT.DO > OUTPUT.BA
+tandy-tokenize < INPUT.DO > OUTPUT.BA
 ```
+
+Note: The file OUTPUT.BA must be transferred to the Model 100 as a
+binary file using a program such as TEENY. TELCOM's text capture will
+not work.
+
 
 ## Machine compatibility
 
-The TRS-80 Models 100 and 102 and the Tandy 200 all share the same tokenized BASIC, so this will work for any of them. However, other similar machines, such as the NEC PC-8201/8300, have a different BASIC tokenization format. 
+The TRS-80 Models 100 and 102 and the Tandy 200 all share the same
+tokenized BASIC, so this will work for any of them. However, other
+similar machines, such as the NEC PC-8201/8300, have a different BASIC
+tokenization format. (Sidenote: Converting this to handle NEC's N82
+BASIC should not be difficult.)
 
-Converting this to NEC BASIC should not be difficult.
-
-## Lex?
+## Why Lex?
 
 This program is written in
 [Flex](https://web.stanford.edu/class/archive/cs/cs143/cs143.1128/handouts/050%20Flex%20In%20A%20Nutshell.pdf),
@@ -36,19 +65,36 @@ a lexical analyzer, because it made implementation trivial. It's mostly
 just a table of keywords and the corresponding byte they should emit.
 Flex handles special cases, like quoted strings and REMarks, easily.
 The downside is that one must have flex installed to compile.
-Here is the basic method of compilation:
 
-```
-flex tokenize.lex  &&  gcc lex.yy.c -lfl
-```
-
-Flex creates the file lex.yy.c from tokenize.lex. Linking with libfl
-sets up useful defaults, like a `main()` routine.
-
-## Usage notes
+## Miscellaneous notes
 
 * Line endings in the input file can either be `CR``LF` (standard for
   a Model 100 text document) or simply `LF` (UNIX style).
+
+* Conventions for filename extensions vary. Here are just some of them:
+  * `.BA` All tokenized BASIC programs are .BA files, but note that
+    most .BA files found on the Internet are in ASCII format. Before
+    the existence of tokenizers like this, one was expected to know
+    that ASCII files had to be renamed to .DO when downloading to a
+    Model 100. 
+  * `.DO` This is the extension the Model 100 uses for plain text
+    BASIC files, but in general can mean any ASCII text document with
+    CRLF line endings.
+  * Although the BASIC language and tokenization is the same, some
+    programs use POKEs or CALLs which work only one one model of
+    portable computer and will cause others to crash badly, possibly
+    losing files. To avoid this, some filename extensions are used:
+	* `.100` An ASCII BASIC file that includes POKEs or CALLs specific
+	  to the Model 100/102.
+	* `.200` An ASCII BASIC file specific to the Tandy 200.
+	* `.BA1` A tokenized BASIC file specific to the Model 100/102.	
+	* `.BA2` A tokenized BASIC file specific to the Tandy 200.
+	* `.BA0` A tokenized BASIC file specific to the NEC PC-8201A.
+
+* To save in ASCII format on the Model 100, append `, A`:
+  ```BASIC
+  save "FOO", A
+  ```
 
 ## More information
 
@@ -57,7 +103,8 @@ sets up useful defaults, like a `main()` routine.
 
 ## Alternatives
 
-Here are some other ways that you can tokenize Model 100 BASIC on a host system. 
+Here are some other ways that you can tokenize Model 100 BASIC on a
+host system.
 
 * Robert Pigford wrote a Model 100 tokenizer that runs in Microsoft Windows.
   Includes PowerBASIC source code. 
