@@ -45,6 +45,11 @@ flex tokenize.lex  &&  gcc lex.yy.c -lfl
 Flex creates the file lex.yy.c from tokenize.lex. Linking with libfl
 sets up useful defaults, like a `main()` routine.
 
+## Usage notes
+
+* Line endings in the input file can either be `CR``LF` (standard for
+  a Model 100 text document) or simply `LF` (UNIX style).
+
 ## More information
 
 * The file format of tokenized BASIC in the Model 100/102 and Tandy 200: 
