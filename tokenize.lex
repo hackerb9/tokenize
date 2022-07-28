@@ -62,6 +62,7 @@ LPRINT		putchar(160);
 DEF		putchar(161);
 POKE		putchar(162);
 PRINT		putchar(163);
+"?"		putchar(163);
 CONT		putchar(164);
 LIST		putchar(165);
 LLIST		putchar(166);
