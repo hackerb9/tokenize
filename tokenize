@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Wrapper for tandy-tokenize to handle multiple files and filename manipulation.
+
+# -n for "not really" , for testing.
+if [[ "$1" == "-n" ]]; then nflag="yup"; shift; else nflag=""; fi
+
+# Use `file` to identify ASCII versus binary, but only if installed
+if ! type file >/dev/null 2>&1; then
+    # Not installed, so just fake it
+    file() { echo "$1: ASCII text, with CRLF line terminators"; }
+fi
+
+for f; do
+    # If a file is already tokenized, skip it
+    if ! file "$f" | grep -q "ASCII text"; then
+	echo "Skipping non ASCII file '$f'"
+	continue
+    fi
+
+    # Come up with a good output filename
+    g="$f"
+    if [[ "$g" =~ ^(.*)\.(DO|100|200|TXT|do|txt) ]]; then
+	g="${BASH_REMATCH[1]}.ba"
+    elif [[ "$g" =~ ^(.*)\.(BA|ba) ]]; then
+	g="${BASH_REMATCH[1]}-tokenized.ba"
+    else
+	g="$g".ba
+    fi
+    # If original filename was ALL CAPS, then keep it so on output  
+    if [[ $(basename "${f@U}") == $(basename "$f") ]]; then
+	dir=$(dirname "$f")
+	base=$(basename "$g")
+	g="$dir${dir:+/}${base@U}"
+    fi
+
+    # Don't overwrite existing files by default
+    if [[ -e "$g" && -z "$nflag" ]]; then
+	echo -n "Output file '$g' already exists. "
+	read -e -p "Overwrite [y/N]? " -n 1
+	if [[ ${REPLY@L} != "y" ]]; then
+	    echo "Skipping '$g'"
+	    continue
+	fi
+    fi
+
+    # Okay, now do the work
+    echo "Tokenizing '$f' into '$g'${nflag:+ (not really)}"
+    dir=$(dirname "$0")
+    if [[ -z "$nflag" ]]; then 
+	"$dir${dir:+/}tandy-tokenize" <"$f" >"$g"
+    fi
+done
