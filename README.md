@@ -37,7 +37,7 @@ sets up useful defaults, like a `main()` routine.
 
 ## Usage
 
-The program reads from stdin and writes to stdout, so you'll need
+The main program reads from stdin and writes to stdout, so you'll need
 to use redirection like so:
 
 ``` bash
@@ -48,14 +48,28 @@ Note: The file OUTPUT.BA must be transferred to the Model 100 as a
 binary file using a program such as TEENY. TELCOM's text capture will
 not work.
 
+### Alternate usage
+
+There is also a helper script called "tokenize" which doesn't
+require redirection. It has some nice features, like automatically
+naming the .BA and not overwriting existing files by default. It can
+operate on multiple input files. 
+
+``` bash
+$ tokenize PROG1.DO prog2.do PROG3.DO
+Tokenizing 'PROG1.DO' into 'PROG1.BA'
+Tokenizing 'prog2.do into 'prog2.ba'
+Output file 'PROG3.BA' already exists. Overwrite [y/N]?
+```
+
 
 ## Machine compatibility
 
 The TRS-80 Models 100 and 102 and the Tandy 200 all share the same
-tokenized BASIC, so this will work for any of them. However, other
-similar machines, such as the NEC PC-8201/8300, have a different BASIC
-tokenization format. (Sidenote: Converting this to handle NEC's N82
-BASIC should not be difficult.)
+tokenized BASIC, so this program will work for any of them. However,
+other similar machines, such as the NEC PC-8201/8300, have a different
+BASIC tokenization format. (Sidenote: Converting this to handle NEC's
+N82 BASIC should not be difficult.)
 
 ## Why Lex?
 
