@@ -58,7 +58,7 @@ operate on multiple input files.
 ``` bash
 $ tokenize PROG1.DO prog2.do PROG3.DO
 Tokenizing 'PROG1.DO' into 'PROG1.BA'
-Tokenizing 'prog2.do into 'prog2.ba'
+Tokenizing 'prog2.do' into 'prog2.ba'
 Output file 'PROG3.BA' already exists. Overwrite [y/N]?
 ```
 
@@ -78,11 +78,14 @@ This program is written in
 a lexical analyzer, because it made implementation trivial. It's mostly
 just a table of keywords and the corresponding byte they should emit.
 Flex handles special cases, like quoted strings and REMarks, easily.
-The downside is that one must have flex installed to compile.
+
+The downside is that one must have flex installed to modify this program.
+(Note: flex is not necessary to compile without modification
+as flex generates C code, `yy.lex.c`.)
 
 ## Miscellaneous notes
 
-* Line endings in the input file can either be `CR``LF` (standard for
+* Line endings in the input file can either be `CRLF` (standard for
   a Model 100 text document) or simply `LF` (UNIX style).
 
 * Conventions for filename extensions vary. Here are just some of them:
