@@ -5,19 +5,7 @@
 # -n for "not really" , for testing.
 if [[ "$1" == "-n" ]]; then nflag="yup"; shift; else nflag=""; fi
 
-# Use `file` to identify ASCII versus binary, but only if installed
-if ! type file >/dev/null 2>&1; then
-    # Not installed, so just fake it
-    file() { echo "$1: ASCII text, with CRLF line terminators"; }
-fi
-
 for f; do
-    # If a file is already tokenized, skip it
-    if ! file "$f" | grep -q "ASCII text"; then
-	echo "Skipping non ASCII file '$f'"
-	continue
-    fi
-
     # Come up with a good output filename
     g="$f"
     if [[ "$g" =~ ^(.*)\.(DO|100|200|TXT|do|txt) ]]; then
