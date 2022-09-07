@@ -8,7 +8,9 @@ if [[ "$1" == "-n" ]]; then nflag="yup"; shift; else nflag=""; fi
 for f; do
     # Come up with a good output filename
     g="$f"
-    if [[ "$g" =~ ^(.*)\.(DO|100|200|TXT|do|txt) ]]; then
+    if [[ "$g" =~ ^(.*)\.(DO|100|200|TXT) ]]; then
+	g="${BASH_REMATCH[1]}.BA"
+    elif [[ "$g" =~ ^(.*)\.(do|txt) ]]; then
 	g="${BASH_REMATCH[1]}.ba"
     elif [[ "$g" =~ ^(.*)\.(BA|ba) ]]; then
 	g="${BASH_REMATCH[1]}-tokenized.ba"
