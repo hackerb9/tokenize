@@ -1,7 +1,7 @@
 /* TRS-80 Model 100 BASIC tokenizer *
- * Compile with:   flex tokenize.lex && gcc lex.yy.c -lfl
+ * Compile with:   flex tandy-tokenize.lex && gcc lex.yy.c -lfl
  *
- * Usage: ./tokenize  <FOO.DO  >FOO.BA
+ * Usage: ./tandy-tokenize  <FOO.DO  >FOO.BA
  */
 
 
