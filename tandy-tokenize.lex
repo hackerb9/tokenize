@@ -2,11 +2,12 @@
  * Compile with:   flex tandy-tokenize.lex && gcc lex.yy.c -lfl
  *
  * Usage: ./tandy-tokenize  <FOO.DO  >FOO.BA
+ * See also the "tokenize" shell script wrapper.
  */
 
 
 
-/* Define states to simply copy text instead of lexing */  
+/* Define states that simply copy text instead of lexing */  
 %x string
 %x remark
 
@@ -14,7 +15,7 @@
 <*>\r		/* Ignore carriage return */
 <*>\n		putchar('\0'); BEGIN(INITIAL);
 
-^[0-9]+[ ]?	{		/* BASIC line number */
+^[[:space:]]*[0-9]+[ ]?	{	/* BASIC line number */
   uint16_t line=atoi(yytext);
   putchar(42);  putchar(42);	/* Dummy placeholder values */
   putchar(line & 0xFF);
