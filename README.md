@@ -66,8 +66,9 @@ Output file 'PROG3.BA' already exists. Overwrite [y/N]?
 ## Machine compatibility
 
 The TRS-80 Models 100 and 102 and the Tandy 200 all share the same
-tokenized BASIC, so this program will work for any of them. However,
-other similar machines, such as the NEC PC-8201/8300, have a different
+tokenized BASIC, as do the Kyocera Kyotronic-85 and Olivetti M10, 
+so one program will work for any of them. However,the NEC family 
+of portables, the PC-8201, PC-8201A, and PC-8300, have a different
 BASIC tokenization format. (Sidenote: Converting this to handle NEC's
 N82 BASIC should not be difficult.)
 
