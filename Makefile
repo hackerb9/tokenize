@@ -19,3 +19,11 @@ test:	bacmp tandy-tokenize
 	if ./bacmp output samples/TREK.BA; then echo Success; fi
 	./tandy-tokenize < samples/LEGACY.DO > output
 	if ./bacmp output samples/LEGACY.BA; then echo Success; fi
+	./tandy-tokenize < samples/olivetti/M100LE.DO > output
+	if ./bacmp output samples/olivetti/M100LE.BA.M10; then echo Success; fi
+	./tandy-tokenize < samples/NOQUOT.DO > output
+	if ./bacmp output samples/NOQUOT.BA; then echo Success; fi
+
+install: tandy-tokenize
+	cp -p tandy-tokenize /usr/local/bin/
+	cp -p tokenize /usr/local/bin/
