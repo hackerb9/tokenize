@@ -1,5 +1,9 @@
+
+# If a pkg-config file exists for libfl, use that to get the library directory.
+LDFLAGS+=`pkg-config --libs libfl`
+
 tandy-tokenize:	lex.yy.c
-	gcc -o tandy-tokenize lex.yy.c -lfl
+	gcc -o tandy-tokenize lex.yy.c -lfl $(LDFLAGS)
 
 lex.yy.c:	tandy-tokenize.lex
 	flex tandy-tokenize.lex
