@@ -3,34 +3,37 @@
 2 DIM HI$(5)   'CURRENT HINT SYMBOLS
 3 DIM SO$(6,5) 'Social, alphabet symbols
 4 DIM UL$(6):  'Backspace+Underline
-5 DIM DA(12):  'DAYS IN A MONTH ARRAY 
+5 DIM DA(12):  'DAYS IN A MONTH ARRAY
 6 'LOAD NUMBER OF DAYS FOR EACH MONTH INTO THE ARRAY DA()
 7 DATA 31,28,31,30,31,30,31,31,30,31,30,31: 'DAYS IN EACH MONTH
 8 FOR I = 1 TO 12: READ DA(I):NEXT I: 'POPULATE ARRAY'
+9 YY=-1	       'Year starts unset
 10 'WORDLE FOR THE TANDY M100
 11 'ADAPTED BY BRAD GRIER
 12 'BLOG.BRADGRIER.COM
-13 'UNCOMMENTED VERSION AND SUPPORTING FILES
+13 'SMALL VERSIONS AND SUPPORTING FILES
 14 'AT : https://github.com/bgri/m100LE
 15 '
-16 ' MD=1 ' SET MD=1 TO MANUALLY ENTER DATE, OTHERWISE 0 TO SKIP
-17 GOSUB 8150: 'SET AD$ TO DATE$ IF MD=0  ASK FOR DATE INPUT WHEN MD=1.
-18 GOSUB 8200: 'SET YY$ (2-digit year)
+16 ''MD=1 ' USE 1 TO MANUALLY ENTER DATE     DEFAULT OF 0 USES SYSTEM DATE$
+17 GOSUB 8000: 'SET DF$ (date format) TO "USA", "NEC", or "K85".
+18 GOSUB 8100: 'SET AD$ TO DATE$ IF MD=0; ASK FOR DATE INPUT WHEN MD=1.
 19 RF=0: ' RANDOM FLAG
-20 DB=0:VR$="v0.l": 'V UPDATE - add manual date entry
+20 DB=0:VR$="v0.l": 'V UPDATE
 21 WN=0: 'RESET WON FLAG
 22 GOSUB 4000: ' Define VT52 movement strings (AT$, RV$, NV$, LT$, etc)
 23 VX=1: VY=1  'CURSOR
 24 CO$=AT$+CHR$(32+2)+CHR$(32+30) 'COMMENTS
 26 DL=400: 'DELAY'
-27 CC=1:   'WITTY COMMENT VALUE 
+27 CC=1:   'WITTY COMMENT VALUE
 28 SV=0:   'SOCIAL SCREEN VIEWED? BOOL
+29 '
 30 'Row positions for guesses and hints
 31 FOR I=1 TO 6
 32 G$(I)=AT$+CHR$(32+I)+CHR$(32+1)
 33 H$(I)=AT$+CHR$(32+I)+CHR$(32+7)
 34 NEXT I
-36 PX=14:PY=5	' Alphabet position
+35 ' Alphabet position
+36 PX=14:PY=4
 37 P1$=AT$+CHR$(32+PY)  +CHR$(32+PX): A1$="ABCDEFGHIJKLM": 'ALPHABET BOARD
 38 P2$=AT$+CHR$(32+PY+1)+CHR$(32+PX): A2$="NOPQRSTUVWXYZ"
 39 FOR I=1 TO 6:FOR J=1 TO 5:SO$(I,J)=".":NEXT J:NEXT I
@@ -43,13 +46,15 @@
 48 VY=0:VX=16:GOSUB 4200:PRINT "-m100le-": PRINT P1$A1$;: PRINT P2$A2$;
 49 VX=28:VY=1:GOSUB4200:FOR VY=1 TO 6: PRINT"|";DN$;LT$;: NEXT VY
 50 ON ERROR GOTO 9000: 'ERROR HANDLING'
-60 PRINT CV$;: 'MAKE CURSOR VISIBLE 
+60 PRINT CV$;: 'MAKE CURSOR VISIBLE
 65 WF$="":     'YEAR'S WORDLIST FILENAME
 70 '
 73 IF RF<>1 THEN DY=0: 'DAYS FROM THE START OF THE YEAR'
 75 GN=1: 'GUESS ATTEMPT NUMBER
 78 TW$="":TM$="" 'TODAY'S WORD/TEMP WORD
 79 N=0:I=0:R=0:C=0: 'LOCAL VARIABLES
+80 '
+82 GOSUB 8200: 'SET YY, CM, DY
 84 GOSUB 8300: 'LOAD THE DATE/DAY/NUMBER & YEAR FOR WORDFILE (WF$)
 90 ' RESERVED LINE NUMBERS FOR FUTURE FEATURES
 100 '
@@ -61,6 +66,7 @@
 900 'POSITION CURSOR BEFORE MAIN LOOP
 910 VX=1: VY=GN
 920 GOSUB 4200
+999 '
 1000 'MAIN LOOP
 1010 GOSUB 7000: 'GET KEYBOARD INPUT
 1015 '
@@ -75,13 +81,16 @@
 2006 REM
 2007 ' Normalize WL$ to 8 chars, no dot
 2008 GOSUB 2100
-2009 ' HW ID 51=M100, 171=T200, 148=NEC,            167=T102,  35=M10,  225=K85
+2009 'HW ID 51=M100, 171=T200, 167=T102,           148=NEC,  225=K85,                       35=M10 (Italy), 125=M10 (US)
 2010 ID=PEEK(1)
-2014 ' Ram Directory address. (Anderson's "Programming Tips" gives RD=63842 for M100/102 and 62034 for T200.)
-2015 ' (Gary Weber's NEC.MAP gives RD=63567, but we can skip the system files by starting at 63633.)
-2016 RD=-( 63842*(ID=51 OR ID=167) + 62034*(ID=171) + 63633*(ID=148) )
+2012 ' RD: RAM DIRECTORY ADDRESS. (Anderson's "Programming Tips" gives RD=63842 for M100/102 and 62034 for T200.)
+2013 ' (Gary Weber's NEC.MAP gives RD=63567, but we can skip the system files by starting at 63633.)
+2014 ' (Hackerb9 found K85 and M10 (with ROM ID=35) as having RD=63849)
+2015 ' (Note: Strangely, the Italian-language Olivetti M10 manual says 63841, which is wrong. Perhaps that is for a different regional ROM, such as ID=125?)
+2016 RD=-( 63842*(ID=51 OR ID=167)               + 62034*(ID=171)                        + 63633*(ID=148)                        + 63849*(ID=225 OR ID=35 OR ID=125) )
 2017 IF RD=0 THEN PRINT "Error: Unknown machine ID";ID;". Please file a bug report.": END
-2019 ' Search directory for WL$
+2018 IF RD=125 THEN PRINT "This is an M10 (USA)! Please file a bug report if this works or not.": FOR T=0 TO 1000: NEXT T
+2019 ' Search directory for WL$ (characters are in IW() for speed) 
 2020 FOR T1 = RD TO 65535 STEP 11
 2029 ' Attribute flag: See Oppedahl's "Inside the TRS-80 Model 100" for details.
 2030 FL=PEEK(T1)
@@ -113,24 +122,26 @@
 2173 WL$=WL$+CHR$(T2)
 2175 NEXT T1
 2180 RETURN
+2999 '
 3000 'WITTY COMMENTS
 3009 ' COMMENT DISPLAY LOCATION
 3010 CO$=AT$+CHR$(32+2)+CHR$(32+30)
 3020 PRINT CO$;
-3030 IF CC<=1 THEN PRINT "HMMM..."; 
+3030 IF CC<=1 THEN PRINT "HMMM...";
 3040 IF CC =2 THEN PRINT "OK...";
-3050 IF CC =3 THEN PRINT "NICE"; 
+3050 IF CC =3 THEN PRINT "NICE";
 3060 IF CC>=4 THEN PRINT "WELL DONE";
 3090 FOR NQ=1 TO DL: NEXT NQ
 3095 PRINT CO$;"          ";
 3099 RETURN
+3999 '
 4000 REM VT52 CURSOR MOVEMENT
 4001 ' IN: None, OUT: Strings defined
 4002 ' AT$ positions cursor at X, Y.
 4003 ' Usage: ?AT$CHR$(32+X)CHR$(32+Y);
 4004 ' UP$ DN$ RT$ LT$ move 1 step.
 4005 ' RV$ NV$ reverse/normal video.
-4006 ' 
+4006 '
 4010 ES$=CHR$(27)   ' Escape char
 4020 AT$=ES$+"Y"    ' Move cursor at
 4030 RV$=ES$+"p"    ' Reverse Video
@@ -153,22 +164,24 @@
 4169 ' Second prepend the underlines.
 4170 UL$(I)=STRING$(I, "_")+UL$(I)
 4180 NEXT I
-4199 RETURN
+4190 RETURN
+4199 '
 4200 REM Position cursor at VX, VY
 4201 '  IN: 0<=VX<=39, 0<=VY<=7.
 4202 ' OUT: NONE
 4203 ' (On Tandy 200, VY<=15.)
 4210 PRINT AT$;CHR$(32+VY);CHR$(32+VX);
 4220 RETURN
+4999 '
 5000 'SOCIAL
 5010 '
 5020 CLS:VX=16:VY=0:GOSUB 4200 'MVCURS
 5022 PRINT "-m100le-"
-5024 VY=1: VX=40-LEN(WF$):GOSUB 4200: PRINT WF$;
-5026 IF RF=1 THEN DY$=RIGHT$(STR$(DY), LEN(STR$(DY))-1): AD$=YY$+"/"+DY$
-5027 VY=VY+1: VX=40-LEN(AD$):GOSUB 4200:PRINT AD$;
-5028 VY=VY+1: VX=40-LEN(VR$):GOSUB 4200:PRINT VR$;
-5029 VY=VY+1: VX=40-LEN(STR$(DY)):GOSUB 4200:PRINT DY;
+5024 VY=1: VX=40-LEN(WF$):                   GOSUB 4200: PRINT WF$;
+5026 IF RF=1 THEN DY$=RIGHT$(STR$(DY),       LEN(STR$(DY))-1):                       AD$=RIGHT$(STR$(Y), 2)+"/"+DY$
+5027 VY=VY+1: VX=40-LEN(AD$):                GOSUB 4200: PRINT AD$;
+5028 VY=VY+1: VX=40-LEN(VR$):                GOSUB 4200: PRINT VR$;
+5029 VY=VY+1: VX=40-LEN(STR$(DY)):           GOSUB 4200:PRINT DY;
 5030 FOR I=1 TO 6: VX=13: VY=I
 5035 GOSUB 4200: PRINT I;"- ";:FOR J=1 TO 5:PRINT SO$(I,J);:NEXT J: NEXT I
 5038 IF WN=0 THEN GN=0
@@ -196,6 +209,7 @@
 6065 GOSUB 4200: PRINT "       ": VY=1: VX=40-LEN(STR$(DY)): GOSUB 4200: PRINT DY;: 'CLEAR LOADING TEXT, PRINT WORD SEQ. NUM
 6067 IF DB=1 THEN TW$="HIPPY": 'OVERRIDE CURRENT WORD IF DB=1(DEBUG ON)'
 6070 RETURN
+6099 '
 6100 REM READ WORD FROM BINARY .CO FILE
 6101 ' INPUT: WA is address of file,                  DY is day of the year
 6102 ' OUTPUT: TW$ is today's word
@@ -210,6 +224,7 @@
 6170 A=B
 6180 NEXT I
 6190 RETURN
+6199 '
 6200 REM READ WORD FROM ASCII .DO FILE
 6201 ' INPUT: WA is address of file,                   DY is day of the year
 6202 ' OUTPUT: TW$ is today's word
@@ -222,7 +237,7 @@
 6250 TW$=TW$+CHR$(A)
 6270 NEXT I
 6290 RETURN
-6999 GOTO 10000: 'WENT TOO FAR -- abort, abort.
+6990 GOTO 10000: 'WENT TOO FAR -- abort, abort.
 7000 '
 7001 'GET KEYBOARD INPUT
 7002 '
@@ -279,12 +294,13 @@
 7360 PRINT H$(GN);
 7361 FOR I=1 TO 5:PRINT HI$(I);:NEXT I
 7365 VX=1: VY=GN+1
-7370 IF TM$=TW$ THEN WN=1: VX=15: VY=3: GOSUB 4200: PRINT RV$ " CONGRATS! " NV$;: FOR I = 1 TO DL: NEXT I: GOTO 8900: 'WIN. SET WIN FLAGS'
+7370 IF TM$=TW$ THEN WN=1: VX=15: VY=1: GOSUB 4200: PRINT RV$ " CONGRATS! " NV$;: FOR I = 1 TO DL: NEXT I: GOTO 8900: 'WIN. SET WIN FLAGS'
 7380 GOSUB 7400: 'UPDATE ALPHABET BOARD'
 7382 GOSUB 3000:CC=1: 'GET COMMENTS AND RESET COMMENT INCREMENT
 7384 IF WN=1 THEN GOTO 8900: 'GO TO WIN SCREEN'
 7395 IF GN=6 THEN GOTO 8900
-7399 GN=GN+1: TM$="":GOSUB 7600:GOTO 7190: 'RESET AND GET NEXT GUESS'
+7390 GN=GN+1: TM$="":GOSUB 7600:GOTO 7190: 'RESET AND GET NEXT GUESS'
+7399 '
 7400 ' UPDATE ALPHABET BOARD
 7401 ' IN: TM$: the word guessed.
 7402 '     GN: guess number
@@ -298,10 +314,16 @@
 7430 IF T<=13 THEN VY=PY  : VX=PX-1+T:                ELSE VY=PY+1: VX=PX-14+T
 7440 GOSUB 4200
 7450 PRINT SO$(GN,I);
+7451 ' move clue letter above/below alphabet board
+7452 IF T<=13 THEN VY=VY-1:VX=PX-1+T:ELSE VY=VY+1: VX=PX-14+T
+7453 GOSUB 4200
+7455 IF SO$(GN,I)="*" THEN PRINT RV$;CHR$(T+64);NV$;
+7456 IF SO$(GN,I)="?" THEN PRINT CHR$(T+64);
 7460 NEXT I
 7499 RETURN
+7599 '
 7600 'REDRAW WORD, POSITION CURSOR
-7601 ' Speed test x100 = 6 seconds 
+7601 ' Speed test x100 = 6 seconds
 7610 GOSUB 4200
 7620 PRINT G$(GN)TM$UL$(5-LEN(TM$));
 7630 RETURN
@@ -310,73 +332,79 @@
 7801 ' Speed test x100 = 6 seconds
 7810 IF ID<>148 THEN PRINT @(VY*40+VX), "_____":PRINT @(VY*40+VX), TM$;: ELSE LOCATE VX,VY: PRINT "_____":LOCATE VX,VY: PRINT TM$;
 7820 RETURN
-7999 GOTO 10000
-8000 'SMALL ROUTINES
-8150 'MANUAL DATE ENTRY. MD=1 TO ENABLE MANUAL DATE ENTRY. AD$=ALTERNATE DATE
-8160 IF MD<>1 THEN GOTO 8185
-8170 CLS
-8171 PRINT "Input date as ";
-8173 IF DF$="EU" THEN PRINT "YY/MM/DD"; : ELSE PRINT "MM/DD/YY";
-8174 PRINT " or YY/DAY"
-8175 PRINT "hit ENTER for ";DATE$
-8176 PRINT
-8178 PRINT "        DATE: ";
-8180 LINE INPUT "";AD$
-8185 IF AD$ = "" THEN AD$=DATE$
+7900 GOTO 10000
+7999 'SMALL ROUTINES
+8000 REM Detect machine platform.
+8001 ' INPUT: None
+8002 ' OUTPUT: ID is PEEK(1) and 
+8003 '         DF$ is date format.
+8004 '         "NEC", "USA", or "K85"
+8005 '      YY/MM/DD, MM/DD/YY, DD/MM/YY
+8006 '
+8009 'Use ID to determine date format
+8010 ID=PEEK(1)
+8011 '  51=M100, 167=T102, 171=T200 (US)
+8012 ' 125=Olivetti US M10 (?MM/DD/YY?)
+8013 ' 148=NEC (YY/MM/DD)
+8014 ' 225=K85, 35=M10 (DD/MM/YY)
+8020 IF ID=148 THEN DF$="NEC":          ELSE IF (ID=225 OR ID=35) THEN DF$="K85":                         ELSE DF$="USA"
+8030 RETURN
+8099 '
+8100 REM MANUAL DATE ENTRY. MD=1 TO ENABLE MANUAL DATE ENTRY. AD$=ALTERNATE DATE
+8101 'Note: AD$ may already be set from a previous game.
+8110 IF AD$ = "" THEN AD$=DATE$
+8120 IF MD<>1 THEN RETURN
+8130 CLS
+8140 PRINT "Input date as ";
+8145 IF DF$="NEC" THEN PRINT "YY/MM/DD";:ELSE IF DF$="K85" THEN PRINT "DD/MM/YY";: ELSE PRINT "MM/DD/YY";
+8150 PRINT " or YY/DAY or DAY"
+8160 PRINT "hit ENTER for ";AD$: PRINT
+8170 PRINT "        DATE";
+8179 'Don't use LINE INPUT as it changes AD$ on ENTER key.
+8180 INPUT "";AD$
 8190 RETURN
 8199 '
-8200 REM Set YY$, two-digit year. 
-8201 ' IN: AD$ is YY/MM/DD or MM/DD/YY
-8202 '         or YY/ddd   or ddd/YY 
+8200 REM Set YY, two-digit year and                  DY, Ordinal ("Julian") day
+8201 ' IN: AD$ is YY/MM/DD (NEC)                       or MM/DD/YY (US)                        or DD/MM/YY (K85)
+8202 '         or YY/ddd
 8203 '         or ddd  (ordinal day #)
-8204 ' OUT: YY$ is two-digit year.
-8205 '      DF$ is "EU" or "US"
-8206 ' TEMP: ID, IX, DT$
-8209 '
-8210 ID=PEEK(1)
-8211 '  51=M100, 167=T102, 171=T200
-8213 ' 225=K85,  125=Olivetti M10 (US)
-8214 ' 148=NEC,   35=M10 (Europe)
-8215 '
-8219 ' Use ID to determine date format
-8220 IF ID=148 OR ID=35 THEN DF$="EU"   :                       ELSE DF$="US"
-8229 ' Check for ordinal day w/o year
-8230 IX=INSTR(1, AD$, "/")
-8240 IF IX=0 THEN DT$=DATE$ ELSE DT$=AD$
-8249 ' Check for ordinal day with year
-8250 IF IX=3 AND INSTR(IX+1, AD$, "/")=0 THEN YY$=LEFT$(AD$, 2): RETURN
-8269 ' Format is either YY first or last
-8270 IF DF$="EU" THEN YY$=LEFT$(DT$,2)  :                ELSE YY$=RIGHT$(DT$,2)
-8290 RETURN
+8204 ' OUT: DY is ordinal day (1 to 366)
+8205 '      YY is two-digit year. 
+8207 ' TEMP: IX, I, D(I)
+8208 '
+8209 ' Count number of slashes and split values into d()
+8210 I=0: IX=0
+8220 D(I)=VAL(MID$(AD$, IX+1, 15))
+8230 IX=INSTR(IX+1, AD$, "/")
+8240 IF IX<>0 THEN I=I+1:GOTO 8220
+8249 ' No slashes in input: Ordinal day.
+8250 IF I=0 THEN DY=D(0): CM=0: IF YY=-1 THEN IF DF$="NEC" THEN YY=VAL(LEFT$(DATE$, 2)): ELSE YY=VAL(RIGHT$(DATE$, 2))
+8259 ' One slash. Year / Ordinal day.
+8260 IF I=1 THEN YY=D(0): DY=D(1): CM=0
+8269 ' Two slashes and NEC: YY/MM/DD
+8270 IF I=2 AND DF$="NEC" THEN               YY=D(0): CM=D(1): DY=D(2)
+8279 ' Two slashes and K85: DD/MM/YY
+8280 IF I=2 AND DF$="K85" THEN               YY=D(2): CM=D(1): DY=D(0)
+8289 ' Two slashes and USA: MM/DD/YY
+8290 IF I=2 AND DF$="USA" THEN               YY=D(2): CM=D(0): DY=D(1)
+8295 YY=YY MOD 100 ' Ignore century
+8298 RETURN
 8299 '
-8300 'CALCULATE DAY (#) OF THE YEAR
-8305 ' If user inputs a day # without a year (e.g., "213"), use current year.
-8306 IF INSTR(1, AD$, "/")=0 THEN AD$=YY$+"/"+AD$
-8307 ' If user inputs "YR/DY" (e.g., "22/213"), then use DY as ordinal date.
-8308 IF INSTR(4, AD$, "/")=0 THEN DY=VAL(MID$(AD$,4,3)): GOTO 8337
-8309 IF RF=1 THEN PRINT "Debugging Assertion failed. Random DY cannot have two slashes in AD$. ": PRINT DY, AD$: STOP
-8310 '
-8319 'GET NUMBER OF THE CURRENT MONTH'
-8320 IF DF$="EU" THEN CM$=MID$(AD$,4,2): ELSE CM$=LEFT$(AD$,2)
-8321 CM=VAL(CM$)
-8324 'GET NUMBER OF THE CURRENT DAY
-8325 IF DF$="EU" THEN DY$=RIGHT$(AD$,2): ELSE DY$=MID$(AD$,4,2)
-8326 DY=VAL(DY$)
-8330 'LOOP MONTH # OF TIMES - 1: 'ADD DAYS FROM EACH MONTH PREVIOUS: 'ADD DAYS OF CURRENT MONTH
-8335 IF CM>1 THEN: FOR I = 1 TO CM-1: DY=DY+DA(I): NEXT I
-8337 Y=2000+VAL(YY$): 'FOUR DIGIT YEAR
-8338 LP=-( (Y MOD 4 = 0) AND ( (Y MOD 100 <> 0) OR (Y MOD 400 = 0) ) ): ' LP is 1 in leap years, 0 otherwise.
-8339 IF CM>2 THEN DY=DY+LP
-8340 'PRINT "#DAYS=";DY: 'PRINT NUMBER OF DAYS IN YEAR TO TODAY - THIS IS THE NUMBER FOR TODAY'S WORD
-8345 IF DY<0 OR DY>365+LP THEN ERROR 6: ' Overflow error if DY is not in the calendar.
-8349 ' CREATE THE WORDLIST FILENAME
-8350 WF$="WL20"+YY$+".CO" '2-digit year
-8360 '
-8362 'VY=0
-8365 'IF RF=1 THEN VX=36: GOSUB 4200: PRINT "RAND";: ELSE VX=40-LEN(WF$): GOSUB 4200: PRINT WF$;
+8300 REM CALCULATE DAY (#) OF THE YEAR
+8301 ' INPUT: YY (2 digit year),                      CM (current month),                     DY (day of month, day of year if CM==0)
+8302 ' OUTPUT:                                 DY is day of year (ordinal)             Y is four digit year                    YY$ is 2 digit year (str)               LP is 1 if Y is a leap year             WF$ is "WL20yy.CO"
+8309 'LOOP MONTH # OF TIMES - 1: 'ADD DAYS FROM EACH MONTH PREVIOUS: 'ADD DAYS OF CURRENT MONTH
+8310 IF CM>1 THEN: FOR I = 1 TO CM-1: DY=DY+DA(I): NEXT I
+8320 Y=2000+YY: 'FOUR DIGIT YEAR
+8330 LP=-( (Y MOD 4 = 0) AND ( (Y MOD 100 <> 0) OR (Y MOD 400 = 0) ) ): ' LP is 1 in leap years, 0 otherwise.
+8339 ' If month is past February, leap.
+8340 IF CM>2 THEN DY=DY+LP
+8350 IF DY<0 OR DY>365+LP THEN ERROR 6: ' Overflow error if DY is not in the calendar.
+8359 ' CREATE THE WORDLIST FILENAME
+8360 WF$="WL20"+RIGHT$(STR$(Y), 2)+".CO" '2-digit year
 8370 VY=0: VX=40-LEN(WF$): GOSUB 4200: PRINT WF$;
 8390 RETURN
-8399 ' 
+8399 '
 8800 'DEBUG ROUTINES
 8860 RETURN
 8900 'WIN OR FAIL AFTER 6 GUESSES
@@ -387,15 +415,15 @@
 8915 ''
 8920 K$ = INKEY$: IF K$="" GOTO 8920
 8925 IF K$="a" OR K$="A" THEN CLS:MD=1: GOTO 10: 'COMPLETE RESTART, ASK FOR DATE
-8930 IF K$="r" OR K$="R" THEN CLS: RF=1:RT=VAL(RIGHT$(TIME$,2)): FOR I=1 TO RT:DY=FIX(RND(RT)*(365+LP)):NEXT I: DY$=RIGHT$(STR$(DY), LEN(STR$(DY))-1): AD$=YY$+"/"+DY$: MD=0: GOTO 20
+8930 IF K$="r" OR K$="R" THEN CLS: RF=1:RT=VAL(RIGHT$(TIME$,2)): FOR I=1 TO RT:DY=FIX(RND(RT)*(365+LP)):NEXT I: DY$=RIGHT$(STR$(DY), LEN(STR$(DY))-1): AD$=RIGHT$(STR$(Y), 2)+"/"+DY$: MD=0: GOTO 20
 8935 IF K$="s" OR K$="S" THEN GOTO 5000: 'GOTO SOCIAL THEN END
 8938 IF K$="q" OR K$="Q" THEN MENU
 8940 PRINT CO$LT$LT$;"        ":PRINT CO$DN$;"         ":PRINT CO$DN$DN$;"      ":PRINT CO$;"ENDING...";:FOR I = 1 TO DL: NEXT I: CLS: END
 9000 'ERROR HANDLING'
 9009 'FILE NOT FOUND
-9010 IF ERR=52 THEN CLS: PRINT "PROGAM STOP": PRINT "DATA FILE NOT FOUND (";WF$")": END
-9020 IF ERR=6 THEN CLS: PRINT"PROGRAM STOP": PRINT "DATE OUT OF RANGE (";AD$")": END
-9200 VX=30: VY=1: GOSUB 4200: PRINT RV$ ERR;"-";ERL NV$
-9210 PRINT"Error"; ERR ;"in line"; ERL
+9010 IF ERR=52 THEN CLS: PRINT "PROGAM STOP": PRINT "DATA FILE NOT FOUND (";WF$")": GOTO 9900
+9020 IF ERR=6 THEN CLS: PRINT"PROGRAM STOP": PRINT "DATE OUT OF RANGE (";AD$")": GOTO 9900
+9900 VX=30: VY=1: GOSUB 4200: PRINT RV$ ERR;"-";ERL NV$
+9910 PRINT"Error"; ERR ;"in line"; ERL
 9999 ERROR ERR
 10000 PRINT "ERROR - YOU SHOULD NOT HAVE GOTTEN SO FAR":STOP
