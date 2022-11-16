@@ -649,11 +649,11 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "tandy-tokenize.lex"
-/* TRS-80 Model 100 BASIC tokenizer *
- * Compile with:   flex tandy-tokenize.lex && gcc lex.yy.c -lfl
+/* tandy-tokenize.lex		TRS-80 Model 100 BASIC tokenizer *
  *
- * Usage: ./tandy-tokenize  <FOO.DO  >FOO.BA
- * See also the "tokenize" shell script wrapper.
+ * Flex uses this to create yy.lex.c, which is included by tandy-tokenize.c.
+ * 
+ * Compile with:   flex tandy-tokenize.lex && gcc tandy-tokenize.c
  */
 /* Define states that simply copy text instead of lexing */  
 
@@ -880,7 +880,7 @@ YY_DECL
 		}
 
 	{
-#line 14 "tandy-tokenize.lex"
+#line 13 "tandy-tokenize.lex"
 
 #line 886 "lex.yy.c"
 
@@ -942,19 +942,19 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 15 "tandy-tokenize.lex"
+#line 14 "tandy-tokenize.lex"
 /* Ignore carriage return */
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 16 "tandy-tokenize.lex"
+#line 15 "tandy-tokenize.lex"
 putchar('\0'); BEGIN(INITIAL);
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 18 "tandy-tokenize.lex"
+#line 17 "tandy-tokenize.lex"
 {	/* BASIC line number */
   uint16_t line=atoi(yytext);
   putchar(42);  putchar(42);	/* Dummy placeholder values */
@@ -964,668 +964,668 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 25 "tandy-tokenize.lex"
+#line 24 "tandy-tokenize.lex"
 putchar('"'); BEGIN(string);
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 26 "tandy-tokenize.lex"
+#line 25 "tandy-tokenize.lex"
 putchar('"'); BEGIN(INITIAL);
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(string):
 case YY_STATE_EOF(remark):
-#line 28 "tandy-tokenize.lex"
+#line 27 "tandy-tokenize.lex"
 { yyterminate(); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 30 "tandy-tokenize.lex"
+#line 29 "tandy-tokenize.lex"
 putchar(128);
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 31 "tandy-tokenize.lex"
+#line 30 "tandy-tokenize.lex"
 putchar(129);
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 32 "tandy-tokenize.lex"
+#line 31 "tandy-tokenize.lex"
 putchar(130);
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 33 "tandy-tokenize.lex"
+#line 32 "tandy-tokenize.lex"
 putchar(131);
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 34 "tandy-tokenize.lex"
+#line 33 "tandy-tokenize.lex"
 putchar(132);
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 35 "tandy-tokenize.lex"
+#line 34 "tandy-tokenize.lex"
 putchar(133);
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 36 "tandy-tokenize.lex"
+#line 35 "tandy-tokenize.lex"
 putchar(134);
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 37 "tandy-tokenize.lex"
+#line 36 "tandy-tokenize.lex"
 putchar(135);
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 38 "tandy-tokenize.lex"
+#line 37 "tandy-tokenize.lex"
 putchar(136);
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 39 "tandy-tokenize.lex"
+#line 38 "tandy-tokenize.lex"
 putchar(137);
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 40 "tandy-tokenize.lex"
+#line 39 "tandy-tokenize.lex"
 putchar(138);
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 41 "tandy-tokenize.lex"
+#line 40 "tandy-tokenize.lex"
 putchar(139);
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 42 "tandy-tokenize.lex"
+#line 41 "tandy-tokenize.lex"
 putchar(140);
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 43 "tandy-tokenize.lex"
+#line 42 "tandy-tokenize.lex"
 putchar(141);
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 44 "tandy-tokenize.lex"
+#line 43 "tandy-tokenize.lex"
 putchar(142); 	BEGIN(remark);
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 45 "tandy-tokenize.lex"
+#line 44 "tandy-tokenize.lex"
 putchar(143);
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 46 "tandy-tokenize.lex"
+#line 45 "tandy-tokenize.lex"
 putchar(144);
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 47 "tandy-tokenize.lex"
+#line 46 "tandy-tokenize.lex"
 putchar(':'); putchar(145);
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 48 "tandy-tokenize.lex"
+#line 47 "tandy-tokenize.lex"
 putchar(146);
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 49 "tandy-tokenize.lex"
+#line 48 "tandy-tokenize.lex"
 putchar(147);
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 50 "tandy-tokenize.lex"
+#line 49 "tandy-tokenize.lex"
 putchar(148);
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 51 "tandy-tokenize.lex"
+#line 50 "tandy-tokenize.lex"
 putchar(149);
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 52 "tandy-tokenize.lex"
+#line 51 "tandy-tokenize.lex"
 putchar(150);
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 53 "tandy-tokenize.lex"
+#line 52 "tandy-tokenize.lex"
 putchar(151);
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 54 "tandy-tokenize.lex"
+#line 53 "tandy-tokenize.lex"
 putchar(152);
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 55 "tandy-tokenize.lex"
+#line 54 "tandy-tokenize.lex"
 putchar(153);
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 56 "tandy-tokenize.lex"
+#line 55 "tandy-tokenize.lex"
 putchar(154);
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 57 "tandy-tokenize.lex"
+#line 56 "tandy-tokenize.lex"
 putchar(155);
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 58 "tandy-tokenize.lex"
+#line 57 "tandy-tokenize.lex"
 putchar(156);
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 59 "tandy-tokenize.lex"
+#line 58 "tandy-tokenize.lex"
 putchar(157);
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 60 "tandy-tokenize.lex"
+#line 59 "tandy-tokenize.lex"
 putchar(158);
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 61 "tandy-tokenize.lex"
+#line 60 "tandy-tokenize.lex"
 putchar(159);
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 62 "tandy-tokenize.lex"
+#line 61 "tandy-tokenize.lex"
 putchar(160);
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 63 "tandy-tokenize.lex"
+#line 62 "tandy-tokenize.lex"
 putchar(161);
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 64 "tandy-tokenize.lex"
+#line 63 "tandy-tokenize.lex"
 putchar(162);
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 65 "tandy-tokenize.lex"
+#line 64 "tandy-tokenize.lex"
 putchar(163);
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 66 "tandy-tokenize.lex"
+#line 65 "tandy-tokenize.lex"
 putchar(163);
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 67 "tandy-tokenize.lex"
+#line 66 "tandy-tokenize.lex"
 putchar(164);
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 68 "tandy-tokenize.lex"
+#line 67 "tandy-tokenize.lex"
 putchar(165);
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 69 "tandy-tokenize.lex"
+#line 68 "tandy-tokenize.lex"
 putchar(166);
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 70 "tandy-tokenize.lex"
+#line 69 "tandy-tokenize.lex"
 putchar(167);
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 71 "tandy-tokenize.lex"
+#line 70 "tandy-tokenize.lex"
 putchar(168);
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 72 "tandy-tokenize.lex"
+#line 71 "tandy-tokenize.lex"
 putchar(169);
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 73 "tandy-tokenize.lex"
+#line 72 "tandy-tokenize.lex"
 putchar(170);
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 74 "tandy-tokenize.lex"
+#line 73 "tandy-tokenize.lex"
 putchar(171);
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 75 "tandy-tokenize.lex"
+#line 74 "tandy-tokenize.lex"
 putchar(172);
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 76 "tandy-tokenize.lex"
+#line 75 "tandy-tokenize.lex"
 putchar(173);
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 77 "tandy-tokenize.lex"
+#line 76 "tandy-tokenize.lex"
 putchar(174);
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 78 "tandy-tokenize.lex"
+#line 77 "tandy-tokenize.lex"
 putchar(175);
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 79 "tandy-tokenize.lex"
+#line 78 "tandy-tokenize.lex"
 putchar(176);
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 80 "tandy-tokenize.lex"
+#line 79 "tandy-tokenize.lex"
 putchar(177);
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 81 "tandy-tokenize.lex"
+#line 80 "tandy-tokenize.lex"
 putchar(178);
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 82 "tandy-tokenize.lex"
+#line 81 "tandy-tokenize.lex"
 putchar(179);
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 83 "tandy-tokenize.lex"
+#line 82 "tandy-tokenize.lex"
 putchar(180);
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 84 "tandy-tokenize.lex"
+#line 83 "tandy-tokenize.lex"
 putchar(181);
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 85 "tandy-tokenize.lex"
+#line 84 "tandy-tokenize.lex"
 putchar(182);
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 86 "tandy-tokenize.lex"
+#line 85 "tandy-tokenize.lex"
 putchar(183);
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 87 "tandy-tokenize.lex"
+#line 86 "tandy-tokenize.lex"
 putchar(184);
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 88 "tandy-tokenize.lex"
+#line 87 "tandy-tokenize.lex"
 putchar(185);
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 89 "tandy-tokenize.lex"
+#line 88 "tandy-tokenize.lex"
 putchar(186);
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 90 "tandy-tokenize.lex"
+#line 89 "tandy-tokenize.lex"
 putchar(187);
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 91 "tandy-tokenize.lex"
+#line 90 "tandy-tokenize.lex"
 putchar(188);
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 92 "tandy-tokenize.lex"
+#line 91 "tandy-tokenize.lex"
 putchar(189);
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 93 "tandy-tokenize.lex"
+#line 92 "tandy-tokenize.lex"
 putchar(190);
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 94 "tandy-tokenize.lex"
+#line 93 "tandy-tokenize.lex"
 putchar(191);
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 95 "tandy-tokenize.lex"
+#line 94 "tandy-tokenize.lex"
 putchar(192);
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 96 "tandy-tokenize.lex"
+#line 95 "tandy-tokenize.lex"
 putchar(193);
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 97 "tandy-tokenize.lex"
+#line 96 "tandy-tokenize.lex"
 putchar(194);
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 98 "tandy-tokenize.lex"
+#line 97 "tandy-tokenize.lex"
 putchar(195);
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 99 "tandy-tokenize.lex"
+#line 98 "tandy-tokenize.lex"
 putchar(196);
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 100 "tandy-tokenize.lex"
+#line 99 "tandy-tokenize.lex"
 putchar(197);
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 101 "tandy-tokenize.lex"
+#line 100 "tandy-tokenize.lex"
 putchar(198);
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 102 "tandy-tokenize.lex"
+#line 101 "tandy-tokenize.lex"
 putchar(199);
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 103 "tandy-tokenize.lex"
+#line 102 "tandy-tokenize.lex"
 putchar(200);
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 104 "tandy-tokenize.lex"
+#line 103 "tandy-tokenize.lex"
 putchar(201);
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 105 "tandy-tokenize.lex"
+#line 104 "tandy-tokenize.lex"
 putchar(202);
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 106 "tandy-tokenize.lex"
+#line 105 "tandy-tokenize.lex"
 putchar(203);
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 107 "tandy-tokenize.lex"
+#line 106 "tandy-tokenize.lex"
 putchar(204);
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 108 "tandy-tokenize.lex"
+#line 107 "tandy-tokenize.lex"
 putchar(205);
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 109 "tandy-tokenize.lex"
+#line 108 "tandy-tokenize.lex"
 putchar(206);
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 110 "tandy-tokenize.lex"
+#line 109 "tandy-tokenize.lex"
 putchar(207);
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 111 "tandy-tokenize.lex"
+#line 110 "tandy-tokenize.lex"
 putchar(208);
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 112 "tandy-tokenize.lex"
+#line 111 "tandy-tokenize.lex"
 putchar(209);
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 113 "tandy-tokenize.lex"
+#line 112 "tandy-tokenize.lex"
 putchar(210);
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 114 "tandy-tokenize.lex"
+#line 113 "tandy-tokenize.lex"
 putchar(211);
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 115 "tandy-tokenize.lex"
+#line 114 "tandy-tokenize.lex"
 putchar(212);
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 116 "tandy-tokenize.lex"
+#line 115 "tandy-tokenize.lex"
 putchar(213);
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 117 "tandy-tokenize.lex"
+#line 116 "tandy-tokenize.lex"
 putchar(214);
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 118 "tandy-tokenize.lex"
+#line 117 "tandy-tokenize.lex"
 putchar(215);
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 119 "tandy-tokenize.lex"
+#line 118 "tandy-tokenize.lex"
 putchar(216);
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 120 "tandy-tokenize.lex"
+#line 119 "tandy-tokenize.lex"
 putchar(217);
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 121 "tandy-tokenize.lex"
+#line 120 "tandy-tokenize.lex"
 putchar(218);
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 122 "tandy-tokenize.lex"
+#line 121 "tandy-tokenize.lex"
 putchar(219);
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 123 "tandy-tokenize.lex"
+#line 122 "tandy-tokenize.lex"
 putchar(220);
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 124 "tandy-tokenize.lex"
+#line 123 "tandy-tokenize.lex"
 putchar(221);
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 125 "tandy-tokenize.lex"
+#line 124 "tandy-tokenize.lex"
 putchar(222);
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 126 "tandy-tokenize.lex"
+#line 125 "tandy-tokenize.lex"
 putchar(223);
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 127 "tandy-tokenize.lex"
+#line 126 "tandy-tokenize.lex"
 putchar(224);
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 128 "tandy-tokenize.lex"
+#line 127 "tandy-tokenize.lex"
 putchar(225);
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 129 "tandy-tokenize.lex"
+#line 128 "tandy-tokenize.lex"
 putchar(226);
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 130 "tandy-tokenize.lex"
+#line 129 "tandy-tokenize.lex"
 putchar(227);
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 131 "tandy-tokenize.lex"
+#line 130 "tandy-tokenize.lex"
 putchar(228);
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 132 "tandy-tokenize.lex"
+#line 131 "tandy-tokenize.lex"
 putchar(229);
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 133 "tandy-tokenize.lex"
+#line 132 "tandy-tokenize.lex"
 putchar(230);
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-#line 134 "tandy-tokenize.lex"
+#line 133 "tandy-tokenize.lex"
 putchar(231);
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
-#line 135 "tandy-tokenize.lex"
+#line 134 "tandy-tokenize.lex"
 putchar(232);
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-#line 136 "tandy-tokenize.lex"
+#line 135 "tandy-tokenize.lex"
 putchar(233);
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 137 "tandy-tokenize.lex"
+#line 136 "tandy-tokenize.lex"
 putchar(234);
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 138 "tandy-tokenize.lex"
+#line 137 "tandy-tokenize.lex"
 putchar(235);
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 139 "tandy-tokenize.lex"
+#line 138 "tandy-tokenize.lex"
 putchar(236);
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-#line 140 "tandy-tokenize.lex"
+#line 139 "tandy-tokenize.lex"
 putchar(237);
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-#line 141 "tandy-tokenize.lex"
+#line 140 "tandy-tokenize.lex"
 putchar(238);
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-#line 142 "tandy-tokenize.lex"
+#line 141 "tandy-tokenize.lex"
 putchar(239);
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 143 "tandy-tokenize.lex"
+#line 142 "tandy-tokenize.lex"
 putchar(240);
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
-#line 144 "tandy-tokenize.lex"
+#line 143 "tandy-tokenize.lex"
 putchar(241);
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
-#line 145 "tandy-tokenize.lex"
+#line 144 "tandy-tokenize.lex"
 putchar(242);
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
-#line 146 "tandy-tokenize.lex"
+#line 145 "tandy-tokenize.lex"
 putchar(243);
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
-#line 147 "tandy-tokenize.lex"
+#line 146 "tandy-tokenize.lex"
 putchar(244);
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
-#line 148 "tandy-tokenize.lex"
+#line 147 "tandy-tokenize.lex"
 putchar(245);
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
-#line 149 "tandy-tokenize.lex"
+#line 148 "tandy-tokenize.lex"
 putchar(246);
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
-#line 150 "tandy-tokenize.lex"
+#line 149 "tandy-tokenize.lex"
 putchar(247);
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
-#line 151 "tandy-tokenize.lex"
+#line 150 "tandy-tokenize.lex"
 putchar(248);
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
-#line 152 "tandy-tokenize.lex"
+#line 151 "tandy-tokenize.lex"
 putchar(249);
 	YY_BREAK
 case 129:
 YY_RULE_SETUP
-#line 153 "tandy-tokenize.lex"
+#line 152 "tandy-tokenize.lex"
 putchar(250);
 	YY_BREAK
 case 130:
 YY_RULE_SETUP
-#line 154 "tandy-tokenize.lex"
+#line 153 "tandy-tokenize.lex"
 putchar(251);
 	YY_BREAK
 case 131:
 YY_RULE_SETUP
-#line 155 "tandy-tokenize.lex"
+#line 154 "tandy-tokenize.lex"
 putchar(252);
 	YY_BREAK
 case 132:
 YY_RULE_SETUP
-#line 156 "tandy-tokenize.lex"
+#line 155 "tandy-tokenize.lex"
 putchar(253);
 	YY_BREAK
 case 133:
 YY_RULE_SETUP
-#line 157 "tandy-tokenize.lex"
+#line 156 "tandy-tokenize.lex"
 putchar(254);
 	YY_BREAK
 case 134:
 YY_RULE_SETUP
-#line 158 "tandy-tokenize.lex"
+#line 157 "tandy-tokenize.lex"
 putchar(':'); putchar(0x8E); putchar(0xFF); BEGIN(remark);
 	YY_BREAK
 case 135:
 YY_RULE_SETUP
-#line 160 "tandy-tokenize.lex"
+#line 159 "tandy-tokenize.lex"
 ECHO;
 	YY_BREAK
 #line 1632 "lex.yy.c"
@@ -2634,7 +2634,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 160 "tandy-tokenize.lex"
+#line 159 "tandy-tokenize.lex"
 
 
 

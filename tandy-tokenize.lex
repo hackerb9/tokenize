@@ -1,10 +1,9 @@
-/* TRS-80 Model 100 BASIC tokenizer *
- * Compile with:   flex tandy-tokenize.lex && gcc lex.yy.c -lfl
+/* tandy-tokenize.lex		TRS-80 Model 100 BASIC tokenizer *
  *
- * Usage: ./tandy-tokenize  <FOO.DO  >FOO.BA
- * See also the "tokenize" shell script wrapper.
+ * Flex uses this to create yy.lex.c, which is included by tandy-tokenize.c.
+ * 
+ * Compile with:   flex tandy-tokenize.lex && gcc tandy-tokenize.c
  */
-
 
 
 /* Define states that simply copy text instead of lexing */  
