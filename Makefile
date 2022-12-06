@@ -8,8 +8,18 @@ all: lex.yy.c tandy-tokenize
 lex.yy.c: tandy-tokenize.lex
 	flex tandy-tokenize.lex
 
+
+# Compile tandy-decomment.lex
+tandy-decomment: 	tandy-decomment.yy.c
+
+tandy-decomment.yy.c: tandy-decomment.lex
+	flex  -o tandy-decomment.yy.c  tandy-decomment.lex
+
+
+# Utility targets
 clean:
 	rm tandy-tokenize lex.yy.c bacmp output *~ 2>/dev/null || true
+	rm tandy-decomment tandy-decomment.yy.c *~ 2>/dev/null || true
 
 run:	tandy-tokenize
 	./tandy-tokenize < samples/M100LE.DO | tee output | hd
