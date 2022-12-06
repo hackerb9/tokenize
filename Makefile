@@ -9,8 +9,13 @@ all: tandy-tokenize tandy-decomment
 .lex.c:
 	flex -o $@ $<
 
-# Utility targets
+# Utility targets are "PHONY" so they'll run even if a file exists
+# with the same name.
 .PHONY: clean run test install
+
+install: tandy-tokenize
+	cp -p tandy-tokenize ${prefix}/bin/
+	cp -p tokenize ${prefix}/bin/
 
 clean:
 	rm tandy-tokenize lex.yy.c bacmp output *~ 2>/dev/null || true
@@ -19,7 +24,7 @@ clean:
 run:	tandy-tokenize
 	./tandy-tokenize < samples/M100LE.DO | tee output | hd
 
-test:	lex.yy.c tandy-tokenize bacmp
+test:	tandy-tokenize bacmp
 	./tandy-tokenize < samples/M100LE+comments.DO > output
 	@if ./bacmp output samples/M100LE+comments.BA; then echo Success; fi
 	./tandy-tokenize < samples/TREK.DO > output
@@ -32,9 +37,4 @@ test:	lex.yy.c tandy-tokenize bacmp
 	@if ./bacmp output samples/NOQUOT.BA; then echo Success; fi
 	./tandy-tokenize < samples/QUOQUO.DO > output
 	@if ./bacmp output samples/QUOQUO.BA; then echo Success; fi
-
-install: tandy-tokenize
-	cp -p tandy-tokenize ${prefix}/bin/
-	cp -p tokenize ${prefix}/bin/
-
 
