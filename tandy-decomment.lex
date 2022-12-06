@@ -8,6 +8,10 @@
  */
 
 
+/* Change "yy" prefix to "decomment" for variable, function, and file names */
+%option warn
+%option prefix="decomment"
+
 /* Exclusive states. String copies text instead of lexing. */  
 %x string
 
@@ -161,3 +165,5 @@ ASC		putchar(249);
 
 %%
 
+/* The main() routine */
+#include "tandy-decomment-main.c"

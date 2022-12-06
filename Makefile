@@ -1,25 +1,20 @@
 # Where to install.
 prefix ?= /usr/local
 
-# By default, create tandy-tokenize binary. 
-all: lex.yy.c tandy-tokenize 
+# By default, create tandy-tokenize binary (implicitly compiled from .lex)
+all: tandy-tokenize tandy-decomment
 
-# When the .lex file change, recreate lex.yy.c. 
-lex.yy.c: tandy-tokenize.lex
-	flex tandy-tokenize.lex
-
-
-# Compile tandy-decomment.lex
-tandy-decomment: 	tandy-decomment.yy.c
-
-tandy-decomment.yy.c: tandy-decomment.lex
-	flex  -o tandy-decomment.yy.c  tandy-decomment.lex
-
+# Automatically run flex to create .c files from .lex.
+.SUFFIXES: .lex
+.lex.c:
+	flex -o $@ $<
 
 # Utility targets
+.PHONY: clean run test install
+
 clean:
 	rm tandy-tokenize lex.yy.c bacmp output *~ 2>/dev/null || true
-	rm tandy-decomment tandy-decomment.yy.c *~ 2>/dev/null || true
+	rm tandy-decomment tandy-decomment.c *.o 2>/dev/null || true
 
 run:	tandy-tokenize
 	./tandy-tokenize < samples/M100LE.DO | tee output | hd
@@ -41,3 +36,5 @@ test:	lex.yy.c tandy-tokenize bacmp
 install: tandy-tokenize
 	cp -p tandy-tokenize ${prefix}/bin/
 	cp -p tokenize ${prefix}/bin/
+
+
