@@ -2,7 +2,8 @@
  *
  * Removes comments (REMarks) while tokenizing Model 100 BASIC.
  * Additionally: Removes white space and colons before a comment.
- * Bonus: Two single-ticks ('') marks a comment to keep.
+ * Bonus: Extra white spaces are removed to save space.
+ * Double Bonus: Two single-ticks ('') marks a comment to keep.
  * 
  * Compile with:   flex tandy-decomment.lex && gcc lex.yy.c -lfl
  */
@@ -34,6 +35,8 @@
 
 [: \t]*"''"[^\r\n]*	putchar(142); printf(yytext); /* Keep '' comments. */
 [: \t]*('|REM)[^\r\n]*	putchar(':'); putchar(0x8E); putchar(0xFF);  /* Delete comments + whitespace. */
+
+" "    		/* delete unnecessary spaces */
 
 END		putchar(128);
 FOR		putchar(129);
