@@ -1,20 +1,30 @@
 # Where to install.
 prefix ?= /usr/local
 
-# By default, create tandy-tokenize binary. 
-all: lex.yy.c tandy-tokenize 
+# By default, create tandy-tokenize binary (implicitly compiled from .lex)
+all: tandy-tokenize tandy-decomment
 
-# When the .lex file change, recreate lex.yy.c. 
-lex.yy.c: tandy-tokenize.lex
-	flex tandy-tokenize.lex
+# Automatically run flex to create .c files from .lex.
+.SUFFIXES: .lex
+.lex.c:
+	flex -o $@ $<
+
+# Utility targets are "PHONY" so they'll run even if a file exists
+# with the same name.
+.PHONY: clean run test install
+
+install: tandy-tokenize
+	cp -p tandy-tokenize ${prefix}/bin/
+	cp -p tokenize ${prefix}/bin/
 
 clean:
 	rm tandy-tokenize lex.yy.c bacmp output *~ 2>/dev/null || true
+	rm tandy-decomment tandy-decomment.c *.o 2>/dev/null || true
 
 run:	tandy-tokenize
 	./tandy-tokenize < samples/M100LE.DO | tee output | hd
 
-test:	lex.yy.c tandy-tokenize bacmp
+test:	tandy-tokenize bacmp
 	./tandy-tokenize < samples/M100LE+comments.DO > output
 	@if ./bacmp output samples/M100LE+comments.BA; then echo Success; fi
 	./tandy-tokenize < samples/TREK.DO > output
@@ -28,6 +38,3 @@ test:	lex.yy.c tandy-tokenize bacmp
 	./tandy-tokenize < samples/QUOQUO.DO > output
 	@if ./bacmp output samples/QUOQUO.BA; then echo Success; fi
 
-install: tandy-tokenize
-	cp -p tandy-tokenize ${prefix}/bin/
-	cp -p tokenize ${prefix}/bin/

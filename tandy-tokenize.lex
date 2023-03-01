@@ -2,9 +2,11 @@
  *
  * Flex uses this to create yy.lex.c, which is included by tandy-tokenize.c.
  * 
- * Compile with:   flex tandy-tokenize.lex && gcc tandy-tokenize.c
+ * Compile with:   flex tandy-tokenize.lex && gcc lex.yy.c
  */
 
+
+%option prefix="tokenize"
 
 /* Define states that simply copy text instead of lexing */  
 %x string
@@ -158,3 +160,5 @@ ASC		putchar(249);
 
 %%
 
+/* The main() routine */
+#include "tandy-tokenize-main.c"
