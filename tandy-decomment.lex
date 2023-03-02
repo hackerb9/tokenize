@@ -5,7 +5,7 @@
  * Bonus: Extra white spaces are removed to save space.
  * Double Bonus: Two single-ticks ('') marks a comment to keep.
  * 
- * Compile with:   flex tandy-decomment.lex && gcc lex.yy.c -lfl
+ * Compile with:   flex tandy-decomment.lex && gcc lex.decomment.c
  */
 
 

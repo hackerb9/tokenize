@@ -1,8 +1,8 @@
 /* tandy-tokenize.lex		TRS-80 Model 100 BASIC tokenizer *
  *
- * Flex uses this to create yy.lex.c, which is included by tandy-tokenize.c.
+ * Flex uses this to create lex.tokenize.c.
  * 
- * Compile with:   flex tandy-tokenize.lex && gcc lex.yy.c
+ * Compile with:   flex tandy-tokenize.lex && gcc lex.tokenize.c
  */
 
 

@@ -1,12 +1,11 @@
 /* tandy-decomment.c		Front end for Model 100 BASIC decommenter
  * 
  * This is just the frontend. 
- * For the actual decommenter, see tandy-decomment.lex.
+ * For the actual program, see tandy-decomment.lex which #includes this file.
  */
 
 /* Compile with:
- *   flex -o tandy-decomment.yy.c tandy-decomment.lex
- *   gcc tandy-decomment.yy.c tandy-decomment-main.c -o tandy-decomment
+ *   flex tandy-decomment.lex && gcc tandy-decomment.c -o tandy-decomment
 */
 
 
