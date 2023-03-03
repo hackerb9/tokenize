@@ -1,8 +1,13 @@
 # Where to install.
 prefix ?= /usr/local
 
+CFLAGS += -Wall -Wno-unused-function
+
 # By default, create tandy-tokenize binary (implicitly compiled from .lex)
 all: tandy-tokenize tandy-decomment
+
+# Recompile if the -main.c  file changes.
+tandy-tokenize: tandy-tokenize-main.c
 
 # Automatically run flex to create .c files from .lex.
 .SUFFIXES: .lex
