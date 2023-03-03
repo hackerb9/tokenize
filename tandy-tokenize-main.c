@@ -4,6 +4,8 @@
  * For the actual tokenizer, see tandy-tokenize.lex which #includes this file.
  */
 
+int tokenizelex();		/* defined in tandy-tokenize.c */
+
 int main(int argv, char *argc[]) {
   /*
    * Usage: ./tandy-tokenize  <FOO.DO  >FOO.BA
@@ -19,3 +21,4 @@ int main(int argv, char *argc[]) {
 int tokenizewrap() {
   return 1;			/* Always only read one file */
 }
+
