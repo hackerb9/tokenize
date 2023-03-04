@@ -4,6 +4,8 @@ prefix ?= /usr/local
 # By default, create tandy-tokenize binary (implicitly compiled from .lex)
 all: tandy-tokenize tandy-decomment
 
+tandy-tokenize.o: tandy-tokenize-main.c
+
 # Automatically run flex to create .c files from .lex.
 .SUFFIXES: .lex
 .lex.c:
