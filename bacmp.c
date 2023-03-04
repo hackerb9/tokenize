@@ -51,6 +51,16 @@ int main(int argc, char *argv[]) {
     cb1 = fgetc(fb);
     if (ca1 == cb1) continue;
 
+    if ( ca1 == EOF ) {
+      fprintf(stderr, "EOF on %s after byte %d\n", argv[1], count-2);
+      exit(1);
+    }
+    else if ( cb1 == EOF ) {
+      fprintf(stderr, "EOF on %s after byte %d\n", argv[2], count-2);
+      exit(1);
+    }
+
+
     /* Bytes don't match, but maybe it is a lineptr? */
     count++;
     ca2 = fgetc(fa);
@@ -59,7 +69,16 @@ int main(int argc, char *argv[]) {
     offset_b = cb1 + (cb2<<8);
     if (offset_a + delta == offset_b) continue;
  
-    fprintf(stderr, "Files differ at byte %d:  0x%02X versus 0x%02X\n", count-1, ca1, cb1);
+    /* Files do not match, so let the user know */
+    if ( ca1 != cb1 )
+      fprintf(stderr, "Files differ at byte %d:  0x%02X versus 0x%02X\n", count-2, ca1, cb1);
+    else if ( ca2 == EOF ) 
+      fprintf(stderr, "EOF on %s after byte %d\n", argv[1], count-1);
+    else if ( cb2 == EOF )
+      fprintf(stderr, "EOF on %s after byte %d\n", argv[2], count-1);
+    else if ( ca2 != cb2 )
+      fprintf(stderr, "Files differ at byte %d:  0x%02X versus 0x%02X\n", count-1, ca2, cb2);
+
     exit(1);
   }
 
