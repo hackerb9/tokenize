@@ -28,29 +28,41 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  int ca=0, cb=0, count=0;
+  int count=0;			   /* Bytes read so far */
+  int ca1, ca2, cb1, cb2;	   /* 2 bytes from file A and 2 from B */
+  unsigned int offset_a, offset_b; /* Those bytes seen as little endian 16bit */
+  int delta;			   /* Difference between offset_a and b */
 
-  /* Get difference between the offsets */
-  int fa1=fgetc(fa), fa2=fgetc(fa);
-  unsigned int offset_a = fa1 + (fa2<<8);
-  int fb1=fgetc(fb), fb2=fgetc(fb);
-  unsigned int offset_b = fb1 + (fb2<<8);
-  int delta = offset_b - offset_a; 
-
-  fprintf(stderr, "ptr from file a: %d (%x %x)\n", offset_a, fa1, fa2);
-  fprintf(stderr, "ptr from file b: %d (%x %x)\n", offset_b, fb1, fb2);
-  fprintf(stderr, "difference b - a: %d (%x)\n", delta, delta);
+  /* Get delta, difference between the offsets at start of each file */
   count+=2;
+  ca1=fgetc(fa), ca2=fgetc(fa);
+  offset_a = ca1 + (ca2<<8);
+  cb1=fgetc(fb), cb2=fgetc(fb);
+  offset_b = cb1 + (cb2<<8);
+  delta = offset_b - offset_a; 
 
-  while (ca != EOF && cb != EOF) {
+  //  fprintf(stderr, "ptr from file a: %d (%x %x)\n", offset_a, ca1, ca2);
+  //  fprintf(stderr, "ptr from file b: %d (%x %x)\n", offset_b, cb1, cb2);
+  //  fprintf(stderr, "difference b - a: %d (%x)\n", delta, delta);
+
+  while (ca1 != EOF && cb1 != EOF) {
     count++;
-    ca = fgetc(fa);
-    cb = fgetc(fb);
-    if (ca == '*') continue;
-    if (ca == cb) continue;
-    fprintf(stderr, "Files differ at byte %d:  0x%02X versus 0x%02X\n", count, ca, cb);
+    ca1 = fgetc(fa);
+    cb1 = fgetc(fb);
+    if (ca1 == cb1) continue;
+
+    /* Bytes don't match, but maybe it is a lineptr? */
+    count++;
+    ca2 = fgetc(fa);
+    cb2 = fgetc(fb);
+    offset_a = ca1 + (ca2<<8);
+    offset_b = cb1 + (cb2<<8);
+    if (offset_a + delta == offset_b) continue;
+ 
+    fprintf(stderr, "Files differ at byte %d:  0x%02X versus 0x%02X\n", count-1, ca1, cb1);
     exit(1);
   }
+
   /* Files are identical */
   exit(0);
 }
