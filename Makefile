@@ -37,4 +37,6 @@ test:	tandy-tokenize bacmp
 	@if ./bacmp output.ba samples/NOQUOT.BA; then echo Success; fi
 	./tandy-tokenize samples/QUOQUO.DO output.ba
 	@if ./bacmp output.ba samples/QUOQUO.BA; then echo Success; fi
+	./tandy-tokenize samples/TSWEEP.DO output.ba
+	@if ./bacmp output.ba samples/TSWEEP.BA; then echo Success; fi
 
