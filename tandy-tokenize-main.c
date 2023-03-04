@@ -43,6 +43,7 @@ int yyput(uint8_t c) {
 int fixup_ptrs() {
   /* Rewrite the line pointers in the output file so that each line
      points to the next. */
+  int offset = 0xA001;		/* Offset into memory for start of program */
 
   ptr[nlines++] = ftell(yyout);	/* Pointer to final NULL byte */
 
@@ -56,8 +57,8 @@ int fixup_ptrs() {
   
   for (int n=1; n < nlines; n++) {
     fseek(yyout, ptr[n-1], SEEK_SET);
-    yyput(ptr[n] & 0xFF);
-    yyput(ptr[n] >> 8);
+    yyput( (offset + ptr[n]) & 0xFF);
+    yyput( (offset + ptr[n]) >> 8);
   }
     
   return 0;
