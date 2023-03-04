@@ -1,4 +1,10 @@
-/* Like cmp, but match any '*' bytes in the first file as wildcards */
+/* Like cmp, but for .BA files.
+
+   In particular, the two bytes at the beginning of each line (the
+   line pointers) are matched, vis-a-vis their base offset.
+
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7,11 +13,9 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Usage: bacmp <file1> <file2>\n");
     fprintf(stderr, "\n"
 	    "Compares two Tandy BASIC files in tokenized format\n"
-	    "but allows for variation of files created by hackerb9's\n"
-	    "Tandy tokenizer which puts ASCII 42 ('*') in the\n"
-	    "pointer placeholder spots in each line.\n"
-	    "\n"
-	    "Asterisks are treated as wildcards for the first file.\n");
+	    "but allows for variation of files depending upon\n"
+	    "where in memory the file is intended to load.\n"
+	    "\n");
     exit(1);
   }
 
@@ -25,6 +29,18 @@ int main(int argc, char *argv[]) {
   }
 
   int ca=0, cb=0, count=0;
+
+  /* Get difference between the offsets */
+  int fa1=fgetc(fa), fa2=fgetc(fa);
+  unsigned int offset_a = fa1 + (fa2<<8);
+  int fb1=fgetc(fb), fb2=fgetc(fb);
+  unsigned int offset_b = fb1 + (fb2<<8);
+  int delta = offset_b - offset_a; 
+
+  fprintf(stderr, "ptr from file a: %d (%x %x)\n", offset_a, fa1, fa2);
+  fprintf(stderr, "ptr from file b: %d (%x %x)\n", offset_b, fb1, fb2);
+  fprintf(stderr, "difference b - a: %d (%x)\n", delta, delta);
+  count+=2;
 
   while (ca != EOF && cb != EOF) {
     count++;
