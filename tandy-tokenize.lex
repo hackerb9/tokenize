@@ -1,10 +1,10 @@
 /* tandy-tokenize.lex		TRS-80 Model 100 BASIC tokenizer *
  *
- * Flex uses this to create yy.lex.c, which is included by tandy-tokenize.c.
+ * Flex uses this to create lex.tokenize.c.
  * 
- * Compile with:   flex tandy-tokenize.lex && gcc lex.yy.c
+ * Compile with:   	flex tandy-tokenize.lex
+ *			gcc lex.tokenize.c tandy-tokenize-main.c
  */
-
 
 %option prefix="tokenize"
 
@@ -12,153 +12,167 @@
 %x string
 %x remark
 
+  /* Functions defined in tandy-tokenize-main.c */
+  int yyput(uint8_t);		/* putchar, but for yyout instead of stdout. */
+  uint8_t lastput=255;		/* last written character, for EOF without nl */
+  int fixup_ptrs();		/* rewrite line pointers, if possible. */
+
+  /* An array to store line pointers, to be fixed up at EOF */
+  uint16_t ptr[65536];
+  int nlines = 0;
+
 %%
 <*>\r		/* Ignore carriage return */
-<*>\n		putchar('\0'); BEGIN(INITIAL);
+<*>\n		yyput('\0'); BEGIN(INITIAL);
 
-^[[:space:]]*[0-9]+[ ]?	{	/* BASIC line number */
-  uint16_t line=atoi(yytext);
-  putchar(42);  putchar(42);	/* Dummy placeholder values */
-  putchar(line & 0xFF);
-  putchar(line >> 8);
- }
+^[[:space:]]*[0-9]+[ ]?	{	  /* BASIC line number */
+    ptr[nlines++] = ftell(yyout); /* Cache the location of the current line */
+    yyput('*'); yyput('*');	  /* Dummy pointer to next line. */
+    uint16_t linenum=atoi(yytext);
+    yyput(linenum & 0xFF);
+    yyput(linenum >> 8);
+  }
 
-\"		putchar('"'); BEGIN(string);
-<string>\"	putchar('"'); BEGIN(INITIAL);
+\"		yyput('"'); BEGIN(string);
+<string>\"	yyput('"'); BEGIN(INITIAL);
 
-<<EOF>>		{ yyterminate(); }
+<<EOF>>		{
+    (lastput == '\0') || yyput('\0'); /* Handle EOF without preceding newline */
+    fixup_ptrs();
+    yyterminate();
+  }
 
-END		putchar(128);
-FOR		putchar(129);
-NEXT		putchar(130);
-DATA		putchar(131);
-INPUT		putchar(132);
-DIM		putchar(133);
-READ		putchar(134);
-LET		putchar(135);
-GOTO		putchar(136);
-RUN		putchar(137);
-IF		putchar(138);
-RESTORE		putchar(139);
-GOSUB		putchar(140);
-RETURN		putchar(141);
-REM		putchar(142); 	BEGIN(remark);
-STOP		putchar(143);
-WIDTH		putchar(144);
-ELSE		putchar(':'); putchar(145);
-LINE		putchar(146);
-EDIT		putchar(147);
-ERROR		putchar(148);
-RESUME		putchar(149);
-OUT		putchar(150);
-ON		putchar(151);
-"DSKO$"		putchar(152);
-OPEN		putchar(153);
-CLOSE		putchar(154);
-LOAD		putchar(155);
-MERGE		putchar(156);
-FILES		putchar(157);
-SAVE		putchar(158);
-LFILES		putchar(159);
-LPRINT		putchar(160);
-DEF		putchar(161);
-POKE		putchar(162);
-PRINT		putchar(163);
-"?"		putchar(163);
-CONT		putchar(164);
-LIST		putchar(165);
-LLIST		putchar(166);
-CLEAR		putchar(167);
-CLOAD		putchar(168);
-CSAVE		putchar(169);
-"TIME$"		putchar(170);
-"DATE$"		putchar(171);
-"DAY$"		putchar(172);
-COM		putchar(173);
-MDM		putchar(174);
-KEY		putchar(175);
-CLS		putchar(176);
-BEEP		putchar(177);
-SOUND		putchar(178);
-LCOPY		putchar(179);
-PSET		putchar(180);
-PRESET		putchar(181);
-MOTOR		putchar(182);
-MAX		putchar(183);
-POWER		putchar(184);
-CALL		putchar(185);
-MENU		putchar(186);
-IPL		putchar(187);
-NAME		putchar(188);
-KILL		putchar(189);
-SCREEN		putchar(190);
-NEW		putchar(191);
-"TAB("		putchar(192);
-TO		putchar(193);
-USING		putchar(194);
-VARPTR		putchar(195);
-ERL		putchar(196);
-ERR		putchar(197);
-"STRING$"	putchar(198);
-INSTR		putchar(199);
-"DSKI$"		putchar(200);
-"INKEY$"	putchar(201);
-CSRLIN		putchar(202);
-OFF		putchar(203);
-HIMEM		putchar(204);
-THEN		putchar(205);
-NOT		putchar(206);
-STEP		putchar(207);
-"+"		putchar(208);
-"-"		putchar(209);
-"*"		putchar(210);
-"/"		putchar(211);
-"^"		putchar(212);
-AND		putchar(213);
-OR		putchar(214);
-XOR		putchar(215);
-EQV		putchar(216);
-IMP		putchar(217);
-MOD		putchar(218);
-"\\"		putchar(219);
-">"		putchar(220);
-"="		putchar(221);
-"<"		putchar(222);
-SGN		putchar(223);
-INT		putchar(224);
-ABS		putchar(225);
-FRE		putchar(226);
-INP		putchar(227);
-LPOS		putchar(228);
-POS		putchar(229);
-SQR		putchar(230);
-RND		putchar(231);
-LOG		putchar(232);
-EXP		putchar(233);
-COS		putchar(234);
-SIN		putchar(235);
-TAN		putchar(236);
-ATN		putchar(237);
-PEEK		putchar(238);
-EOF		putchar(239);
-LOC		putchar(240);
-LOF		putchar(241);
-CINT		putchar(242);
-CSNG		putchar(243);
-CDBL		putchar(244);
-FIX		putchar(245);
-LEN		putchar(246);
-"STR$"		putchar(247);
-VAL		putchar(248);
-ASC		putchar(249);
-"CHR$"		putchar(250);
-"SPACE$"	putchar(251);
-"LEFT$"		putchar(252);
-"RIGHT$"	putchar(253);
-"MID$"		putchar(254);
-"'"		putchar(':'); putchar(0x8E); putchar(0xFF); BEGIN(remark);
+END		yyput(128);
+FOR		yyput(129);
+NEXT		yyput(130);
+DATA		yyput(131);
+INPUT		yyput(132);
+DIM		yyput(133);
+READ		yyput(134);
+LET		yyput(135);
+GOTO		yyput(136);
+RUN		yyput(137);
+IF		yyput(138);
+RESTORE		yyput(139);
+GOSUB		yyput(140);
+RETURN		yyput(141);
+REM		yyput(142); 	BEGIN(remark);
+STOP		yyput(143);
+WIDTH		yyput(144);
+ELSE		yyput(':'); yyput(145);
+LINE		yyput(146);
+EDIT		yyput(147);
+ERROR		yyput(148);
+RESUME		yyput(149);
+OUT		yyput(150);
+ON		yyput(151);
+"DSKO$"		yyput(152);
+OPEN		yyput(153);
+CLOSE		yyput(154);
+LOAD		yyput(155);
+MERGE		yyput(156);
+FILES		yyput(157);
+SAVE		yyput(158);
+LFILES		yyput(159);
+LPRINT		yyput(160);
+DEF		yyput(161);
+POKE		yyput(162);
+PRINT		yyput(163);
+"?"		yyput(163);
+CONT		yyput(164);
+LIST		yyput(165);
+LLIST		yyput(166);
+CLEAR		yyput(167);
+CLOAD		yyput(168);
+CSAVE		yyput(169);
+"TIME$"		yyput(170);
+"DATE$"		yyput(171);
+"DAY$"		yyput(172);
+COM		yyput(173);
+MDM		yyput(174);
+KEY		yyput(175);
+CLS		yyput(176);
+BEEP		yyput(177);
+SOUND		yyput(178);
+LCOPY		yyput(179);
+PSET		yyput(180);
+PRESET		yyput(181);
+MOTOR		yyput(182);
+MAX		yyput(183);
+POWER		yyput(184);
+CALL		yyput(185);
+MENU		yyput(186);
+IPL		yyput(187);
+NAME		yyput(188);
+KILL		yyput(189);
+SCREEN		yyput(190);
+NEW		yyput(191);
+"TAB("		yyput(192);
+TO		yyput(193);
+USING		yyput(194);
+VARPTR		yyput(195);
+ERL		yyput(196);
+ERR		yyput(197);
+"STRING$"	yyput(198);
+INSTR		yyput(199);
+"DSKI$"		yyput(200);
+"INKEY$"	yyput(201);
+CSRLIN		yyput(202);
+OFF		yyput(203);
+HIMEM		yyput(204);
+THEN		yyput(205);
+NOT		yyput(206);
+STEP		yyput(207);
+"+"		yyput(208);
+"-"		yyput(209);
+"*"		yyput(210);
+"/"		yyput(211);
+"^"		yyput(212);
+AND		yyput(213);
+OR		yyput(214);
+XOR		yyput(215);
+EQV		yyput(216);
+IMP		yyput(217);
+MOD		yyput(218);
+"\\"		yyput(219);
+">"		yyput(220);
+"="		yyput(221);
+"<"		yyput(222);
+SGN		yyput(223);
+INT		yyput(224);
+ABS		yyput(225);
+FRE		yyput(226);
+INP		yyput(227);
+LPOS		yyput(228);
+POS		yyput(229);
+SQR		yyput(230);
+RND		yyput(231);
+LOG		yyput(232);
+EXP		yyput(233);
+COS		yyput(234);
+SIN		yyput(235);
+TAN		yyput(236);
+ATN		yyput(237);
+PEEK		yyput(238);
+EOF		yyput(239);
+LOC		yyput(240);
+LOF		yyput(241);
+CINT		yyput(242);
+CSNG		yyput(243);
+CDBL		yyput(244);
+FIX		yyput(245);
+LEN		yyput(246);
+"STR$"		yyput(247);
+VAL		yyput(248);
+ASC		yyput(249);
+"CHR$"		yyput(250);
+"SPACE$"	yyput(251);
+"LEFT$"		yyput(252);
+"RIGHT$"	yyput(253);
+"MID$"		yyput(254);
+"'"		yyput(':'); yyput(0x8E); yyput(0xFF); BEGIN(remark);
 
 %%
 
-/* The main() routine */
+/* The main() routine, yyput(), fixup_ptrs() */
 #include "tandy-tokenize-main.c"
