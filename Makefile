@@ -27,16 +27,8 @@ run:	tandy-tokenize
 	./tandy-tokenize samples/M100LE.DO output.ba && hd output.ba | less
 
 test:	tandy-tokenize bacmp
-	./tandy-tokenize samples/M100LE+comments.DO output.ba
-	@if ./bacmp output.ba samples/M100LE+comments.BA; then echo Success; fi
-	./tandy-tokenize samples/TREK.DO output.ba
-	@if ./bacmp output.ba samples/TREK.BA; then echo Success; fi
-	./tandy-tokenize samples/LEGACY.DO output.ba
-	@if ./bacmp output.ba samples/LEGACY.BA; then echo Success; fi
-	./tandy-tokenize samples/NOQUOT.DO output.ba
-	@if ./bacmp output.ba samples/NOQUOT.BA; then echo Success; fi
-	./tandy-tokenize samples/QUOQUO.DO output.ba
-	@if ./bacmp output.ba samples/QUOQUO.BA; then echo Success; fi
-	./tandy-tokenize samples/TSWEEP.DO output.ba
-	@if ./bacmp output.ba samples/TSWEEP.BA; then echo Success; fi
-
+	@for f in samples/*.BA; do \
+	    ./tandy-tokenize "$${f%.BA}.DO" output.ba; \
+	    echo -n "$$f: "; \
+	    if ./bacmp output.ba "$$f"; then echo "(pass)"; fi; \
+	done
