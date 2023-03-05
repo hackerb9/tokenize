@@ -4,11 +4,24 @@
  * For the actual tokenizer, see tandy-tokenize.lex.
  */
 
-int main(int argc, char *argv[]) {
-  /*
-   * Usage: ./tandy-tokenize  FOO.DO  FOO.BA
-   * See also the "tokenize" shell script wrapper.
+  /* Usage: tandy-tokenize  [ input.ba [ output.ba ] ]
+
+   * Examples:  
+   	(a) tandy-tokenize  FOO.DO  FOO.BA
+   	(b) tandy-tokenize  <FOO.DO  >FOO.BA
+   	(c) tandy-tokenize  FOO.DO | cat > FOO.BA
+	
+     Note that (a) and (b) are identical, but (c) is slightly different.
+
+     If the output stream cannot be rewound, then the line pointers will 
+     not be updated at the end. This does not matter for a genuine 
+     Model T computer, but some emulators are known to be persnickety
+     and will refuse to load the file.  
+
    */
+
+
+int main(int argc, char *argv[]) {
 
   ++argv, --argc; 		/* skip over program name */
 
@@ -41,8 +54,9 @@ int yyput(uint8_t c) {
 }
 
 int fixup_ptrs() {
-  /* Rewrite the line pointers in the output file so that each line
-     points to the next. */
+  /* At EOF, rewrite the line pointers in the output file so that each
+     line points to the next. This is not actually necessary. */
+
   int offset = 0xA001;		/* Offset into memory for start of program */
 
   ptr[nlines++] = ftell(yyout);	/* Pointer to final NULL byte */
