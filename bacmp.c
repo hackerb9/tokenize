@@ -1,8 +1,40 @@
-/* Like cmp, but for .BA files.
+/* bacmp.c
 
-   In particular, the two bytes at the beginning of each line (the
-   line pointers) are matched, vis-a-vis their base offset.
+   bacmp is like cmp, but for Tandy BASIC (TRS-80 Model 100) .BA files.
 
+   Usage: bacmp <file1> <file2>
+
+    Compares two Model 100 BASIC files in tokenized format but allows
+    for variation of files depending upon where in memory the file is
+    intended to load.
+
+    Prints nothing and returns success if they match. 
+    Otherwise, prints the byte offset where the mismatch occurred.
+
+   Method: the two bytes at the beginning of each line of BASIC (the
+   line pointers) are 16-bit little-endian integers that may differ by
+   a constant offset, delta. This program doesn't actually bother to
+   locate the line pointers, other than the first ones which are in
+   the first two bytes of each file and are used to calculate delta.
+   Whenever a byte mismatch is detected, the next byte is read from
+   each file to create hypothetical line pointers. The pointers are
+   considered a match if ptrA + delta == ptrB.
+
+   Note: "Model 100 BASIC" perhaps should be called Kyotronic-85 BASIC as
+   that is the first computer that was sold with this particular BASIC
+   interpreter from Microsoft. These machines all share the same file
+   format for their BASIC files:
+
+	TRS-80 Model 100
+	Tandy 200
+	Tandy 102
+	Kyocera Kyotronic-85
+	Olivetti M10
+
+   While similar to the above machines in many other ways, the NEC
+   PC-8201, PC-8201A, and PC-8300 use a different version of BASIC
+   called "N82 BASIC". It is possible but unlikely this program will
+   work for the NEC .BA files.
  */
 
 #include <stdio.h>
@@ -12,10 +44,14 @@ int main(int argc, char *argv[]) {
   if (argc<=2) {
     fprintf(stderr, "Usage: bacmp <file1> <file2>\n");
     fprintf(stderr, "\n"
-	    "Compares two Tandy BASIC files in tokenized format\n"
-	    "but allows for variation of files depending upon\n"
-	    "where in memory the file is intended to load.\n"
-	    "\n");
+	    "\tCompares two Tandy BASIC files in tokenized format\n"
+	    "\tbut allows for variation of files depending upon\n"
+	    "\twhere in memory the file is intended to load.\n"
+	    "\n"
+	    "\tReturns success (0) and prints nothing if the files match.\n"
+	    "\tPrints the byte offset of the mismatch if the files differ.\n"
+	    "\n"
+	    );
     exit(1);
   }
 
@@ -57,7 +93,7 @@ int main(int argc, char *argv[]) {
     }
     else if ( cb1 == EOF ) {
       fprintf(stderr, "EOF on %s after byte %d\n", argv[2], count-2);
-      exit(1);
+      exit(2);
     }
 
 
@@ -79,7 +115,7 @@ int main(int argc, char *argv[]) {
     else if ( ca2 != cb2 )
       fprintf(stderr, "Files differ at byte %d:  0x%02X versus 0x%02X\n", count-1, ca2, cb2);
 
-    exit(1);
+    exit(3);
   }
 
   /* Files are identical */
