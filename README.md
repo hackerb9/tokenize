@@ -44,11 +44,10 @@ sets up useful defaults, like a `main()` routine.
 
 ## Usage
 
-The main program reads from stdin and writes to stdout, so you'll need
-to use redirection like so:
+The main program allows one to specify the input .DO and output .BA file. 
 
 ``` bash
-tandy-tokenize < INPUT.DO > OUTPUT.BA
+tandy-tokenize INPUT.DO OUTPUT.BA
 ```
 
 Note: You must transfer OUTPUT.BA to the Model 100 as a binary file
@@ -58,10 +57,10 @@ as those both expect ASCII format.
 
 ### Alternate usage
 
-There is also a helper script called "tokenize" which doesn't
-require redirection. It has some nice features, like automatically
-naming the .BA and not overwriting existing files by default. It can
-operate on multiple input files. 
+There is also a helper script called "tokenize" which doesn't require
+specifying the output name. It automatically derives the .BA and
+checks for existing files so they are not overwritten. It can operate
+on multiple input files.
 
 ``` bash
 $ tokenize PROG1.DO prog2.do PROG3.DO
@@ -98,13 +97,7 @@ Flex handles special cases, like quoted strings and REMarks, easily.
 The downside is that one must have flex installed to _modify_ the
 tokenizer. Flex is _not_ necessary to compile and run as flex actually
 generates C code which can be compliled anywhere (see the file
-`yy.lex.c`). 
-
-However, note that this program currently uses libfl (the flex
-library) instead of having its own `main()` routine. This is for
-simplicity of implementation. If there are problems for people whose
-operating systems make installing libfl difficult, please file an
-issue and I'll look into writing a standalone main().
+`lex.tokenize.c`). 
 
 ## Miscellaneous notes
 
@@ -148,6 +141,52 @@ issue and I'll look into writing a standalone main().
   ```BASIC
   save "FOO", A
   ```
+
+## Decommenter
+
+As a bonus, a program called tandy-decomment exists which tokenizes
+programs while also shrinking the output size by throwing away data.
+It removes the text of comments and extraneous whitespace. It could do
+more thorough packing (merging lines together, removing unnecessary
+lines), but I think it currently strikes a good balance of compression
+versus complexity.
+
+## Testing
+
+Run `make test` to try out the tokenizer on some standard Model 100
+programs and some strange ones designed specifically to exercise
+peculiar syntax. The program `bacmp` is used to compare the generated
+.BA file with one created on a actual Tandy 200.
+
+Currently, the only test which is "failing" is SCRAMB.DO whose input
+is scrambled and redundant. 
+
+``` BASIC
+20 GOTO 10
+10 GOTO 10
+10 PRINT "!dlroW ,olleH"
+
+```
+
+This tokenizer emits output as soon as a line is seen, so lines which
+are out of order will be kept out of order. Likewise, a redundant line
+will still be redundant in the output. This could be fixed using a
+preprocessor that sorts the lines and keeps only the last of duplicates.
+
+## bacmp
+
+The `bacmp` program may be useful for others who wish to discover if
+two BASIC files are identical. Because of the way the Model 100 works,
+a normal `cmp` test will fail. There are pointers from each BASIC line
+to the next which change based upon where the program happens to be in
+memory. The `bacmp` program handles that by allowing line pointers to
+differ as long as they are offset by a constant amount.
+
+Note that generating correct line pointers is actually unnecessary in
+a tokenizer; they could be any arbitrary values. The Model 100 always
+regenerates the pointers when it loads a .BA file. However, some
+emulators insist on having them precisely correct, so this tokenizer
+has followed suit.
 
 ## More information
 
