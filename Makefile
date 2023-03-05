@@ -32,3 +32,4 @@ test:	tandy-tokenize bacmp
 	    echo -n "$$f: "; \
 	    if ./bacmp output.ba "$$f"; then echo "(pass)"; fi; \
 	done
+	@rm output.ba
