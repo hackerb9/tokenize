@@ -3,7 +3,7 @@
  * Flex uses this to create lex.tokenize.c.
  * 
  * Compile with:   	flex tandy-tokenize.lex
- *			gcc lex.tokenize.c tandy-tokenize-main.c
+ *			gcc lex.tokenize.c
  */
 
 %option prefix="tokenize"
@@ -22,13 +22,11 @@
   int nlines = 0;
 
 %%
-<*>\r		/* Ignore carriage return */
-<*>\n		yyput('\0'); BEGIN(INITIAL);
 
-^[[:space:]]*[0-9]+[ ]?	{	  /* BASIC line number */
-    ptr[nlines++] = ftell(yyout); /* Cache the location of the current line */
-    yyput('*'); yyput('*');	  /* Dummy pointer to next line. */
-    uint16_t linenum=atoi(yytext);
+^[[:space:]]*[0-9]+[ ]?	{
+    ptr[nlines++] = ftell(yyout);   /* Cache the location of the current line */
+    yyput('*'); yyput('*');	    /* Dummy pointer to next line. */
+    uint16_t linenum=atoi(yytext);  /* BASIC line number */
     yyput(linenum & 0xFF);
     yyput(linenum >> 8);
   }
@@ -36,7 +34,10 @@
 \"		yyput('"'); BEGIN(string);
 <string>\"	yyput('"'); BEGIN(INITIAL);
 
-<<EOF>>		{
+	/* Newline matches <string> and <remark> start conditions. */
+<*>\r?\n		yyput('\0'); BEGIN(INITIAL);
+
+<<EOF>>	{
     (lastput == '\0') || yyput('\0'); /* Handle EOF without preceding newline */
     fixup_ptrs();
     yyterminate();
@@ -56,7 +57,7 @@ IF		yyput(138);
 RESTORE		yyput(139);
 GOSUB		yyput(140);
 RETURN		yyput(141);
-REM		yyput(142); 	BEGIN(remark);
+REM		yyput(142); BEGIN(remark);
 STOP		yyput(143);
 WIDTH		yyput(144);
 ELSE		yyput(':'); yyput(145);
