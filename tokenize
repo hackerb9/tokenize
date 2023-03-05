@@ -1,6 +1,13 @@
 #!/bin/bash
 
-# Wrapper for tandy-tokenize to handle multiple files and filename manipulation.
+# Usage: ./tokenize [ INPUT1.DO [ INPUT2.DO ... ] ]
+
+# Wrapper for tandy-tokenize to handle multiple files and
+# to guess an appropriate filename for output.
+
+# Unlike tandy-tokenize, a second filename is taken as another file
+# for input. In fact, output filenames are never specified with this
+# script.
 
 # -n for "not really" , for testing.
 if [[ "$1" == "-n" ]]; then nflag="yup"; shift; else nflag=""; fi
