@@ -1,20 +1,72 @@
 #!/bin/bash
 
-# Usage: ./tokenize [ INPUT1.DO [ INPUT2.DO ... ] ]
+# Usage: ./tokenize [-n] INPUT.DO [ OUTPUT.DO ]
 
-# Wrapper for tandy-tokenize to handle multiple files and
-# to guess an appropriate filename for output.
+# Wrapper for tandy-tokenize.
 
-# Unlike tandy-tokenize, a second filename is taken as another file
-# for input. In fact, output filenames are never specified with this
-# script.
+# Unlike tandy-tokenize, the input file is passed through a filter
+# that sorts the lines and removes duplicate line numbers.
 
-# -n for "not really" , for testing.
-if [[ "$1" == "-n" ]]; then nflag="yup"; shift; else nflag=""; fi
+function usage() {
+    cat <<EOF
+tokenize: Create a tokenized BASIC file from an ASCII BASIC source file.
 
-for f; do
-    # Come up with a good output filename
-    g="$f"
+Usage: tokenize INPUT.DO [ OUTPUT.BA ]
+
+This is a wrapper for tandy-tokenize.
+
+Unlike tandy-tokenize, the input file is passed through a filter that
+sorts the lines and removes duplicate line numbers.
+
+This is the way the BASIC tokenizer on the Model T works and probably
+should be how any *sane* tokenizer should behave. However, tokenized
+programs with scrambled or redundant line numbers are actually valid
+on Model T computers.
+
+The syntax is also slightly different from tandy-tokenize. The input
+filename is mandatory and the output filename, if not specified, will
+default to something reasonable (such as "FOO.BA" for "FOO.DO").
+
+EOF
+}
+
+function main() {
+    local f="$1"		# Input BASIC source filename 
+    local g="$2"		# Output tokenized BASIC filename
+
+    if [[ -z "$f" ]]; then usage; exit 1; fi
+
+    # Make a reasonable guess for an output filename, if none given.
+    if [[ -z "$g" ]]; then g=$(output_name "$f") || exit 1; fi
+
+    # Look first for the tandy-tokenize binary in same dir as this script.
+    PATH=$(dirname "$0"):"$PATH"
+
+    echo "Tokenizing '$f' into '$g'"
+    sort_lines "$f" | tandy-tokenize > "$g"
+}
+
+
+function sort_lines() {
+    # Given the filename of a BASIC program in ASCII format, print the
+    # file to stdout, but with the lines numbers sorted numerically
+    # and redundant lines removed. (Later lines override earlier).
+
+    local srcfile="$1"		# Filename of the BASIC source
+    awk '{
+	   lines[$1] = $0;
+	 }
+         END {
+           asorti(lines, indices, "@val_num_asc");
+	   for (i in indices) print lines[indices[i]];
+         }'  < "$srcfile"
+}
+
+function output_name() {
+    # Given an input filename in $1, print a reasonable output filename.
+
+    local f="$1" 		# Input filename
+    local g="$1"		# Output filename
     if [[ "$g" =~ ^(.*)\.(DO|100|200|TXT) ]]; then
 	g="${BASH_REMATCH[1]}.BA"
     elif [[ "$g" =~ ^(.*)\.(do|txt) ]]; then
@@ -24,6 +76,7 @@ for f; do
     else
 	g="$g".ba
     fi
+
     # If original filename was ALL CAPS, then keep it so on output  
     if [[ $(basename "${f@U}") == $(basename "$f") ]]; then
 	dir=$(dirname "$f")
@@ -32,19 +85,33 @@ for f; do
     fi
 
     # Don't overwrite existing files by default
-    if [[ -e "$g" && -z "$nflag" ]]; then
-	echo -n "Output file '$g' already exists. "
-	read -e -p "Overwrite [y/N]? " -n 1
-	if [[ ${REPLY@L} != "y" ]]; then
-	    echo "Skipping '$g'"
-	    continue
+    if [[ -e "$g" ]]; then
+	if ! tty -s; then
+	    mv "$g" "$g~" || return -1
+	else
+	    echo -n "Output file '$g' already exists. " >&2
+	    read -e -p "Overwrite [yes/NO/rename]? " -n 1 >&2
+	    case ${REPLY@L} in
+		y)			# Yes
+	            ;;
+		r) 			# Rename
+		    if mv "$g" "$g~"; then
+			echo "Old file renamed to $g~" >&2
+		    else
+			return -1
+		    fi
+		    ;;
+		*)			# Anything else
+		    return -1
+		    ;;
+	    esac
 	fi
     fi
 
-    # Okay, now do the work
-    echo "Tokenizing '$f' into '$g'${nflag:+ (not really)}"
-    dir=$(dirname "$0")
-    if [[ -z "$nflag" ]]; then 
-	"$dir${dir:+/}tandy-tokenize" <"$f" >"$g"
-    fi
-done
+    echo "$g"
+    return 0
+}
+
+
+main "$@"
+
