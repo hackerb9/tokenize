@@ -35,38 +35,50 @@ You can just run `make` on most machines. Alternately, you can compile
 by hand:
 
 ```bash
- flex tandy-tokenize.lex  &&  gcc -o tandy-tokenize lex.yy.c -lfl
+ flex tandy-tokenize.lex  &&  gcc lex.tokenize.c
 ```
 
-Flex creates the file lex.yy.c from tokenize.lex. Linking with libfl
-sets up useful defaults, like a `main()` routine.
+Flex creates the file lex.tokenize.c from tandy-tokenize.lex. The
+`main()` routine is defined in tandy-tokenize-main.c, which is
+#included by tandy-tokenize.lex.
 
 
 ## Usage
 
-The main program allows one to specify the input .DO and output .BA file. 
+The main program allows one to specify the input `.DO` (ASCII BASIC)
+and output `.BA` (Tokenized BASIC) files.
 
 ``` bash
 tandy-tokenize INPUT.DO OUTPUT.BA
 ```
 
-Note: You must transfer OUTPUT.BA to the Model 100 as a binary file
-using a program such as [TEENY](https://youtu.be/H0xx9cOe97s). Neither
-TELCOM's "download" (text capture) nor BASIC's `LOAD "COM:"` will work
-as those both expect ASCII format.
-
-### Alternate usage
-
-There is also a helper script called "tokenize" which doesn't require
-specifying the output name. It automatically derives the .BA and
-checks for existing files so they are not overwritten. It can operate
-on multiple input files.
+If not specified, the default is to use stdin and stdout. For example,
 
 ``` bash
-$ tokenize PROG1.DO prog2.do PROG3.DO
-Tokenizing 'PROG1.DO' into 'PROG1.BA'
-Tokenizing 'prog2.do' into 'prog2.ba'
-Output file 'PROG3.BA' already exists. Overwrite [y/N]?
+tac INPUT.DO | sort -n -k1,1 -u |
+	tandy-tokenize > OUTPUT.BA
+```
+
+### The tokenize wrapper
+
+There is also a helper script called
+"[tokenize](https://github.com/hackerb9/tokenize/blob/main/tokenize)"
+which has a two benefits over using tandy-tokenize directly.
+
+1. It sanitizes the input in the same way that BASIC on the Model T
+   does by sorting the lines by number and removing redundant lines.
+   Lines defined later override lines that came earlier.
+1. It will not write to stdout if a second filename is not given.
+   Instead, it will guess an appropriate output name based on the
+   input name. If the output file exists, it will also ask if you want
+   to overwrite it: yes, no, or rename. "Rename" appends a `~` to the
+   old file's filename.
+
+
+``` bash
+$ tokenize PROG.DO
+Output file 'PROG.BA' already exists. Overwrite [yes/No/rename]? R
+Old file renamed to 'PROG.BA~'
 ```
 
 
@@ -115,7 +127,7 @@ generates C code which can be compliled anywhere (see the file
   intended to run on a certain platform and warn that it may use
   system specific features. 
 
-* Conventions for filename extensions vary. Here are just some of them:
+  Conventions for filename extensions vary. Here are just some of them:
   * `.DO` This is the extension the Model 100 uses for plain text
     BASIC files, but in general can mean any ASCII text document with
     CRLF line endings.
@@ -128,7 +140,8 @@ generates C code which can be compliled anywhere (see the file
     programs use POKEs or CALLs which work only one one model of
     portable computer and will cause others to crash badly, possibly
     losing files. To avoid this, some filename extensions are used:
-	* `.100` An ASCII BASIC file that includes POKEs or CALLs specific
+
+* `.100` An ASCII BASIC file that includes POKEs or CALLs specific
 	  to the Model 100/102.
 	* `.200` An ASCII BASIC file specific to the Tandy 200.
 	* `.BA1` A tokenized BASIC file specific to the Model 100/102.	
@@ -142,6 +155,12 @@ generates C code which can be compliled anywhere (see the file
   save "FOO", A
   ```
 
+* If the output is piped to another program, tandy-tokenize will not
+  be able to rewind the stream to update the line pointers at the for
+  each line. In that case, the characters '**' are used which will
+  work fine on genuine Model 100 hardware. However, some emulators may
+  complain or refuse to load up the tokenized file. 
+
 ## Decommenter
 
 As a bonus, a program called tandy-decomment exists which tokenizes
@@ -151,12 +170,13 @@ more thorough packing (merging lines together, removing unnecessary
 lines), but I think it currently strikes a good balance of compression
 versus complexity.
 
-## Testing
+## Testing and a minor bug
 
-Run `make test` to try out the tokenizer on some standard Model 100
-programs and some strange ones designed specifically to exercise
-peculiar syntax. The program `bacmp` is used to compare the generated
-.BA file with one created on a actual Tandy 200.
+Run `make test` to try out the tokenizer on some [sample Model 100
+programs](https://github.com/hackerb9/tokenize/tree/main/samples) and
+some strange ones designed specifically to exercise peculiar syntax.
+The program `bacmp` is used to compare the generated .BA file with one
+created on a actual Tandy 200.
 
 Currently, the only test which is "failing" is SCRAMB.DO whose input
 is scrambled and redundant. 
@@ -170,14 +190,24 @@ is scrambled and redundant.
 
 This tokenizer emits output as soon as a line is seen, so lines which
 are out of order will be kept out of order. Likewise, a redundant line
-will still be redundant in the output. This could be fixed using a
-preprocessor that sorts the lines and keeps only the last of duplicates.
+will still be redundant in the output. The builtin tokenizer on the
+Model 100 computer sorts the lines and keeps only the last of
+duplicates. If this is a problem, one solution would be to sort the
+input and keep only the last of each line number:
 
-## bacmp
+For example,
 
-The `bacmp` program may be useful for others who wish to discover if
-two BASIC files are identical. Because of the way the Model 100 works,
-a normal `cmp` test will fail. There are pointers from each BASIC line
+```BASH
+rev | sort -u -n -k1,1 | tandy-tokenize > output.ba
+```
+
+## bacmp: BASIC comparator
+
+The included
+[bacmp.c](https://github.com/hackerb9/tokenize/blob/main/bacmp.c)
+program may be useful for others who wish to discover if two tokenized
+BASIC files are identical. Because of the way the Model 100 works, a
+normal `cmp` test will fail. There are pointers from each BASIC line
 to the next which change based upon where the program happens to be in
 memory. The `bacmp` program handles that by allowing line pointers to
 differ as long as they are offset by a constant amount.
