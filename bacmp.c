@@ -16,9 +16,9 @@
    a constant offset, delta. This program doesn't actually bother to
    locate the line pointers, other than the first ones which are in
    the first two bytes of each file and are used to calculate delta.
-   Whenever a byte mismatch is detected, the next byte is read from
-   each file to create hypothetical line pointers. The pointers are
-   considered a match if ptrA + delta == ptrB.
+   Whenever a byte mismatch is detected, the adjacent bytes are read
+   from each file to create hypothetical line pointers. The pointers
+   are considered a match if ptrA + delta == ptrB.
 
    Note: "Model 100 BASIC" perhaps should be called Kyotronic-85 BASIC as
    that is the first computer that was sold with this particular BASIC
@@ -66,6 +66,7 @@ int main(int argc, char *argv[]) {
 
   int count=0;			   /* Bytes read so far */
   int ca1, ca2, cb1, cb2;	   /* 2 bytes from file A and 2 from B */
+  int ca0=-1, cb0=-1;		   /* Previous byte */
   unsigned int offset_a, offset_b; /* Those bytes seen as little endian 16bit */
   int delta;			   /* Difference between offset_a and b */
 
@@ -77,12 +78,9 @@ int main(int argc, char *argv[]) {
   offset_b = cb1 + (cb2<<8);
   delta = offset_b - offset_a; 
 
-  //  fprintf(stderr, "ptr from file a: %d (%x %x)\n", offset_a, ca1, ca2);
-  //  fprintf(stderr, "ptr from file b: %d (%x %x)\n", offset_b, cb1, cb2);
-  //  fprintf(stderr, "difference b - a: %d (%x)\n", delta, delta);
-
   while (ca1 != EOF && cb1 != EOF) {
     count++;
+    ca0 = ca1; cb0 = cb1;	/* stash old value for lineptr check */
     ca1 = fgetc(fa);
     cb1 = fgetc(fb);
     if (ca1 == cb1) continue;
@@ -98,6 +96,11 @@ int main(int argc, char *argv[]) {
 
 
     /* Bytes don't match, but maybe it is a lineptr? */
+    /* Try with previous byte */
+    offset_a = ca0 + (ca1<<8);
+    offset_b = cb0 + (cb1<<8);
+    if (offset_a + delta == offset_b) continue;
+    /* Try with next byte */
     count++;
     ca2 = fgetc(fa);
     cb2 = fgetc(fb);
@@ -105,6 +108,10 @@ int main(int argc, char *argv[]) {
     offset_b = cb1 + (cb2<<8);
     if (offset_a + delta == offset_b) continue;
  
+    /* fprintf(stderr, "ptr from file a: %d (%x %x)\n", offset_a, ca1, ca2); */
+    /* fprintf(stderr, "ptr from file b: %d (%x %x)\n", offset_b, cb1, cb2); */
+    /* fprintf(stderr, "difference b - a: %d (%x)\n", delta, delta); */
+
     /* Files do not match, so let the user know */
     if ( ca1 != cb1 )
       fprintf(stderr, "Files differ at byte %d:  0x%02X versus 0x%02X\n", count-2, ca1, cb1);
