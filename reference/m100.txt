@@ -1,0 +1,180 @@
+Excerpt from "EXPLORING THE TRS-80 Model 100", typed in by hackerb9
+
+APPENDIX C: BASIC COMMANDS, FUNCTIONS AND STATEMENTS
+
+COMMAND		PROPER FORMAT
+================================================================================
+ABS		ABS( < numeric expression > )
+AND		< operand 1 > AND < operand 2 >
+ASC		ASC(< string >)
+ATN		ATN( < numeric expression > )
+BEEP		BEEP
+CALL		CALL < address >{ < expression 1 >}{ <expression2 > }
+CDBL		CDBL( < numeric expression > )
+CHRS		CHR$( < numeric expression > )
+CINT		CINT( < numeric expression > )
+CLEAR		CLEAR { < string size area > }
+		      { , < maximum memory used in BASIC > }
+CLOAD		CLOAD " < file name > " { ,R}
+CLOADM		CLOADM " < file name > "
+CLOAD?		CLOAD? "< file name > "
+* CLOSE		CLOSE {{ # } < file number > } {,{#}< file number > ... }
+CLS		CLS
+COM		COM ON
+		COM OFF
+		COM STOP
+CONT		CONT
+COS		COS( < numeric expression > )
+CSAVE		CSAVE " < file name > "{ ,A}
+CSAVEM		CSAVEM " < file name > ", < start address >
+					  < end address >, < entry address >
+CSNG		CSNG( < numeric expression > )
+*CSRLIN		CSRLIN
+DATA		DATA < constant > { < constant > }
+DATE$		DATE$ = " < month > / < day > / < year > "
+DAY$		DAY$ = " < day of week > "
+DEF		DEFINT - DEFSGL DEFDBL DEFSTR < range >
+DIM		DIM < variable name > ( < max subscript value >
+				     {, < max subscript value >....})
+**DSKI$		DSKI$( < drive, track, sector, switch > )
+**DSKO$		DSKOS( < drive, track, sector, switch, expression > )
+EDIT		EDIT { < starting line > } {- { < ending line > } }
+END		END
+*EOF		EOF( < file number > )
+EQV		< operand 1 > EQV < operand 2 >
+ERL		ERL
+ERR		ERR
+ERROR		ERROR < integer >
+EXP		EXP( < numeric expression > )
+FILES		FILES
+FIX		FIX( < numeric expression > )
+FOR		FOR < variable name > = < initial value > TO < final value >
+							{ STEP < increment > }
+FRE		FRE( < expression > )
+GOSUB		GOSUB < line number >
+GOTO		GOTO < line number >
+HIMEM		HIMEM
+IF/THEN/ELSE	IF < expression > THEN < clause > {ELSE < clause > }
+IMP		< operand 1 > IMP < operand 2 >
+INKEY$		INKEY$
+INP		INP( < port number > )
+INPUT		INPUT{ "< prompt statement > ";}< variable 1 >
+		       {, < variable 2 > } ...
+*INPUT$		INPUT$( < integer expression >{,{#} < file number > })
+*INPUT#		INPUT # < file number >, < variable 1 > {, < variable 2 > }...
+INSTR		INSTR({ numeric expression >, } < string 1 >,< string 2 >)
+INT		INT( < numeric expression > )
+IPL		IPL "< filename >"
+KEY		KEY < key number > "< function >"
+		KEY < key number > ON
+		KEY < key number > OFF
+		KEY < key number > STOP
+		KEY LIST
+*KILL		KILL " < file name.file type > "
+LCOPY		LCOPY
+LEFT$		LEFT$( < char, string > < numeric expression > }
+LEN		LEN( < character expression > )
+**LFILES	LFILES < drive number >
+LINE		LINE{ <xl/yl > }-<x2/y2 > {,< switch > <B / BF> }
+LINE INPUT	LINE INPUT { " < prompt statement > }
+		< string variable >
+*LINE INPUT#	LINE INPUT # < file number > < variable >
+		{ < variable 2 > }
+LIST/LLIST	LIST/LLIST { < starting line number > }
+			   { - < ending line number > }
+*LOAD		LOAD " { < external device name >: } < file name > " {,R}
+*LOADM		LOADM "{ < device: > } < filename > "
+**LOC		LOG ( < file number > )
+**LOF		LOF( < file number > )
+LOG		LOG( < numeric expression > )
+LPOS		LPOS( < numeric expression > )
+LPRINT		LPRINT { "} { < expression > } { "}
+LPRINT USING	LPRINT USING < format string > < num. exp. list >
+MAXFILES	MAXFILES = < number of files >
+MAXRAM		< variable > = MAXRAM
+MDM		MDM ON/OFF/STOP
+MENU		MENU
+MERGE		MERGE "{ < external device name > } < file name > "
+MID$		MID$( < string1 >, < num. expr. 1 > {, < num. expr. 2 > } )
+		      { = < string2 > }
+MOD		< numeric expression 1 > MOD < numeric expression2 >
+MOTOR		MOTOR < switch >
+*NAME		NAME "< old file name >" AS "< new file name >"
+NEW		NEW
+NEXT		NEXT { < numeric variable > }
+NOT		NOT < operand >
+ON...GOTO	ON < numeric variable > GOTO <line number> {, <line number> }
+ON...GOSUB	ON < numeric variable > GOSUB <line number> {, <line number> }
+ON COM GOSUB	ON COM GOSUB < line number >
+ON ERROR	ON ERROR GOTO < line number >
+ON KEY		ON KEY GOSUB < line number list >
+ON MDM		ON MDM GOSUB < line number >
+ON TIME$	ON TIME$ ="< time > " GOSUB < line number >
+*OPEN		OPEN "{ < external device name >:} < file name > "
+			    ⎧ INPUT  ⎫
+			FOR ⎨ OUTPUT ⎬ AS { # } < file number >
+			    ⎩ APPEND ⎭
+
+OPEN "COM"	OPEN "COM: { <rwpbs > } "
+			FOR ⎰ INPUT  ⎱ AS { # } < file number >
+			    ⎱ OUTPUT ⎰
+OR		< operand 1 > OR < operand 2 >
+OUT		OUT < port number >,< data >
+PEEK		PEEK( < address > )
+POKE		POKE < address > < data >
+*POS		POS( < expression > )
+			       ⎧  RESUME ⎫
+POWER		POWER < time > ⎨, OFF    ⎬
+			       ⎩  CONT   ⎭
+PRESET		PRESET ( < horizontal coordinate >, < vertical coordinate > )
+
+PRINT		PRINT {"} { < expression > } {"}
+*PRINT#		PRINT # < file number > < expression list >
+PRINT USING	PRINT USING < format string > < num. expr. list >
+PRINT # USING	PRINT # < file number > USING < format string >; < expr. list >
+PSET		PSET ( < horizontal coordinate >, < vertical coordinate > )
+READ		READ < variable list >
+REM		REM < remark >
+RESTORE		RESTORE { < line number > }
+RESUME		RESUME (NEXT < line number > }
+RETURN		RETURN
+RIGHT$		RIGHTS( < character string > < numeric expr. > )
+RND		RND( < numeric expression > )
+*RUN		RUN { < line number > } {,R}
+		RUN "{ < device name > : } < program name >" {,R}
+*RUNM		RUNM "{ < device name > : } < filename >"
+*SAVE		SAVE " { < external dev. name > : } < file name > "{,A}
+*SAVEM		SAVEM " { < device name > : } < filename > ",
+			< start address >, < end address >, < entry address >
+*SCREEN		SCREEN < devswitch >, < labelswitch >
+SGN		SGN( < numeric expression > )
+SIN		SIN( < numeric expression > )
+SOUND		SOUND < tone > < length >
+		SOUND ON
+		SOUND OFF
+SPACE$		SPACE$ ( < numeric expression > )
+SQR		SQR( < numeric expression > )
+STOP		STOP
+STR$		STR$( < numeric expression > )
+STRING$		STRING$ ( < numeric expr. > < character expr. > )
+TAB		TAB( < numeric expression > )
+TAN		TAN( < numeric expression > )
+TIME$		TIME$ = " < hour >:< minute >:< second > "
+		TIME$ ON
+		TIME$ OFF
+		TIME$ STOP
+VAL		VAL( < numeric string > )
+VARPTR		VARPTR < variable >
+**WIDTH		WIDTH 40 or WIDTH 80		     
+XOR		< operand > XOR < operand 2 >
+
+
+NOTES: Some commands and functions are also used in Disk BASIC if the Radio
+Shack Disk/Video Interface is connected. Commands marked with one asterisk (*)
+require drive number identification if intended for Disk operation:
+
+	(i.e. KILL "< drive number >: < filename. file extension > ")
+
+Commands or functions marked with two asterisks are unique to Disk BASIC:
+
+	(i.e. LFILES < drive number >)
