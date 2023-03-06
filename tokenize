@@ -52,14 +52,7 @@ function sort_lines() {
     # file to stdout, but with the lines numbers sorted numerically
     # and redundant lines removed. (Later lines override earlier).
 
-    local srcfile="$1"		# Filename of the BASIC source
-    awk '{
-	   lines[$1] = $0;
-	 }
-         END {
-           asorti(lines, indices, "@val_num_asc");
-	   for (i in indices) print lines[indices[i]];
-         }'  < "$srcfile"
+    tac "$1" | sort -n -k1,1 -u
 }
 
 function output_name() {
@@ -96,7 +89,7 @@ function output_name() {
 	            ;;
 		r) 			# Rename
 		    if mv "$g" "$g~"; then
-			echo "Old file renamed to $g~" >&2
+			echo "Old file renamed to '$g~'" >&2
 		    else
 			return -1
 		    fi
