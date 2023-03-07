@@ -35,13 +35,13 @@ int main(int argc, char *argv[]) {
   yyout = (argc>0) ? fopen( argv[0], "w+" ) : stdout;
   if (yyout == NULL) { perror(argv[0]); exit(1);  }
   
-  while (tokenizelex())
+  while (yylex())
     ;
   return 0;
 }
 
 
-int tokenizewrap() {
+int yywrap() {
   return 1;			/* Always only read one file */
 }
 
