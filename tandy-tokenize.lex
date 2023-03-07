@@ -25,8 +25,8 @@
 
 ^[[:space:]]*[0-9]+[ ]?	{
     ptr[nlines++] = ftell(yyout);   /* Cache the location of the current line */
-    yyput('*'); yyput('*');	    /* Dummy pointer to next line. */
-    uint16_t linenum=atoi(yytext);  /* BASIC line number */
+    yyput('*'); yyput('*');	    /* Dummy placeholder pointer to next line. */
+    uint16_t linenum=atoi(yytext);  /* BASIC line number. */
     yyput(linenum & 0xFF);
     yyput(linenum >> 8);
   }
@@ -34,7 +34,7 @@
 \"		yyput('"'); BEGIN(string);
 <string>\"	yyput('"'); BEGIN(INITIAL);
 
-	/* Newline matches <string> and <remark> start conditions. */
+   /* Newline matches <string> and <remark> start conditions. */
 <*>\r?\n		yyput('\0'); BEGIN(INITIAL);
 
 <<EOF>>	{
@@ -51,7 +51,7 @@ INPUT		yyput(132);
 DIM		yyput(133);
 READ		yyput(134);
 LET		yyput(135);
-GOTO		yyput(136);
+GO[ \t]*TO	yyput(136);
 RUN		yyput(137);
 IF		yyput(138);
 RESTORE		yyput(139);
