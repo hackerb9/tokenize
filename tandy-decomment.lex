@@ -71,7 +71,7 @@ IF		yyput(138);
 RESTORE		yyput(139);
 GOSUB		yyput(140);
 RETURN		yyput(141);
-REM		yyput(142); BEGIN(remark);
+  /* REM		yyput(142); BEGIN(remark); 	Unused in decommenter */
 STOP		yyput(143);
 WIDTH		yyput(144);
 ELSE		yyput(':'); yyput(145);
@@ -185,7 +185,7 @@ ASC		yyput(249);
 "LEFT$"		yyput(252);
 "RIGHT$"	yyput(253);
 "MID$"		yyput(254);
-"'"		yyput(':'); yyput(0x8E); yyput(0xFF); BEGIN(remark);
+  /* "'"		yyput(':'); yyput(0x8E); yyput(0xFF); BEGIN(remark); */
 
 %%
 
