@@ -11,7 +11,7 @@ function usage() {
     cat <<EOF
 tokenize: Create a tokenized BASIC file from an ASCII BASIC source file.
 
-Usage: tokenize INPUT.DO [ OUTPUT.BA ]
+Usage: tokenize [-d | --decomment] INPUT.DO [ OUTPUT.BA ]
 
 This is a wrapper for tandy-tokenize.
 
@@ -31,6 +31,11 @@ EOF
 }
 
 function main() {
+    if [[ "$1" == "-d" || "$1" == "--decomment" ]]; then
+	dflag=YUP
+	shift
+    fi
+
     local f="$1"		# Input BASIC source filename 
     local g="$2"		# Output tokenized BASIC filename
 
@@ -42,9 +47,15 @@ function main() {
     # Look first for the tandy-tokenize binary in same dir as this script.
     PATH=$(dirname "$0"):"$PATH"
 
-    echo "Tokenizing '$f' into '$g'"
-    sort_lines "$f" | tandy-tokenize > "$g"
+    if [[ -z "$dflag" ]]; then
+	echo "Tokenizing '$f' into '$g'"
+	sort_lines "$f" | tandy-tokenize > "$g"
+    else
+	echo "Decommenting and tokenizing '$f' into '$g'"
+	sort_lines "$f" | tandy-decomment > "$g"
+    fi
 }
+
 
 
 function sort_lines() {
