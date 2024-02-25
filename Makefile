@@ -15,8 +15,9 @@ tandy-tokenize.o: tandy-tokenize-main.c
 # with the same name.
 .PHONY: clean run test install
 
-install: tandy-tokenize
+install: tandy-tokenize tandy-decomment
 	cp -p tandy-tokenize ${prefix}/bin/
+	cp -p tandy-decomment ${prefix}/bin/
 	cp -p tokenize ${prefix}/bin/
 
 clean:
@@ -29,6 +30,14 @@ run:	tandy-tokenize
 test:	tandy-tokenize bacmp
 	@for f in samples/*.BA; do \
 	    ./tandy-tokenize "$${f%.BA}.DO" output.ba; \
+	    echo -n "$$f: "; \
+	    if ./bacmp output.ba "$$f"; then echo "(pass)"; fi; \
+	done
+	@rm output.ba
+
+test-decomment:	tandy-decomment bacmp
+	@for f in samples-decomment/*.BA; do \
+	    ./tandy-decomment "$${f%.BA}.DO" output.ba; \
 	    echo -n "$$f: "; \
 	    if ./bacmp output.ba "$$f"; then echo "(pass)"; fi; \
 	done
