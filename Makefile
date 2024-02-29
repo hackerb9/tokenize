@@ -2,7 +2,7 @@
 prefix ?= /usr/local
 
 # By default, create tandy-tokenize binary (implicitly compiled from .lex)
-all: tandy-tokenize tandy-decomment bacmp
+all: tandy-tokenize tandy-decomment bacmp jumps
 
 tandy-tokenize.o: tandy-tokenize-main.c
 
@@ -23,6 +23,7 @@ install: tandy-tokenize tandy-decomment
 clean:
 	rm tandy-tokenize lex.tokenize.c bacmp output *~ 2>/dev/null || true
 	rm tandy-decomment tandy-decomment.c *.o 2>/dev/null || true
+	rm jumps jumps.c *.o 2>/dev/null || true
 
 run:	tandy-tokenize
 	./tandy-tokenize samples/M100LE.DO output.ba && hd output.ba | less
