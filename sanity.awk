@@ -9,9 +9,9 @@ awk '
 }
 
 END {
-    asorti(lines, d);
+    asorti(lines, d, "@ind_num_asc");
     for (i in d) {
-	print lines[d[i]];
+	print lines[ d[i] ];
     }
 }
 '  < ${1:-/dev/stdin} > ${2:-/dev/stdout}
