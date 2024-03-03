@@ -1,17 +1,25 @@
 /* jumps.lex
  *
- * given a M100 BASIC file, output all the line numbers which are
- * referenced by any part of the program (for example, "GOTO 10") 
- * and that consist of only a comment.
+ * given a M100 BASIC file, output all the line numbers that consist
+ * of only a comment (for example, "10 REM FOO") and are referenced by
+ * any part of the program (for example, "20 GOTO 10").
  *
  * All comments can be removed from a program _except_ those lines.
- * 
+
  * Compile with:   flex jumps.lex && gcc yy.lex.c 
  *
- * Side note: Technically, "jumps" is inaccurate. Although the vast
+ * Side note: Technically, "jumps" is misnamed. Although the vast
  * majority of references will be via GOTO and GOSUB, it is possible
  * to refer to a line number using RESTORE, ERL, LIST, and EDIT.
- *			
+
+ * For best results, sanitize the source code first using sanity.awk
+ * which prevents an obscure and highly improbable condition where the
+ * BASIC program source code might have two lines with the same line
+ * number like so:
+			
+    222 PRINT "The next line 222 replaces this one.": GOTO 222
+    222 REM A decommenter should keep neither line 222, despite the GOTO.
+
  */
 
 %option warn
@@ -37,7 +45,7 @@ LINERANGE	{LINENUM}?[ \t]*-[ \t]*{LINENUM}?
     /* First entry, jumps[0], is length of array. */
     int jumps[65537] = {0,};
 
-    /* An set to store lines which contain only a REM statement */
+    /* A set to store lines which contain only a REM statement */
     int remarks[65537] = {0, };
 
     int insert(int set[], int n) {
