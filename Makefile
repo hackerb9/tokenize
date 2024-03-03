@@ -2,7 +2,7 @@
 prefix ?= /usr/local
 
 # By default, create tandy-tokenize binary (implicitly compiled from .lex)
-all: tandy-tokenize tandy-decomment bacmp jumps
+all: tandy-tokenize tandy-decomment bacmp jumps tandy-crunch
 
 tandy-tokenize.o: tandy-tokenize-main.c
 
@@ -15,14 +15,14 @@ tandy-tokenize.o: tandy-tokenize-main.c
 # with the same name.
 .PHONY: clean run test install
 
-install: tandy-tokenize tandy-decomment
-	cp -p tandy-tokenize ${prefix}/bin/
-	cp -p tandy-decomment ${prefix}/bin/
+install: tandy-tokenize tandy-decomment jumps tandy-crunch
+	cp -p $^ ${prefix}/bin/
 	cp -p tokenize ${prefix}/bin/
 
 clean:
-	rm tandy-tokenize lex.tokenize.c bacmp output *~ 2>/dev/null || true
+	rm tandy-tokenize tandy-tokenize.c bacmp output *~ 2>/dev/null || true
 	rm tandy-decomment tandy-decomment.c *.o 2>/dev/null || true
+	rm tandy-crunch tandy-crunch.c 2>/dev/null || true
 	rm jumps jumps.c *.o 2>/dev/null || true
 
 run:	tandy-tokenize
