@@ -1,7 +1,6 @@
 /* tandy-decomment.lex		TRS-80 Model 100 BASIC decommenter 
  *
  * Removes comments (REM, ') from Model 100 BASIC.
- * Whitespace between tokens are removed to further shrink filesize.
  * Uses output from jumps.lex to decide which commented out lines to keep.
  *			
  * Compile with:   flex tandy-decomment.lex && gcc lex.decomment.c
@@ -14,16 +13,16 @@
  /* Define states that simply copy text instead of lexing */  
 %x string
 
- /* Set of line numbers that should be kept despite only containing a REM statement */
- /* jumps[0] is length of set. */
+    /* Set of line numbers that should be kept despite only containing a REM statement */
+    /* jumps[0] is length of set. */
     int jumps[65537] = {0,};
 
  /* XXXXXX Should load jumps[] from jumps.lex XXXXXXX */
 
 %%
 
-  /* A line which starts with REM or ' should be removed unless it is in the JUMPS list */
-^[0-9]+[ \t:]*([']|REM)[^\r\n]*[\r\n]+ {
+     /* A line which starts with REM or ' should be removed unless it is in the JUMPS list */
+^[ \t:]*[0-9]+[ \t:]*([']|REM)[^\r\n]*[\r\n]+ {
     int n = atoi(yytext);
     int i = 1, len = jumps[0];
     for (i=1; i<=len; i++) {
@@ -37,11 +36,10 @@
 \"		ECHO; BEGIN(string);
 <string>\"	ECHO; BEGIN(INITIAL);
 
-   /* Newline also matches <string> start condition. */
+    /* Newline also matches <string> start condition. */
 <*>\r?\n		ECHO; BEGIN(INITIAL);
 
 [ \t:]*([']|REM)[^\r\n]*	; 	/* Delete REM and tick comments at end of line. */
-[ \t]*				;	/* Delete whitespace (not in strings). */
 
 %%
 
