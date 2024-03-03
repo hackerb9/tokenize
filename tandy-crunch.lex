@@ -2,7 +2,8 @@
 /* tandy-crunch.lex		TRS-80 Model 100 BASIC cruncher 
  *
  * Saves a few bytes by removing whitespace and other extraneous
- * characters but makes programs harder to read.
+ * characters but makes programs harder to read. See tandy-decommenter
+ * for potentially much greater savings by removing all comments. 
  *			
  * Compile with:   flex tandy-crunch.lex && gcc lex.crunch.c
  * 		
@@ -32,7 +33,7 @@
 <remark>\n		ECHO; BEGIN(INITIAL);
 
     /* Omit close quote on strings at end of line */
-<string>\"[ \t]*[\r\n]	fputc(yytext[yyleng-1], yyout) ; BEGIN(INITIAL);
+ <string>\"[ \t]*[\r\n]	fputc(yytext[yyleng-1], yyout) ; BEGIN(INITIAL);
 
     /* Elide whitespace between tokens (not in strings or remarks). */
 [ \t]*			    ;		      
