@@ -117,6 +117,7 @@ ERL[ \t]*[<=>]+[ \t]*{LINENUM}	parse_erl(yytext);
 	    int n = atoi(p);
 	    insert(jumps, n);
 	}
+	return 0;
     }
 
     int parse_linelist(char *linelist) {
@@ -130,22 +131,33 @@ ERL[ \t]*[<=>]+[ \t]*{LINENUM}	parse_erl(yytext);
 	    insert(jumps, n);
 	    p = strtok(NULL, " \t,");
 	}
+	return 0;
     }
 
     int parse_linerange(char *linerange) {
+	/* Skip over "LLIST" or "EDIT" */
+	while (*linerange && !isdigit(*linerange) && *linerange != '-')
+	    linerange++;
 
-	ECHO;
-	/*xxx*/
-
+	char *p = strstr(linerange, "-");
+	if (p == NULL) return -1;
+	*p++ = '\0';
+	int n;
+	if (*linerange) {
+	    n = atoi(linerange);
+	    insert(jumps, n);
+	}
+	if (*p) {
+	    n = atoi(p);
+	    insert(jumps, n);
+	}
+	return 0;
     }
 
     int parse_erl(char *comparison) {
-
 	ECHO;
-	/*xxx*/
-
+	return 0;
     }
-
 
     void print_set(int set[]) {
         for (int j=1; j<=set[0]; j++) {
