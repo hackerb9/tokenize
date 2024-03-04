@@ -101,8 +101,8 @@ LLIST[ \t]*{LINERANGE}		parse_linerange(yytext);
 EDIT[ \t]*{LINERANGE}		parse_linerange(yytext);
 
   /* ERL is a variable used to compare against a line number */
-ERL[ \t]*[<=>]+[ \t]*{LINENUM}	parse_erl(yytext);
-{LINENUM}[ \t]*[<=>]+[ \t]*ERL	parse_erl(yytext);
+ERL[ \t]*[\<=\>]+[ \t]*{LINENUM}	parse_erl(yytext);
+{LINENUM}[ \t]*[\<=\>]+[ \t]*ERL	parse_erl(yytext);
 
    /* Delete all else */
 <*>.|\r|\n		;
@@ -155,8 +155,35 @@ ERL[ \t]*[<=>]+[ \t]*{LINENUM}	parse_erl(yytext);
     }
 
     int parse_erl(char *comparison) {
-	ECHO;
-	return 0;
+
+	/* This is not actually necessary for use by remove_comments
+	   as there is no case where a line referred to by ERL might
+	   be removed as it is only a comment. (REM statements cannot
+	   cause errors!) */
+
+	/*  ERL <=> n  */
+	char *p = strstr(comparison, "ERL");
+	if (p == NULL) return -1;
+
+	while (*p && !isdigit(*p)) {
+	    p++;
+	}
+	if ( isdigit(*p) ) {
+	    insert( jumps, atoi(p) );
+	    return 0;
+	}
+
+	/*  n <=> ERL  */
+	p = strstr(comparison, "ERL");
+	while ( p != comparison && !isdigit(*p) && !isalpha(*p) )
+	    p--;
+	if ( isdigit(*p) ) {
+	    while ( p != comparison && isdigit(*(p-1)) )
+		p--;
+	    insert( jumps, atoi(p) );
+	    return 0;
+	}	
+	return -1;
     }
 
     void print_set(int set[]) {
