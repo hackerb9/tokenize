@@ -30,7 +30,7 @@ run:	tandy-tokenize
 
 test:	tandy-tokenize bacmp
 	@for f in samples/*.BA; do \
-	    ./tandy-tokenize "$${f%.BA}.DO" output.ba; \
+	    ./sanity.awk "$${f%.BA}.DO" | ./tandy-tokenize >output.ba; \
 	    echo -n "$$f: "; \
 	    if ./bacmp output.ba "$$f"; then echo "(pass)"; fi; \
 	done
@@ -38,7 +38,9 @@ test:	tandy-tokenize bacmp
 
 test-decomment:	tandy-decomment bacmp
 	@for f in samples-decomment/*.BA; do \
-	    ./tandy-decomment "$${f%.BA}.DO" output.ba; \
+	    ./sanity "$${f%.BA}.DO" | \
+	        ./tandy-decomment | \
+	        ./tandy-tokenize >output.ba; \
 	    echo -n "$$f: "; \
 	    if ./bacmp output.ba "$$f"; then echo "(pass)"; fi; \
 	done
