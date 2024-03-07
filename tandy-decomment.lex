@@ -10,14 +10,29 @@
 %option warn
 %option prefix="decomment"
 
+    #include <string.h>
+    #include <ctype.h>
+    int insert(int set[], int n);
+    void print_set(int set[]);
+    void print_intersection(int seta[], int setb[]);
+
+    int insert(int set[], int n) {
+	set[0]++;
+	int len=set[0], i=1;
+	for (i=1; i<len; i++) {
+	    if (set[i] > n) break;
+	    if (set[i] == n) { set[0]--; return 0; }
+	}
+	memmove(set+i+1, set+i, (len-i)*sizeof(set[0]));
+	set[i] = n;
+    }
+
  /* Define states that simply copy text instead of lexing */  
 %x string
 
     /* Set of line numbers that should be kept despite only containing a REM statement */
     /* jumps[0] is length of set. */
     int jumps[65537] = {0,};
-
- /* XXXXXX Should load jumps[] from jumps.lex XXXXXXX */
 
 %%
 
@@ -56,6 +71,11 @@ int main(int argc, char *argv[]) {
   yyout = (argc>0) ? fopen( argv[0], "w+" ) : stdout;
   if (yyout == NULL) { perror(argv[0]); exit(1);  }
   
+  while (argc>0) {
+      insert(jumps, atoi(argv[0]));
+      ++argv, --argc;
+  }
+
   while (yylex())
     ;
   return 0;
