@@ -6,6 +6,11 @@ all: tandy-tokenize tandy-decomment bacmp jumps tandy-crunch
 
 tandy-tokenize.o: tandy-tokenize-main.c
 
+# Use 'make debug' to compile with debugging and catch pointer errors.
+debug : CFLAGS+=-g -fsanitize=address
+debug : LDLIBS+=-lasan
+debug : all
+
 # Automatically run flex to create .c files from .lex.
 .SUFFIXES: .lex
 .lex.c:
@@ -20,10 +25,12 @@ install: tandy-tokenize tandy-decomment jumps tandy-crunch
 	cp -p tokenize ${prefix}/bin/
 
 clean:
-	rm tandy-tokenize tandy-tokenize.c bacmp output *~ 2>/dev/null || true
-	rm tandy-decomment tandy-decomment.c *.o 2>/dev/null || true
-	rm tandy-crunch tandy-crunch.c 2>/dev/null || true
-	rm jumps jumps.c *.o 2>/dev/null || true
+	rm tandy-tokenize tandy-tokenize.c bacmp output *~ \
+	   tandy-decomment tandy-decomment.c *.o \
+	   rm tandy-crunch tandy-crunch.c \
+	   rm jumps jumps.c *.o \
+	   rm core \
+					2>/dev/null || true
 
 run:	tandy-tokenize
 	./tandy-tokenize samples/M100LE.DO output.ba && hd output.ba | less
