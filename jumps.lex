@@ -48,15 +48,18 @@ LINERANGE	{LINENUM}?[ \t]*-[ \t]*{LINENUM}?
     /* A set to store lines which contain only a REM statement */
     int remarks[65537] = {0, };
 
+    /* Insert a number into the set, if it isn't already there. */
+    /* Minor optimization: start at the end of the array since it is sorted. */
     int insert(int set[], int n) {
-	set[0]++;
-	int len=set[0], i=1;
-	for (i=1; i<len; i++) {
-	    if (set[i] > n) break;
-	    if (set[i] == n) { set[0]--; return 0; }
+	int i, len=set[0];
+	for (i=len; i>0; i--) {
+	    if (set[i] == n) return 0;
+	    if (set[i] < n) break;
 	}
-	memmove(set+i+1, set+i, (len-i)*sizeof(set[0]));
+        i++;
+	memmove(set+i+1, set+i, len*sizeof(set[0]));
 	set[i] = n;
+	set[0]++;
     }
 
 %%
