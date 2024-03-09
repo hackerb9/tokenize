@@ -11,17 +11,21 @@ function usage() {
     cat <<EOF
 tokenize: Create a tokenized BASIC file from an ASCII BASIC source file.
 
-Usage: tokenize [-d | --decomment] INPUT.DO [ OUTPUT.BA ]
+Usage: tokenize INPUT.DO [ OUTPUT.BA ]
+       tokenize [-d | --decomment] INPUT.DO [ OUTPUT.BA ]
+       tokenize [-c | --crunch] INPUT.DO [ OUTPUT.BA ]
 
-This is a wrapper for tandy-tokenize.
+This is a wrapper for tandy-tokenize. Using -d shrinks the output by
+omitting comments. Using -c removes comments and also whitespace. 
 
-Unlike tandy-tokenize, the input file is passed through a filter that
-sorts the lines and removes duplicate line numbers.
+Unlike tandy-tokenize, the input file is passed through a sanity
+filter that sorts the lines and removes duplicate line numbers.
 
 This is the way the BASIC tokenizer on the Model T works and probably
 should be how any *sane* tokenizer should behave. However, tokenized
 programs with scrambled or redundant line numbers are actually valid
-on Model T computers.
+on Model T computers and so I've kept tandy-tokenize as flexible as
+possible by allowing such files by default.
 
 The syntax is also slightly different from tandy-tokenize. The input
 filename is mandatory and the output filename, if not specified, will
@@ -33,6 +37,9 @@ EOF
 function main() {
     if [[ "$1" == "-d" || "$1" == "--decomment" ]]; then
 	dflag=YUP
+	shift
+    elif [[ "$1" == "-c" || "$1" == "--crunch" ]]; then
+	cflag=YUP
 	shift
     fi
 
@@ -47,23 +54,18 @@ function main() {
     # Look first for the tandy-tokenize binary in same dir as this script.
     PATH=$(dirname "$0"):"$PATH"
 
-    if [[ -z "$dflag" ]]; then
-	echo "Tokenizing '$f' into '$g'"
-	sort_lines "$f" | tandy-tokenize > "$g"
-    else
+    if [[ "$dflag" ]]; then
 	echo "Decommenting and tokenizing '$f' into '$g'"
-	sort_lines "$f" | tandy-decomment > "$g"
+	jumps=$(sanity.awk "$f" | jumps )
+	sanity.awk "$f" | tandy-decomment /dev/stdin "$g" ${jumps}
+    elif [[ "$cflag" ]]; then
+	echo "Decommenting, crunching, and tokenizing '$f' into '$g'"
+	jumps=$(sanity.awk "$f" | jumps )
+	sanity.awk "$f" | tandy-decomment /dev/stdin /dev/stdout ${jumps} | tandy-crunch | tandy-tokenize > $g
+    else
+	echo "Tokenizing '$f' into '$g'"
+	sanity.awk "$f" | tandy-tokenize > "$g"
     fi
-}
-
-
-
-function sort_lines() {
-    # Given the filename of a BASIC program in ASCII format, print the
-    # file to stdout, but with the lines numbers sorted numerically
-    # and redundant lines removed. (Later lines override earlier).
-
-    tac "$1" | sort -n -k1,1 -u
 }
 
 function output_name() {
