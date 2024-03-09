@@ -2,7 +2,7 @@
 prefix ?= /usr/local
 
 # By default, create tandy-tokenize binary (implicitly compiled from .lex)
-all: tandy-tokenize tandy-decomment bacmp jumps tandy-crunch
+all: tandy-tokenize tandy-decomment bacmp tandy-jumps tandy-crunch
 
 tandy-tokenize.o: tandy-tokenize-main.c
 
@@ -20,7 +20,7 @@ debug : all
 # with the same name.
 .PHONY: clean run test install
 
-install: tandy-tokenize tandy-decomment jumps tandy-crunch
+install: tandy-tokenize tandy-decomment tandy-jumps tandy-crunch
 	cp -p $^ ${prefix}/bin/
 	cp -p tokenize ${prefix}/bin/
 
@@ -28,7 +28,7 @@ clean:
 	rm tandy-tokenize tandy-tokenize.c bacmp output *~ \
 	   tandy-decomment tandy-decomment.c *.o \
 	   rm tandy-crunch tandy-crunch.c \
-	   rm jumps jumps.c *.o \
+	   rm tandy-jumps tandy-jumps.c *.o \
 	   rm core \
 					2>/dev/null || true
 
@@ -37,16 +37,18 @@ run:	tandy-tokenize
 
 test:	tandy-tokenize bacmp
 	@for f in samples/*.BA; do \
-	    ./sanity.awk "$${f%.BA}.DO" | ./tandy-tokenize >output.ba; \
+	    ./tandy-sanity "$${f%.BA}.DO" | ./tandy-tokenize >output.ba; \
 	    echo -n "$$f: "; \
 	    if ./bacmp output.ba "$$f"; then echo "(pass)"; fi; \
 	done
 	@rm output.ba
 
-test-decomment:	tandy-decomment bacmp
+test-decomment:	tandy-tokenize tandy-decomment tandy-jumps bacmp
 	@for f in samples-decomment/*.BA; do \
-	    ./sanity "$${f%.BA}.DO" | \
-	        ./tandy-decomment | \
+	    jumps=$(./tandy-sanity "$${f%.BA}.DO" | \
+		./tandy-jumps) \
+	    ./tandy-sanity "$${f%.BA}.DO" | \
+	        ./tandy-decomment /dev/stdin /dev/stdout $jumps | \
 	        ./tandy-tokenize >output.ba; \
 	    echo -n "$$f: "; \
 	    if ./bacmp output.ba "$$f"; then echo "(pass)"; fi; \
