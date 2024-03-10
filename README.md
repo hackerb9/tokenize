@@ -4,9 +4,9 @@ A tokenizer for TRS-80 Model 100 (AKA "M100") BASIC language.
 
 Although, the text refers to the "Model 100", this also works for the
 Tandy 102, Tandy 200, Kyocera Kyotronic-85, and Olivetti M10, which
-all have the same tokenization.
+all have [identical tokenization](http://fileformats.archiveteam.org/wiki/Tandy_200_BASIC_tokenized_file).
 
-It does not yet work for the NEC PC-8201/8201A/8300 whose N82 BASIC
+This does not yet work for the NEC PC-8201/8201A/8300 whose N82 BASIC
 has a different tokenization.
 
 ## Introduction
