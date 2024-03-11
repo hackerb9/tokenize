@@ -79,6 +79,31 @@ Flex creates the file lex.tokenize.c from tandy-tokenize.lex. The
 
 ## Usage
 
+One can either use the tokenize wrapper or run the executables manually.
+
+### The tokenize wrapper
+
+The
+"[tokenize](https://github.com/hackerb9/tokenize/blob/main/tokenize)"
+script is easy to use. By default, the output will be exactly the
+same, byte for byte, as a .BA file created on actual hardware.
+
+#### Synopsis
+
+**tokenize** _INPUT.DO_ [ _OUTPUT.BA_ ]
+**tokenize** [ **-d** | **--decomment** ] _INPUT.DO_ [ _OUTPUT.BA_ ]
+**tokenize** [ **-c** | **--crunch** ] _INPUT.DO_ [ _OUTPUT.BA_ ]
+
+#### Example
+
+``` bash
+$ tokenize PROG.DO
+Output file 'PROG.BA' already exists. Overwrite [yes/No/rename]? R
+Old file renamed to 'PROG.BA~'
+```
+
+### Running tandy-tokenize manually
+
 The main program allows one to specify the input `.DO` (ASCII BASIC)
 and output `.BA` (Tokenized BASIC) files.
 
@@ -91,28 +116,6 @@ If not specified, the default is to use stdin and stdout. For example,
 ``` bash
 tac INPUT.DO | sort -n -k1,1 -u |
 	tandy-tokenize > OUTPUT.BA
-```
-
-### The tokenize wrapper
-
-There is also a helper script called
-"[tokenize](https://github.com/hackerb9/tokenize/blob/main/tokenize)"
-which has a two benefits over using tandy-tokenize directly.
-
-1. It sanitizes the input in the same way that BASIC on the Model T
-   does by sorting the lines by number and removing redundant lines.
-   Lines defined later override lines that came earlier.
-1. It will not write to stdout if a second filename is not given.
-   Instead, it will guess an appropriate output name based on the
-   input name. If the output file exists, it will also ask if you want
-   to overwrite it: yes, no, or rename. "Rename" appends a `~` to the
-   old file's filename.
-
-
-``` bash
-$ tokenize PROG.DO
-Output file 'PROG.BA' already exists. Overwrite [yes/No/rename]? R
-Old file renamed to 'PROG.BA~'
 ```
 
 
