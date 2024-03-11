@@ -6,8 +6,8 @@ Although, the text refers to the "Model 100", this also works for the
 Tandy 102, Tandy 200, Kyocera Kyotronic-85, and Olivetti M10, which
 all have [identical tokenization](http://fileformats.archiveteam.org/wiki/Tandy_200_BASIC_tokenized_file).
 
-This does not yet work for the NEC PC-8201/8201A/8300 whose N82 BASIC
-has a different tokenization.
+_This does not yet work for the NEC PC-8201/8201A/8300 whose N82 BASIC
+has a different tokenization._
 
 ## Introduction
 
@@ -18,21 +18,54 @@ single byte. Not only is this more compact, but it loads much faster.
 Programs for the Model 100 are generally distributed in ASCII format,
 but that has two downsides: ① the user must LOAD and re-SAVE the file
 on their machine to tokenize it as only tokenized BASIC can be run and
-② the machine may not have enough storage space for downloading or
-tokenizing the ASCII version.
+② the machine may not have enough storage space for the tokenized
+version while the ASCII version is also in memory.
 
 This program solves that problem by tokenizing on the host computer
-before downloading to the Model 100.
+before downloading to the Model 100. Additionally, this project
+provides a decommenter and cruncher (whitespace remover) to save bytes
+in the tokenized output at the expense of readability.
 
 ASCII formatted BASIC files generally are given the extension `.DO` so
 that the Model 100 will see them as text documents. Other common
 extensions are `.BA`, `.100`, and `.200`. Tokenized BASIC files use
 the extension `.BA`.
 
-## Compilation
+## Programs in this project
 
-You can just run `make` on most machines. Alternately, you can compile
-by hand:
+* **tokenize**: A shell script which ties together all the following.
+
+* **tandy-tokenize**: Convert M100 BASIC program from ASCII (.DO)
+  to executable .BA file.
+  
+* **tandy-sanity**: Clean up the BASIC source code (sort lines and
+  remove duplicates).
+  
+* **tandy-jumps**: Analyze the BASIC source code and output a list of
+  lines that begin with a comment and that are referred to by other
+  lines in the program. Input should have been run through
+  tandy-sanity. 
+
+* **tandy-decomment**: Modify the BASIC source code to remove `REM`
+  and `'` comments except it keeps lines mentioned on the command line
+  (output from tandy-jumps). This can save a lot of space if the
+  program was well commented.
+
+* **tandy-crunch**: Modify the BASIC source code to remove all
+  whitespace in an attempt to save even more space at the expense of
+  readability. 
+
+## Compilation & Installation
+
+You can just run `make` on most machines. 
+
+``` BASH
+$ git clone https://github.com/hackerb9/tokenize
+$ make
+$ make install
+```
+
+<details><summary><h3>Optionally, you can compile by hand</h3></summary>
 
 ```bash
  flex tandy-tokenize.lex  &&  gcc lex.tokenize.c
@@ -42,6 +75,7 @@ Flex creates the file lex.tokenize.c from tandy-tokenize.lex. The
 `main()` routine is defined in tandy-tokenize-main.c, which is
 #included by tandy-tokenize.lex.
 
+</details>
 
 ## Usage
 
@@ -110,6 +144,17 @@ The downside is that one must have flex installed to _modify_ the
 tokenizer. Flex is _not_ necessary to compile and run as flex actually
 generates C code which can be compliled anywhere (see the file
 `lex.tokenize.c`). 
+
+## Degenerate code
+
+Sanity  to remove problems which
+  the Model 100's tokenizer takes care of automatically: sort line
+  numbers and keep only the last line of any duplicates. This should
+  be typically be used  on any source code,
+  hackerb9's tandy-tokenize is able to generate tokenizations of
+  degenerate BASIC programs.
+
+
 
 ## Miscellaneous notes
 
