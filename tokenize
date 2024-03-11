@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Usage: ./tokenize [-n] INPUT.DO [ OUTPUT.DO ]
 
@@ -6,6 +6,18 @@
 
 # Unlike tandy-tokenize, the input file is passed through a filter
 # that sorts the lines and removes duplicate line numbers.
+
+function shortusage() {
+    cat <<EOF
+tokenize: Create a tokenized BASIC file from an ASCII BASIC source file.
+
+Usage: tokenize INPUT.DO [ OUTPUT.BA ]
+       tokenize [-d | --decomment] INPUT.DO [ OUTPUT.BA ]
+       tokenize [-c | --crunch] INPUT.DO [ OUTPUT.BA ]
+
+(For more help try -h).
+EOF
+}
 
 function usage() {
     cat <<EOF
@@ -18,23 +30,26 @@ Usage: tokenize INPUT.DO [ OUTPUT.BA ]
 This is a wrapper for tandy-tokenize. Using -d shrinks the output by
 omitting comments. Using -c removes comments and also whitespace. 
 
-Unlike tandy-tokenize, the input file is passed through a sanity
-filter that sorts the lines and removes duplicate line numbers.
-
-This is the way the BASIC tokenizer on the Model T works and probably
-should be how any *sane* tokenizer should behave. However, tokenized
-programs with scrambled or redundant line numbers are actually valid
-on Model T computers and so I've kept tandy-tokenize as flexible as
-possible by allowing such files by default.
+Unlike calling tandy-tokenize directly, the input file is passed
+through a sanity filter that sorts the lines and removes duplicate
+line numbers. This is the way the BASIC tokenizer on the Model T works
+and probably should be how any *sane* tokenizer should behave.
+However, tokenized programs with scrambled or redundant line numbers
+are actually valid on Model T computers and so hackerb9 has kept
+tandy-tokenize as flexible as possible by allowing such files.
 
 The syntax is also slightly different from tandy-tokenize. The input
-filename is mandatory and the output filename, if not specified, will
-default to something reasonable (such as "FOO.BA" for "FOO.DO").
+filename is mandatory and the output has a reasonable default (such as
+"FOO.BA" for "FOO.DO").
 
 EOF
 }
 
 function main() {
+    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+	usage
+	exit
+    fi
     if [[ "$1" == "-d" || "$1" == "--decomment" ]]; then
 	dflag=YUP
 	shift
@@ -46,7 +61,7 @@ function main() {
     local f="$1"		# Input BASIC source filename 
     local g="$2"		# Output tokenized BASIC filename
 
-    if [[ -z "$f" ]]; then usage; exit 1; fi
+    if [[ -z "$f" ]]; then shortusage; exit 1; fi
 
     # Make a reasonable guess for an output filename, if none given.
     if [[ -z "$g" ]]; then g=$(output_name "$f") || exit 1; fi
