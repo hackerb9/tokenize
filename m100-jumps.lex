@@ -1,4 +1,4 @@
-/* tandy-jumps.lex
+/* m100-jumps.lex
  *
  * given a M100 BASIC file, output all the line numbers that consist
  * of only a comment (for example, "10 REM FOO") and are referenced by
@@ -6,13 +6,13 @@
  *
  * All comments can be removed from a program _except_ those lines.
 
- * Compile with:   flex tandy-jumps.lex && gcc yy.lex.c 
+ * Compile with:   flex m100-jumps.lex && gcc yy.lex.c 
  *
  * Side note: Technically, "jumps" is misnamed. Although the vast
  * majority of references will be via GOTO and GOSUB, it is possible
  * to refer to a line number using RESTORE, ERL, LIST, and EDIT.
 
- * For best results, sanitize the source code first using tandy-sanity
+ * For best results, sanitize the source code first using m100-sanity
  * which prevents an obscure and highly improbable condition where the
  * BASIC program source code might have two lines with the same line
  * number like so:

@@ -1,8 +1,8 @@
-/* tandy-tokenize.lex		TRS-80 Model 100 BASIC tokenizer *
+/* m100-tokenize.lex		TRS-80 Model 100 BASIC tokenizer *
  *
  * Flex uses this to create lex.tokenize.c.
  * 
- * Compile with:   	flex tandy-tokenize.lex
+ * Compile with:   	flex m100-tokenize.lex
  *			gcc lex.tokenize.c
  */
 
@@ -12,7 +12,7 @@
 %x string
 %x remark
 
-  /* Functions defined in tandy-tokenize-main.c */
+  /* Functions defined in m100-tokenize-main.c */
   int yyput(uint8_t);		/* putchar, but for yyout instead of stdout. */
   uint8_t lastput=255;		/* last written character, for EOF without nl */
   int fixup_ptrs();		/* rewrite line pointers, if possible. */
@@ -176,4 +176,4 @@ ASC		yyput(249);
 %%
 
 /* The main() routine, yyput(), fixup_ptrs() */
-#include "tandy-tokenize-main.c"
+#include "m100-tokenize-main.c"

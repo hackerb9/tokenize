@@ -1,4 +1,4 @@
-# tandy-tokenize
+# m100-tokenize
 
 A tokenizer for TRS-80 Model 100 (AKA "M100") BASIC language. 
 
@@ -35,23 +35,23 @@ the extension `.BA`.
 
 * **tokenize**: A shell script which ties together all the following.
 
-* **tandy-tokenize**: Convert M100 BASIC program from ASCII (.DO)
+* **m100-tokenize**: Convert M100 BASIC program from ASCII (.DO)
   to executable .BA file.
   
-* **tandy-sanity**: Clean up the BASIC source code (sort lines and
+* **m100-sanity**: Clean up the BASIC source code (sort lines and
   remove duplicates).
   
-* **tandy-jumps**: Analyze the BASIC source code and output a list of
+* **m100-jumps**: Analyze the BASIC source code and output a list of
   lines that begin with a comment and that are referred to by other
   lines in the program. Input should have been run through
-  tandy-sanity. 
+  m100-sanity. 
 
-* **tandy-decomment**: Modify the BASIC source code to remove `REM`
+* **m100-decomment**: Modify the BASIC source code to remove `REM`
   and `'` comments except it keeps lines mentioned on the command line
-  (output from tandy-jumps). This can save a lot of space if the
+  (output from m100-jumps). This can save a lot of space if the
   program was well commented.
 
-* **tandy-crunch**: Modify the BASIC source code to remove all
+* **m100-crunch**: Modify the BASIC source code to remove all
   whitespace in an attempt to save even more space at the expense of
   readability. 
 
@@ -68,12 +68,12 @@ $ make install
 <details><summary><b>Optionally, you can compile by hand</b></summary>
 
 ```bash
- flex tandy-tokenize.lex  &&  gcc lex.tokenize.c
+ flex m100-tokenize.lex  &&  gcc lex.tokenize.c
 ```
 
-Flex creates the file lex.tokenize.c from tandy-tokenize.lex. The
-`main()` routine is defined in tandy-tokenize-main.c, which is
-#included by tandy-tokenize.lex.
+Flex creates the file lex.tokenize.c from m100-tokenize.lex. The
+`main()` routine is defined in m100-tokenize-main.c, which is
+#included by m100-tokenize.lex.
 
 </details>
 
@@ -107,36 +107,36 @@ Output file 'PROG.BA' already exists. Overwrite [yes/No/rename]? R
 Old file renamed to 'PROG.BA~'
 ```
 
-### Running tandy-tokenize manually
+### Running m100-tokenize manually
 
 #### Synopsis
 
-**tandy-tokenize** [ _INPUT.DO_ [ _OUTPUT.BA_ ] ]
+**m100-tokenize** [ _INPUT.DO_ [ _OUTPUT.BA_ ] ]
 
-Unlike `tokenize`, tandy-tokenize does not require an input
+Unlike `tokenize`, m100-tokenize does not require an input
 filename as it is meant to be used as a filter in a pipeline.
 With no files specified, the default is to use stdin and stdout. 
 
-#### Example usage of tandy-tokenize
+#### Example usage of m100-tokenize
 
-When running tandy-tokenize by hand, it is recommended to process
-the input through the `tandy-sanity` script first to correct
+When running m100-tokenize by hand, it is recommended to process
+the input through the `m100-sanity` script first to correct
 possibly ill-formed BASIC source code.
 
 ``` bash
-tandy-sanity INPUT.DO | tandy-tokenize > OUTPUT.BA
+m100-sanity INPUT.DO | m100-tokenize > OUTPUT.BA
 ```
 
 #### Stdout stream rewinding 
 
-After finishing tokenizing, tandy-tokenize rewinds the output
+After finishing tokenizing, m100-tokenize rewinds the output
 file in order to correct the **PL PH** line pointers. Rewinding
 fails if the standard output is piped to another program. For
 example:
 
-  1. tandy-tokenize  FOO.DO  FOO.BA
-  2. tandy-tokenize  <FOO.DO  >FOO.BA
-  3. tandy-tokenize  FOO.DO | cat > FOO.BA
+  1. m100-tokenize  FOO.DO  FOO.BA
+  2. m100-tokenize  <FOO.DO  >FOO.BA
+  3. m100-tokenize  FOO.DO | cat > FOO.BA
 
 Note that (1) and (2) are identical, but (3) is slightly different.
 
@@ -177,8 +177,8 @@ generates C code which can be compliled anywhere (see the file
 
 ## Abnormal code
 
-The `tokenize` script always uses the tandy-sanity program to
-clean up the source code, but one can run tandy-tokenize directly
+The `tokenize` script always uses the m100-sanity program to
+clean up the source code, but one can run m100-tokenize directly
 to purposefully create abnormal, but valid, programs. These
 programs cannot be created on genuine hardware, but **will** run.
 
@@ -239,14 +239,14 @@ Here is an extreme example.
 
 To run this on a Model 100, download
 [GOTO10.BA](https://github.com/hackerb9/tokenize/raw/main/degenerate/GOTO10.BA)
-which was created using tandy-tokenizer.
+which was created using m100-tokenizer.
 
 </details>
 
 takes care of automatically: sort line
 numbers and keep only the last line of any duplicates. This
 should be typically be used on any source code, hackerb9's
-tandy-tokenize is able to generate tokenizations of degenerate
+m100-tokenize is able to generate tokenizations of degenerate
 BASIC programs.
 
 
@@ -295,7 +295,7 @@ BASIC programs.
   save "FOO", A
   ```
 
-* If the output is piped to another program, tandy-tokenize will not
+* If the output is piped to another program, m100-tokenize will not
   be able to rewind the stream to update the line pointers at the for
   each line. In that case, the characters '**' are used which will
   work fine on genuine Model 100 hardware. However, some emulators may
@@ -303,14 +303,14 @@ BASIC programs.
 
 ## Decommenter
 
-As a bonus, a program called tandy-decomment exists which tokenizes
+As a bonus, a program called m100-decomment exists which tokenizes
 programs while also shrinking the output size by throwing away data.
 It removes the text of comments and extraneous whitespace. It could do
 more thorough packing (merging lines together, removing unnecessary
 lines), but I think it currently strikes a good balance of compression
 versus complexity.
 
-## Testing and a minor bug
+## Testing
 
 Run `make test` to try out the tokenizer on some [sample Model 100
 programs](https://github.com/hackerb9/tokenize/tree/main/samples) and
@@ -318,27 +318,14 @@ some strange ones designed specifically to exercise peculiar syntax.
 The program `bacmp` is used to compare the generated .BA file with one
 created on a actual Tandy 200.
 
-Currently, the only test which is "failing" is SCRAMB.DO whose input
-is scrambled and redundant. 
+Note that without m100-sanity, the SCRAMB.DO test, whose input is
+scrambled and redundant, would fail.
 
 ``` BASIC
 20 GOTO 10
 10 GOTO 10
 10 PRINT "!dlroW ,olleH"
 
-```
-
-This tokenizer emits output as soon as a line is seen, so lines which
-are out of order will be kept out of order. Likewise, a redundant line
-will still be redundant in the output. The builtin tokenizer on the
-Model 100 computer sorts the lines and keeps only the last of
-duplicates. If this is a problem, one solution would be to sort the
-input and keep only the last of each line number:
-
-For example,
-
-```BASH
-rev | sort -u -n -k1,1 | tandy-tokenize > output.ba
 ```
 
 ## bacmp: BASIC comparator
@@ -365,8 +352,23 @@ has followed suit.
 
 ## Alternatives
 
-Here are some other ways that you can tokenize Model 100 BASIC on a
-host system.
+Here are some other ways that you can tokenize Model 100 BASIC when
+the source code and the tokenized version won't both fit in the M100's
+RAM. 
+
+* Perhaps the simplest is to load the ASCII BASIC file to the M100 over
+  a serial port from a PC host. On the Model 100, type:
+  
+          LOAD "COM:88N1"
+
+  or for a Tandy 200, type
+
+          LOAD "COM:88N1ENN"
+  
+  On the host side, send the file followed by the `^Z` ('\x1A')
+  character to signal End-of-File. See hackerb9's
+  [sendtomodelt](https://github.com/hackerb9/m100le/blob/main/adjunct/sendtomodelt)
+  for a script to make this easier.
 
 * Robert Pigford wrote a Model 100 tokenizer that runs in Microsoft Windows.
   Includes PowerBASIC source code. 

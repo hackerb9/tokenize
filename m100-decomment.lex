@@ -1,9 +1,9 @@
-/* tandy-decomment.lex		TRS-80 Model 100 BASIC decommenter 
+/* m100-decomment.lex		TRS-80 Model 100 BASIC decommenter 
  *
  * Removes comments (REM, ') from Model 100 BASIC.
  * Uses output from jumps.lex to decide which commented out lines to keep.
  *			
- * Compile with:   flex tandy-decomment.lex && gcc lex.decomment.c
+ * Compile with:   flex m100-decomment.lex && gcc lex.decomment.c
  */
 
  /* Change "yy" prefix to "decomment" for file names */

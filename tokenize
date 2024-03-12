@@ -2,9 +2,9 @@
 
 # Usage: ./tokenize [-n] INPUT.DO [ OUTPUT.DO ]
 
-# Wrapper for tandy-tokenize.
+# Wrapper for m100-tokenize.
 
-# Unlike tandy-tokenize, the input file is passed through a filter
+# Unlike m100-tokenize, the input file is passed through a filter
 # that sorts the lines and removes duplicate line numbers.
 
 function shortusage() {
@@ -27,18 +27,18 @@ Usage: tokenize INPUT.DO [ OUTPUT.BA ]
        tokenize [-d | --decomment] INPUT.DO [ OUTPUT.BA ]
        tokenize [-c | --crunch] INPUT.DO [ OUTPUT.BA ]
 
-This is a wrapper for tandy-tokenize. Using -d shrinks the output by
+This is a wrapper for m100-tokenize. Using -d shrinks the output by
 omitting comments. Using -c removes comments and also whitespace. 
 
-Unlike calling tandy-tokenize directly, the input file is passed
+Unlike calling m100-tokenize directly, the input file is passed
 through a sanity filter that sorts the lines and removes duplicate
 line numbers. This is the way the BASIC tokenizer on the Model T works
 and probably should be how any *sane* tokenizer should behave.
 However, tokenized programs with scrambled or redundant line numbers
 are actually valid on Model T computers and so hackerb9 has kept
-tandy-tokenize as flexible as possible by allowing such files.
+m100-tokenize as flexible as possible by allowing such files.
 
-The syntax is also slightly different from tandy-tokenize. The input
+The syntax is also slightly different from m100-tokenize. The input
 filename is mandatory and the output has a reasonable default (such as
 "FOO.BA" for "FOO.DO").
 
@@ -66,20 +66,20 @@ function main() {
     # Make a reasonable guess for an output filename, if none given.
     if [[ -z "$g" ]]; then g=$(output_name "$f") || exit 1; fi
 
-    # Look first for the tandy-tokenize binary in same dir as this script.
+    # Look first for the m100-tokenize binary in same dir as this script.
     PATH=$(dirname "$0"):"$PATH"
 
     if [[ "$dflag" ]]; then
 	echo "Decommenting and tokenizing '$f' into '$g'"
 	jumps=$(sanity.awk "$f" | jumps )
-	sanity.awk "$f" | tandy-decomment /dev/stdin "$g" ${jumps}
+	sanity.awk "$f" | m100-decomment /dev/stdin "$g" ${jumps}
     elif [[ "$cflag" ]]; then
 	echo "Decommenting, crunching, and tokenizing '$f' into '$g'"
 	jumps=$(sanity.awk "$f" | jumps )
-	sanity.awk "$f" | tandy-decomment /dev/stdin /dev/stdout ${jumps} | tandy-crunch | tandy-tokenize > $g
+	sanity.awk "$f" | m100-decomment /dev/stdin /dev/stdout ${jumps} | m100-crunch | m100-tokenize > $g
     else
 	echo "Tokenizing '$f' into '$g'"
-	sanity.awk "$f" | tandy-tokenize > "$g"
+	sanity.awk "$f" | m100-tokenize > "$g"
     fi
 }
 

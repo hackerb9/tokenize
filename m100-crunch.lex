@@ -1,11 +1,11 @@
 
-/* tandy-crunch.lex		TRS-80 Model 100 BASIC cruncher 
+/* m100-crunch.lex		TRS-80 Model 100 BASIC cruncher 
  *
  * Saves a few bytes by removing whitespace and other extraneous
- * characters but makes programs harder to read. See tandy-decommenter
+ * characters but makes programs harder to read. See m100-decommenter
  * for potentially much greater savings by removing all comments. 
  *			
- * Compile with:   flex tandy-crunch.lex && gcc lex.crunch.c
+ * Compile with:   flex m100-crunch.lex && gcc lex.crunch.c
  * 		
  * Note: Crunching is not always a good idea as the confusion it
  * causes may not be worth the few bytes saved. For example,

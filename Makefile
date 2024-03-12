@@ -1,10 +1,10 @@
 # Where to install.
 prefix ?= /usr/local
 
-# By default, create tandy-tokenize binary (implicitly compiled from .lex)
-all: tandy-tokenize tandy-decomment bacmp tandy-jumps tandy-crunch
+# By default, create m100-tokenize binary (implicitly compiled from .lex)
+all: m100-tokenize m100-decomment bacmp m100-jumps m100-crunch
 
-tandy-tokenize.o: tandy-tokenize-main.c
+m100-tokenize.o: m100-tokenize-main.c
 
 # Use 'make debug' to compile with debugging and catch pointer errors.
 debug : CFLAGS+=-g -fsanitize=address
@@ -20,36 +20,36 @@ debug : all
 # with the same name.
 .PHONY: clean run test install
 
-install: tandy-tokenize tandy-decomment tandy-jumps tandy-crunch
+install: m100-tokenize m100-decomment m100-jumps m100-crunch
 	cp -p $^ ${prefix}/bin/
 	cp -p tokenize ${prefix}/bin/
 
 clean:
-	rm tandy-tokenize tandy-tokenize.c bacmp output *~ \
-	   tandy-decomment tandy-decomment.c *.o \
-	   rm tandy-crunch tandy-crunch.c \
-	   rm tandy-jumps tandy-jumps.c *.o \
+	rm m100-tokenize m100-tokenize.c bacmp output *~ \
+	   m100-decomment m100-decomment.c *.o \
+	   rm m100-crunch m100-crunch.c \
+	   rm m100-jumps m100-jumps.c *.o \
 	   rm core \
 					2>/dev/null || true
 
-run:	tandy-tokenize
-	./tandy-tokenize samples/M100LE.DO output.ba && hd output.ba | less
+run:	m100-tokenize
+	./m100-tokenize samples/M100LE.DO output.ba && hd output.ba | less
 
-test:	tandy-tokenize bacmp
+test:	m100-tokenize bacmp
 	@for f in samples/*.BA; do \
-	    ./tandy-sanity "$${f%.BA}.DO" | ./tandy-tokenize >output.ba; \
+	    ./m100-sanity "$${f%.BA}.DO" | ./m100-tokenize >output.ba; \
 	    echo -n "$$f: "; \
 	    if ./bacmp output.ba "$$f"; then echo "(pass)"; fi; \
 	done
 	@rm output.ba
 
-test-decomment:	tandy-tokenize tandy-decomment tandy-jumps bacmp
+test-decomment:	m100-tokenize m100-decomment m100-jumps bacmp
 	@for f in samples-decomment/*.BA; do \
-	    jumps=$(./tandy-sanity "$${f%.BA}.DO" | \
-		./tandy-jumps) \
-	    ./tandy-sanity "$${f%.BA}.DO" | \
-	        ./tandy-decomment /dev/stdin /dev/stdout $jumps | \
-	        ./tandy-tokenize >output.ba; \
+	    jumps=$(./m100-sanity "$${f%.BA}.DO" | \
+		./m100-jumps) \
+	    ./m100-sanity "$${f%.BA}.DO" | \
+	        ./m100-decomment /dev/stdin /dev/stdout $jumps | \
+	        ./m100-tokenize >output.ba; \
 	    echo -n "$$f: "; \
 	    if ./bacmp output.ba "$$f"; then echo "(pass)"; fi; \
 	done
