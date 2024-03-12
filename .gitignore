@@ -1,5 +1,5 @@
-tandy-tokenize.c
-tandy-tokenize
-tandy-decomment.c
-tandy-decomment
+m100-tokenize.c
+m100-tokenize
+m100-decomment.c
+m100-decomment
 bacmp
