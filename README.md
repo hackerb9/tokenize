@@ -1,13 +1,13 @@
-# m100-tokenize
+# Model 100 Tokenizer
 
 A tokenizer for TRS-80 Model 100 (AKA "M100") BASIC language. Converts
 `.DO` files to `.BA`.
 
     tokenize FOO.DO FOO.BA
 
-Although, the documentation will refers to the "Model 100", this
-program also works for the Tandy 102, Tandy 200, Kyocera Kyotronic-85,
-and Olivetti M10, which all have [identical
+Although, this documentation refers to the "Model 100", this program
+also works for the Tandy 102, Tandy 200, Kyocera Kyotronic-85, and
+Olivetti M10, which all have [identical
 tokenization](http://fileformats.archiveteam.org/wiki/Tandy_200_BASIC_tokenized_file).
 
 _This does not work for the NEC PC-8201/8201A/8300 whose N82 BASIC has
@@ -260,11 +260,9 @@ as "N82 BASIC", is not yet supported.
 The TRS-80 Models 100 and 102 and the Tandy 200 all share the same
 tokenized BASIC. While less commonly seen, the Kyocera Kyotronic-85
 and Olivetti M10 also use that tokenization, so one .BA program can
-work for any of them. However, the NEC family of portables, the
-PC-8201, PC-8201A, and PC-8300, have a different BASIC tokenization
-format. (Sidenote: Converting this program to handle NEC's N82 BASIC
-is not expected to be difficult as N82 BASIC is almost the same as
-M100 BASIC.)
+work for any of them. However, the NEC family of portables -- the
+PC-8201, PC-8201A, and PC-8300 -- run N82 BASIC which has a different
+tokenization format.
 
 ## Why Lex?
 
