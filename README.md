@@ -224,8 +224,6 @@ Example output after crunching but before tokenizing:
 20GOTO10
 ```
 
-</details>
-
 ### An obscure note about stdout stream rewinding 
 
 After finishing tokenizing, m100-tokenize rewinds the output
