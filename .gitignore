@@ -2,4 +2,9 @@ m100-tokenize.c
 m100-tokenize
 m100-decomment.c
 m100-decomment
+m100-jumps.c
+m100-jumps
+m100-crunch.c
+m100-crunch
 bacmp
+*.tar.gz
