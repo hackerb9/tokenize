@@ -45,6 +45,9 @@ LINENUM		[0-9]+
     /* Replace 100 ' with 100 REM as it tokenizes to 1 instead of 2 bytes */
 ^[ \t]*[0-9]+[ \t:]*['][^\r\n]*  fprintf(yyout, "%d REM", atoi(yytext));
 
+    /* Replace :ELSE with ELSE */
+[ \t:]*:[ \t:]*ELSE		fprintf(yyout, "ELSE");
+
     /* Replace 100 :REM with 100 REM */
 ^[ \t]*[0-9]+[ \t:]*REM[^\r\n]*  fprintf(yyout, "%d REM", atoi(yytext));
 
