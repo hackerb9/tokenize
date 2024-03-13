@@ -7,45 +7,21 @@ on:
 
 jobs:
   build_release:
-    name: build_release
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: make
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Make
         run: make 
-      - name: version
-        run: echo "::set-output name=version::$(echo 0.0)"
-        id: version
-      - name: build artifacts
+      - name: Check
+        run: make check
+      - name: Create .tar.gz files
         run: make artifacts
-      - name: release
-        uses: actions/create-release@v1
-        id: create_release
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          draft: true
-          prerelease: false
-          release_name: ${{ steps.version.outputs.version }}
-          tag_name: ${{ github.ref }}
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-      - name: upload linux artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./linux-amd64.tar.gz
-          asset_name: linux-amd64.tar.gz
-          asset_content_type: application/gzip
-      - name: upload generated C files
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./cfiles.tar.gz
-          asset_name: cfiles.tar.gz
-          asset_content_type: application/gzip
+          files: |
+	    tokenize-source.tar.gz
+	    tokenize-cfiles.tar.gz
+	    tokenize-linux-amd64.tar.gz
