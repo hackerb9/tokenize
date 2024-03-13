@@ -140,7 +140,8 @@ m100-decomment --> m100-tokenize
 | m100-sanity<br/>m100-jumps<br/>m100-decomment<br/>m100-crunch<br/>m100-tokenize | Saves even more RAM, removing whitespace   | tokenize -c |
 | m100-tokenize                                                                   | Abnormal code is kept as is                |             |
 
-<details>
+<details><summary>Click to see more details about running these
+programs manually</summary><p>
 
 ### m100-tokenize synopsis
 
@@ -288,9 +289,9 @@ cannot be created on genuine hardware, but **will** run.
 
 Here is an extreme example.
 
-<details><summary><b>Source code for 
+<b>Source code for 
 <a href="https://github.com/hackerb9/tokenize/blob/main/degenerate/GOTO10.DO">
-"GOTO 10"</a> by hackerb9</b></summary>
+"GOTO 10"</a> by hackerb9</b>
 
 ```BASIC
 1 I=-1
@@ -340,7 +341,6 @@ Here is an extreme example.
 8 PRINT "Please use hackerb9's"
 9 PRINT "pre-tokenized GOTO10.BA."
 ```
-</details>
 
 To run this on a Model 100, download
 [GOTO10.BA](https://github.com/hackerb9/tokenize/raw/main/degenerate/GOTO10.BA)
