@@ -340,6 +340,7 @@ Here is an extreme example.
 8 PRINT "Please use hackerb9's"
 9 PRINT "pre-tokenized GOTO10.BA."
 ```
+</details>
 
 To run this on a Model 100, download
 [GOTO10.BA](https://github.com/hackerb9/tokenize/raw/main/degenerate/GOTO10.BA)
