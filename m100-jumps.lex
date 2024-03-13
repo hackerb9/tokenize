@@ -46,7 +46,7 @@ LINERANGE	{LINENUM}?[ \t]*-[ \t]*{LINENUM}?
     int jumps[65537] = {0,};
 
     /* A set to store lines which contain only a REM statement */
-    int remarks[65537] = {0, };
+    int remset[65537] = {0, };
 
     /* Insert a number into the set, if it isn't already there. */
     /* Minor optimization: start at the end of the array since it is sorted. */
@@ -66,10 +66,11 @@ LINERANGE	{LINENUM}?[ \t]*-[ \t]*{LINENUM}?
 
   /* A line which starts with REM or ' should be noted */
 ^{LINENUM}[ \t:]*([']|REM) {
-    insert(remarks, atoi(yytext));
+    insert(remset, atoi(yytext));
+    BEGIN(remark);
 }
 
-  /* Skip over remarks and strings  */
+  /* Skip over remset and strings  */
 (REM|\')	BEGIN(remark);
 \"		BEGIN(string);
 <string>\"      BEGIN(INITIAL);
@@ -84,7 +85,7 @@ LINERANGE	{LINENUM}?[ \t]*-[ \t]*{LINENUM}?
      Q: Can list be empty? E.g., ON KEY GOSUB ,,,, ? 
   */
 
-(GO[ \t]*TO|GOSUB)([ \t,]*[0-9]+)+		{ parse_linelist(yytext); }
+(GO[ \t]*TO|GOSUB)([ \t,]*[0-9]+)+	parse_linelist(yytext);
 
 RESTORE[ \t]*{LINENUM}		parse_linenumber(yytext);
 RESUME[ \t]*{LINENUM}		parse_linenumber(yytext);
@@ -235,7 +236,7 @@ int main(int argc, char *argv[]) {
   if (printalljumps)
       print_set(jumps);				/* -j flag */
   else
-      print_intersection(jumps, remarks); 	/* Default */
+      print_intersection(jumps, remset); 	/* Default */
 
   return 0;
 }
