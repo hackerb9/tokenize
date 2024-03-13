@@ -5,9 +5,10 @@ A tokenizer for TRS-80 Model 100 (AKA "M100") BASIC language. Converts
 
     tokenize FOO.DO FOO.BA
 
-Although, the text refers to the "Model 100", this also works for the
-Tandy 102, Tandy 200, Kyocera Kyotronic-85, and Olivetti M10, which
-all have [identical tokenization](http://fileformats.archiveteam.org/wiki/Tandy_200_BASIC_tokenized_file).
+Although, the documentation will refers to the "Model 100", this
+program also works for the Tandy 102, Tandy 200, Kyocera Kyotronic-85,
+and Olivetti M10, which all have [identical
+tokenization](http://fileformats.archiveteam.org/wiki/Tandy_200_BASIC_tokenized_file).
 
 _This does not work for the NEC PC-8201/8201A/8300 whose N82 BASIC has
 a different tokenization._
@@ -119,8 +120,6 @@ Old file renamed to 'PROG.BA~'
 
 ### Running m100-tokenize and friends manually
 
-#### Soft dependencies
-
 Certain programs should _usually_ be run to process the input before
 the final tokenization step, depending upon what is wanted.
 m100-sanity is strongly recommended. (See [Abnormal
@@ -136,12 +135,14 @@ m100-decomment --> m100-tokenize
 
 | Programs used                                                                   | Effect                                     | Same as     |
 |---------------------------------------------------------------------------------|--------------------------------------------|-------------|
-| m100-tokenize                                                                   | Abnormal code is kept as is                |             |
 | m100-sanity<br/>m100-tokenize                                                   | Identical output as a genuine Model 100    | tokenize    |
 | m100-sanity<br/>m100-jumps<br/>m100-decomment<br/>m100-tokenize                 | Saves RAM by removing unnecessary comments | tokenize -d |
-| m100-sanity<br/>m100-jumps<br/>m100-decomment<br/>m100-crunch<br/>m100-tokenize | Saves even more RAM by removing whitespace | tokenize -c |
+| m100-sanity<br/>m100-jumps<br/>m100-decomment<br/>m100-crunch<br/>m100-tokenize | Saves even more RAM, removing whitespace   | tokenize -c |
+| m100-tokenize                                                                   | Abnormal code is kept as is                |             |
 
-#### m100-tokenize synopsis
+<details>
+
+### m100-tokenize synopsis
 
 **m100-tokenize** [ _INPUT.DO_ [ _OUTPUT.BA_ ] ]
 
@@ -151,7 +152,7 @@ can be used as a filter in a pipeline. The other programs --
 m100-sanity, m100-jumps, m100-decomment, and m100-crunch -- all have the
 same syntax taking two optional filenames. 
 
-#### Example usage of m100-tokenize
+### Example usage of m100-tokenize
 
 When running m100-tokenize by hand, process the input through the
 `m100-sanity` script first to correct possibly ill-formed BASIC source
@@ -164,7 +165,7 @@ m100-sanity INPUT.DO | m100-tokenize > OUTPUT.BA
 The above example is equivalent to running `tokenize INPUT.DO
 OUTPUT.BA`.
 
-#### Example usage with decommenting
+### Example usage with decommenting
 
 The m100-decomment program needs help from the m100-jumps program to
 know when it shouldn't completely remove a commented out line, for
@@ -198,7 +199,7 @@ Example output after decommenting but before tokenizing:
 20 GOTO 10
 ```
 
-#### Example usage with crunching
+### Example usage with crunching
 
 The m100-crunch program removes all optional space and some other
 optional characters, such as a double-quote at the end of a line or a
@@ -223,6 +224,8 @@ Example output after crunching but before tokenizing:
 20GOTO10
 ```
 
+</details>
+
 ### An obscure note about stdout stream rewinding 
 
 After finishing tokenizing, m100-tokenize rewinds the output
@@ -244,6 +247,9 @@ but some emulators are known to be persnickety and balk.
 If you find this to be a problem, please file an issue as it is
 potentially correctable using `open_memstream()`, but hackerb9 does
 not see the need.
+
+</details>
+
 
 ## Machine compatibility
 
@@ -271,9 +277,9 @@ and the corresponding byte they should emit. Flex handles special
 cases, like quoted strings and REMarks, easily.
 
 The downside is that one must have flex installed to _modify_ the
-tokenizer. Flex is _not_ necessary to compile and run as flex actually
-generates portable C code. See the tokenize-cfiles.tar.gz in the
-github release or run `make cfiles`.
+tokenizer. Flex is _not_ necessary to compile on a machine as flex can
+generate portable C code. See the tokenize-cfiles.tar.gz in the github
+release or run `make cfiles`.
 
 ## Abnormal code
 
@@ -340,8 +346,6 @@ Here is an extreme example.
 To run this on a Model 100, download
 [GOTO10.BA](https://github.com/hackerb9/tokenize/raw/main/degenerate/GOTO10.BA)
 which was created using m100-tokenizer.
-
-</details>
 
 
 ## Miscellaneous notes
