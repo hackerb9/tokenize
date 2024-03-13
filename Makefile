@@ -40,7 +40,7 @@ clean:
 						2>/dev/null || true
 
 # Check that the program is building and running correctly
-check: all test-tokenize-script test-m100-tokenize test-m100-decomment test-m100-crunch
+check: all test-m100-tokenize test-m100-decomment test-m100-crunch  test-tokenize-script
 
 # Check that the distribution will actually install, uninstall.
 distcheck: all
