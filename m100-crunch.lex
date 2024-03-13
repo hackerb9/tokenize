@@ -23,23 +23,21 @@
 %x string
 %x remark
 
+LINENUM		[0-9]+
 
 %%
 
 \"			ECHO; BEGIN(string);
 <string>\"		ECHO; BEGIN(INITIAL);
-<string>\n		ECHO; BEGIN(INITIAL); /* Newline ends strings */
 (REM|['])		ECHO; BEGIN(remark); 
-<remark>\n		ECHO; BEGIN(INITIAL);
+<*>\n			ECHO; BEGIN(INITIAL); /* Newline ends REM or string */
+<remark>.*		;		      /* Remove the content of remarks */
 
     /* Omit close quote on strings at end of line */
- <string>\"[ \t]*[\r\n]	fputc(yytext[yyleng-1], yyout) ; BEGIN(INITIAL);
+<string>\"[ \t]*[\r\n]	fputc(yytext[yyleng-1], yyout) ; BEGIN(INITIAL);
 
     /* Elide whitespace between tokens (not in strings or remarks). */
 [ \t]*			    ;		      
-
-    /* Delete leading colons */
-^[: \t]+		    ;		      
 
     /* Delete trailing colons */
 [: \t]+$		    ;		      
@@ -50,7 +48,15 @@
     /* Remove redundant colon in  :'. */
 [ \t:]:[']			fprintf(yyout, "'"); 	
 
+    /* Squeeze strings of colons into a single colon. */
+[ \t:]*:[ \t:]*:		fprintf(yyout, ":");
 
+    /* MAYBE Delete leading colons.  XXX this could remove a jump target!   */
+  /*^[0-9]+[: \t]+		fprintf(yyout, "%d ", atoi(yytext));*/
+
+   /* Line numbers have a single space after them. */
+   /* Doesn't matter for tokenization, but standardizes the output */
+^[ \t]*[0-9]+[ \t:]		fprintf(yyout, "%d ", atoi(yytext));
 
 %%
 
