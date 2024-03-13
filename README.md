@@ -1,13 +1,16 @@
 # m100-tokenize
 
-A tokenizer for TRS-80 Model 100 (AKA "M100") BASIC language. 
+A tokenizer for TRS-80 Model 100 (AKA "M100") BASIC language. Converts
+`.DO` files to `.BA`.
+
+    tokenize FOO.DO FOO.BA
 
 Although, the text refers to the "Model 100", this also works for the
 Tandy 102, Tandy 200, Kyocera Kyotronic-85, and Olivetti M10, which
 all have [identical tokenization](http://fileformats.archiveteam.org/wiki/Tandy_200_BASIC_tokenized_file).
 
-_This does not yet work for the NEC PC-8201/8201A/8300 whose N82 BASIC
-has a different tokenization._
+_This does not work for the NEC PC-8201/8201A/8300 whose N82 BASIC has
+a different tokenization._
 
 ## Introduction
 
@@ -15,21 +18,28 @@ The Tandy/Radio-Shack Model 100 portable computer can save its BASIC
 files in ASCII (plain text) or in a "tokenized" format where the
 keywords — such as `FOR`, `IF`, `PRINT`, `REM` — are converted to a
 single byte. Not only is this more compact, but it loads much faster.
+
+### The problem
+
 Programs for the Model 100 are generally distributed in ASCII format,
 but that has two downsides: ① the user must LOAD and re-SAVE the file
 on their machine to tokenize it as only tokenized BASIC can be run and
 ② the machine may not have enough storage space for the tokenized
 version while the ASCII version is also in memory.
 
+### The solution
+
 This program solves that problem by tokenizing on the host computer
 before downloading to the Model 100. Additionally, this project
 provides a decommenter and cruncher (whitespace remover) to save bytes
 in the tokenized output at the expense of readability.
 
-ASCII formatted BASIC files generally are given the extension `.DO` so
-that the Model 100 will see them as text documents. Other common
-extensions are `.BA`, `.100`, and `.200`. Tokenized BASIC files use
-the extension `.BA`.
+### File extension terminology
+
+Tokenized BASIC files use the extension `.BA`. ASCII formatted BASIC
+files should be given the extension `.DO` so that the Model 100 will
+see them as text documents, although people often misuse `.BA` for
+ASCII. 
 
 ## Programs in this project
 
@@ -107,27 +117,113 @@ Output file 'PROG.BA' already exists. Overwrite [yes/No/rename]? R
 Old file renamed to 'PROG.BA~'
 ```
 
-### Running m100-tokenize manually
+### Running m100-tokenize and friends manually
 
-#### Synopsis
+#### Soft dependencies
+
+Certain programs should _usually_ be run to process the input before
+the final tokenization step, depending upon what is wanted.
+m100-sanity is strongly recommended. (See [Abnormal
+code](#Abnormal code) below.)
+
+``` mermaid
+flowchart LR;
+m100-sanity ==> m100-tokenize
+m100-sanity ==> m100-jumps
+m100-sanity ==> m100-decomment --> m100-crunch --> m100-tokenize
+m100-decomment --> m100-tokenize
+```
+
+| Programs used                                                                   | Effect                                     | Same as     |
+|---------------------------------------------------------------------------------|--------------------------------------------|-------------|
+| m100-tokenize                                                                   | Abnormal code is kept as is                |             |
+| m100-sanity<br/>m100-tokenize                                                   | Identical output as a genuine Model 100    | tokenize    |
+| m100-sanity<br/>m100-jumps<br/>m100-decomment<br/>m100-tokenize                 | Saves RAM by removing unnecessary comments | tokenize -d |
+| m100-sanity<br/>m100-jumps<br/>m100-decomment<br/>m100-crunch<br/>m100-tokenize | Saves even more RAM by removing whitespace | tokenize -c |
+
+#### m100-tokenize synopsis
 
 **m100-tokenize** [ _INPUT.DO_ [ _OUTPUT.BA_ ] ]
 
-Unlike `tokenize`, m100-tokenize does not require an input
-filename as it is meant to be used as a filter in a pipeline.
-With no files specified, the default is to use stdin and stdout. 
+Unlike `tokenize`, m100-tokenize never guesses the output filename.
+With no files specified, the default is to use stdin and stdout so it
+can be used as a filter in a pipeline. The other programs --
+m100-sanity, m100-jumps, m100-decomment, and m100-crunch -- all have the
+same syntax taking two optional filenames. 
 
 #### Example usage of m100-tokenize
 
-When running m100-tokenize by hand, it is recommended to process
-the input through the `m100-sanity` script first to correct
-possibly ill-formed BASIC source code.
+When running m100-tokenize by hand, process the input through the
+`m100-sanity` script first to correct possibly ill-formed BASIC source
+code. 
 
 ``` bash
 m100-sanity INPUT.DO | m100-tokenize > OUTPUT.BA
 ```
 
-#### Stdout stream rewinding 
+The above example is equivalent to running `tokenize INPUT.DO
+OUTPUT.BA`.
+
+#### Example usage with decommenting
+
+The m100-decomment program needs help from the m100-jumps program to
+know when it shouldn't completely remove a commented out line, for
+example,
+
+``` BASIC
+10 REM This line would normally be removed
+20 GOTO 10   ' ... but now line 10 should be kept.
+```
+
+So, first, we get the list of line numbers that must be kept in the
+variable `$jumps` and then we call m100-decomment passing in that list
+on the command line.
+
+    jumps=$(m100-sanity INPUT.DO | m100-jumps)
+    m100-sanity INPUT.DO | 
+	    m100-decomment - - $jumps | 
+		m100-tokenize > OUTPUT.BA
+
+The above example is equivalent to running `tokenize -d INPUT.DO
+OUTPUT.BA`.
+
+Note that m100-decomment keeps the entire text of comments which are
+listed by m100-jumps with the presumption that, as targets of GOTO or
+GOSUB, they are the most valuable remarks in the program. (This
+behaviour may change in the future.)
+
+Example output after decommenting but before tokenizing:
+``` BASIC
+10 REM This line would normally be removed
+20 GOTO 10
+```
+
+#### Example usage with crunching
+
+The m100-crunch program removes all optional space and some other
+optional characters, such as a double-quote at the end of a line or a
+colon before an apostrophe. It also completely removes the text of
+comments which may have been preserved by m100-decomment from the
+m100-jumps list. In short, it makes the program extremely hard to
+read, but does save a few more bytes in RAM.
+
+    jumps=$(m100-sanity INPUT.DO | m100-jumps)
+    m100-sanity INPUT.DO | 
+	    m100-decomment - - $jumps | 
+		m100-crunch | 
+		m100-tokenize > OUTPUT.BA
+
+The above example is equivalent to running `tokenize -c INPUT.DO
+OUTPUT.BA`.
+
+Example output after crunching but before tokenizing:
+
+``` BASIC
+10REM
+20GOTO10
+```
+
+### An obscure note about stdout stream rewinding 
 
 After finishing tokenizing, m100-tokenize rewinds the output
 file in order to correct the **PL PH** line pointers. Rewinding
@@ -145,6 +241,9 @@ pointers will all contain "\*\*" (0x2A2A). This does not matter
 for a genuine Model T computer which ignores **PL PH** in a file,
 but some emulators are known to be persnickety and balk.
 
+If you find this to be a problem, please file an issue as it is
+potentially correctable using `open_memstream()`, but hackerb9 does
+not see the need.
 
 ## Machine compatibility
 
@@ -166,21 +265,22 @@ M100 BASIC.)
 
 This program is written in
 [Flex](https://web.stanford.edu/class/archive/cs/cs143/cs143.1128/handouts/050%20Flex%20In%20A%20Nutshell.pdf),
-a lexical analyzer, because it made implementation trivial. It's mostly
-just a table of keywords and the corresponding byte they should emit.
-Flex handles special cases, like quoted strings and REMarks, easily.
+a lexical analyzer, because it made implementation trivial. The
+tokenizer itself, m100-tokenize, is mostly just a table of keywords
+and the corresponding byte they should emit. Flex handles special
+cases, like quoted strings and REMarks, easily.
 
 The downside is that one must have flex installed to _modify_ the
 tokenizer. Flex is _not_ necessary to compile and run as flex actually
-generates C code which can be compliled anywhere (see the file
-`lex.tokenize.c`). 
+generates portable C code. See the tokenize-cfiles.tar.gz in the
+github release or run `make cfiles`.
 
 ## Abnormal code
 
-The `tokenize` script always uses the m100-sanity program to
-clean up the source code, but one can run m100-tokenize directly
-to purposefully create abnormal, but valid, programs. These
-programs cannot be created on genuine hardware, but **will** run.
+The `tokenize` script always uses the m100-sanity program to clean up
+the source code, but one can run m100-tokenize directly to
+purposefully create abnormal, but valid, `.BA` files. These programs
+cannot be created on genuine hardware, but **will** run.
 
 Here is an extreme example.
 
@@ -243,13 +343,6 @@ which was created using m100-tokenizer.
 
 </details>
 
-takes care of automatically: sort line
-numbers and keep only the last line of any duplicates. This
-should be typically be used on any source code, hackerb9's
-m100-tokenize is able to generate tokenizations of degenerate
-BASIC programs.
-
-
 
 ## Miscellaneous notes
 
@@ -281,11 +374,11 @@ BASIC programs.
     portable computer and will cause others to crash badly, possibly
     losing files. To avoid this, some filename extensions are used:
 
-* `.100` An ASCII BASIC file that includes POKEs or CALLs specific
+  * `.100` An ASCII BASIC file that includes POKEs or CALLs specific
 	  to the Model 100/102.
-	* `.200` An ASCII BASIC file specific to the Tandy 200.
-	* `.BA1` A tokenized BASIC file specific to the Model 100/102.	
-	* `.BA2` A tokenized BASIC file specific to the Tandy 200.
+  * `.200` An ASCII BASIC file specific to the Tandy 200.
+  * `.BA1` A tokenized BASIC file specific to the Model 100/102.	
+  * `.BA2` A tokenized BASIC file specific to the Tandy 200.
   * The `.BA0` and `.NEC.BA` extension signify a tokenized BASIC file
     specific to the NEC portables. This is a different tokenization
     format than any of the above and is not yet supported.
@@ -295,28 +388,13 @@ BASIC programs.
   save "FOO", A
   ```
 
-* If the output is piped to another program, m100-tokenize will not
-  be able to rewind the stream to update the line pointers at the for
-  each line. In that case, the characters '**' are used which will
-  work fine on genuine Model 100 hardware. However, some emulators may
-  complain or refuse to load up the tokenized file. 
-
-## Decommenter
-
-As a bonus, a program called m100-decomment exists which tokenizes
-programs while also shrinking the output size by throwing away data.
-It removes the text of comments and extraneous whitespace. It could do
-more thorough packing (merging lines together, removing unnecessary
-lines), but I think it currently strikes a good balance of compression
-versus complexity.
-
 ## Testing
 
-Run `make test` to try out the tokenizer on some [sample Model 100
+Run `make check` to try out the tokenizer on some [sample Model 100
 programs](https://github.com/hackerb9/tokenize/tree/main/samples) and
 some strange ones designed specifically to exercise peculiar syntax.
 The program `bacmp` is used to compare the generated .BA file with one
-created on a actual Tandy 200.
+created on hackerb9's Tandy 200.
 
 Note that without m100-sanity, the SCRAMB.DO test, whose input is
 scrambled and redundant, would fail.
@@ -347,7 +425,7 @@ has followed suit.
 
 ## More information
 
-* The file format of tokenized BASIC in the Model 100/102 and Tandy 200: 
+* Hackerb9 has documented the file format of tokenized BASIC at
   http://fileformats.archiveteam.org/wiki/Tandy_200_BASIC_tokenized_file
 
 ## Alternatives
