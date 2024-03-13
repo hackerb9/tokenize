@@ -1,28 +1,34 @@
 # Where to install.
 prefix ?= /usr/local
 
-# By default, create m100-tokenize binary (implicitly compiled from .lex)
-all: m100-tokenize m100-decomment bacmp m100-jumps m100-crunch
+targets := m100-tokenize m100-decomment m100-jumps m100-crunch bacmp
+scripts := tokenize m100-sanity
 
-m100-tokenize.o: m100-tokenize-main.c
+# By default, create m100-tokenize and friends (implicitly compiled from .lex)
+all: $(targets)
 
 # Use 'make debug' to compile with debugging and catch pointer errors.
 debug : CFLAGS+=-g -fsanitize=address
 debug : LDLIBS+=-lasan
 debug : all
 
-# Automatically run flex to create .c files from .lex.
+# Rule to automatically run flex to create .c files from .lex.
 .SUFFIXES: .lex
 .lex.c:
 	flex -o $@ $<
 
 # Utility targets are "PHONY" so they'll run even if a file exists
 # with the same name.
-.PHONY: clean run test install
+.PHONY: install uninstall clean test check distcheck
 
-install: m100-tokenize m100-decomment m100-jumps m100-crunch
+install: ${targets}
 	cp -p $^ ${prefix}/bin/
-	cp -p tokenize ${prefix}/bin/
+	cp -p ${scripts} ${prefix}/bin/
+
+uninstall: 
+	for f in ${targets} ${scripts}; do \
+		rm ${prefix}/bin/$$f 2>/dev/null || true; \
+	done
 
 clean:
 	rm m100-tokenize m100-tokenize.c bacmp output *~ \
@@ -32,25 +38,32 @@ clean:
 	   rm core \
 					2>/dev/null || true
 
-run:	m100-tokenize
-	./m100-tokenize samples/M100LE.DO output.ba && hd output.ba | less
-
 test:	m100-tokenize bacmp
+	@echo "Testing m100-tokenize"
 	@for f in samples/*.BA; do \
 	    ./m100-sanity "$${f%.BA}.DO" | ./m100-tokenize >output.ba; \
-	    echo -n "$$f: "; \
-	    if ./bacmp output.ba "$$f"; then echo "(pass)"; fi; \
+	    echo -n "    $$f: "; \
+	    if ./bacmp output.ba "$$f"; then echo "(pass)"; fi \
 	done
 	@rm output.ba
 
-test-decomment:	m100-tokenize m100-decomment m100-jumps bacmp
-	@for f in samples-decomment/*.BA; do \
-	    jumps=$(./m100-sanity "$${f%.BA}.DO" | \
-		./m100-jumps) \
-	    ./m100-sanity "$${f%.BA}.DO" | \
-	        ./m100-decomment /dev/stdin /dev/stdout $jumps | \
-	        ./m100-tokenize >output.ba; \
-	    echo -n "$$f: "; \
-	    if ./bacmp output.ba "$$f"; then echo "(pass)"; fi; \
+test-decomment:	m100-decomment m100-jumps
+	@echo "Testing m100-decomment and m100-jumps"
+	@for f in samples/*-decommented.DO; do \
+	    src="$${f%-decommented.DO}.DO"; \
+	    ./m100-sanity "$$src" input.do; \
+	    jumps=`./m100-jumps input.do`; \
+	    ./m100-decomment input.do output.do $$jumps; \
+	    echo -n "    $$f: $$jumps:"; \
+	    if diff -q "$$f" output.do; then echo "(pass)"; else exit 1; fi; \
 	done
-	@rm output.ba
+	@rm input.do output.do
+
+# Check that the program is building and running correctly
+check: all test test-decomment
+
+# Check that the distribution will actually install, uninstall.
+distcheck: all
+	@echo Not implemented yet
+
+
