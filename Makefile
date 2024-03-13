@@ -1,11 +1,11 @@
 # Where to install.
 prefix ?= /usr/local
 
-targets := m100-tokenize m100-decomment m100-jumps m100-crunch bacmp
+targets := m100-tokenize m100-decomment m100-jumps m100-crunch
 scripts := tokenize m100-sanity
 
 # By default, create m100-tokenize and friends (implicitly compiled from .lex)
-all: $(targets)
+all: $(targets) bacmp
 
 # Use 'make debug' to compile with debugging and catch pointer errors.
 debug : CFLAGS+=-g -fsanitize=address
@@ -19,7 +19,7 @@ debug : all
 
 # Utility targets are "PHONY" so they'll run even if a file exists
 # with the same name.
-.PHONY: install uninstall clean test check distcheck
+.PHONY: install uninstall clean test check distcheck cfiles
 
 install: ${targets}
 	cp -p $^ ${prefix}/bin/
@@ -31,12 +31,12 @@ uninstall:
 	done
 
 clean:
-	rm m100-tokenize m100-tokenize.c bacmp output *~ \
-	   m100-decomment m100-decomment.c *.o \
-	   rm m100-crunch m100-crunch.c \
-	   rm m100-jumps m100-jumps.c *.o \
-	   rm core \
-					2>/dev/null || true
+	rm ${targets} \
+	   $(addsuffix .c, ${targets}) \
+	   bacmp \
+	   *.o *~ core \
+	   input.do output.do output.ba \
+						2>/dev/null || true
 
 test:	m100-tokenize bacmp
 	@echo "Testing m100-tokenize"
@@ -66,4 +66,6 @@ check: all test test-decomment
 distcheck: all
 	@echo Not implemented yet
 
-
+# Create the intermediate .c files from *.lex.
+# Maybe useful for copying to projects without requiring a dependency on flex.
+cfiles: $(addsuffix .c, ${targets})
