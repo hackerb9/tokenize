@@ -45,6 +45,9 @@ LINENUM		[0-9]+
     /* Replace 100 ' with 100 REM as it tokenizes to 1 instead of 2 bytes */
 ^[ \t]*[0-9]+[ \t:]*['][^\r\n]*  fprintf(yyout, "%d REM", atoi(yytext));
 
+    /* Replace 100 :REM with 100 REM */
+^[ \t]*[0-9]+[ \t:]*REM[^\r\n]*  fprintf(yyout, "%d REM", atoi(yytext));
+
     /* Remove redundant colon in  :'. */
 [ \t:]:[']			fprintf(yyout, "'"); 	
 
@@ -54,7 +57,8 @@ LINENUM		[0-9]+
     /* MAYBE Delete leading colons.  XXX this could remove a jump target!   */
   /*^[0-9]+[: \t]+		fprintf(yyout, "%d ", atoi(yytext));*/
 
-   /* Line numbers have a single space after them. */
+
+   /* Ensure line numbers have a single space after them. */
    /* Doesn't matter for tokenization, but standardizes the output */
 ^[ \t]*[0-9]+[ \t:]		fprintf(yyout, "%d ", atoi(yytext));
 
