@@ -123,7 +123,7 @@ Old file renamed to 'PROG.BA~'
 Certain programs should _usually_ be run to process the input before
 the final tokenization step, depending upon what is wanted.
 m100-sanity is strongly recommended. (See [Abnormal
-code](#Abnormal code) below.)
+code](#abnormal-code) below.)
 
 ``` mermaid
 flowchart LR;
