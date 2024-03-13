@@ -19,14 +19,14 @@ debug : all
 
 # Utility targets are "PHONY" so they'll run even if a file exists
 # with the same name.
-.PHONY: install uninstall clean test check distcheck cfiles
+.PHONY: install uninstall clean test check distcheck cfiles artifacts
 
-install: ${targets}
+install: ${targets} bacmp
 	cp -p $^ ${prefix}/bin/
 	cp -p ${scripts} ${prefix}/bin/
 
 uninstall: 
-	for f in ${targets} ${scripts}; do \
+	for f in ${targets} bacmp ${scripts}; do \
 		rm ${prefix}/bin/$$f 2>/dev/null || true; \
 	done
 
@@ -69,3 +69,7 @@ distcheck: all
 # Create the intermediate .c files from *.lex.
 # Maybe useful for copying to projects without requiring a dependency on flex.
 cfiles: $(addsuffix .c, ${targets})
+
+artifacts: all cfiles
+	tar -zcf linux-amd64.tar.gz ${targets} bacmp ${scripts}
+	tar -zcf cfiles.tar.gz $(addsuffix .c, ${targets}) m100-tokenize-main.c bacmp.c ${scripts}
