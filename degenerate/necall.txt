@@ -76,7 +76,7 @@ ERR         e0
 STRING$     e1
 USING       e2
 INSTR       e3
-           e4
+'           e4
 CSRLIN      e6
 OFF         e7
 DSKI$       e8
