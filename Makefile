@@ -34,6 +34,7 @@ clean:
 	rm ${targets} \
 	   $(addsuffix .c, ${targets}) \
 	   bacmp \
+	   *.tar.gz \
 	   *.o *~ core \
 	   input.do output.do output.ba \
 						2>/dev/null || true
@@ -70,6 +71,15 @@ distcheck: all
 # Maybe useful for copying to projects without requiring a dependency on flex.
 cfiles: $(addsuffix .c, ${targets})
 
+# Dirname so we can create tar files that unpack into a directory
+thisdir := $(notdir $(shell pwd))
+
 artifacts: all cfiles
-	tar -zcf linux-amd64.tar.gz ${targets} bacmp ${scripts}
-	tar -zcf cfiles.tar.gz $(addsuffix .c, ${targets}) m100-tokenize-main.c bacmp.c ${scripts}
+	tar -C .. -zcf ../source.tar.gz \
+		--exclude='*reference*' --exclude='.git*' --exclude='*.tar.gz' \
+		${thisdir}
+	mv ../source.tar.gz .
+	tar -C .. -zcf linux-amd64.tar.gz \
+		$(addprefix ${thisdir}/,  ${targets} bacmp ${scripts})
+	tar -C .. -zcf cfiles.tar.gz \
+		$(addprefix ${thisdir}/,  $(addsuffix .c, ${targets}) m100-tokenize-main.c bacmp.c ${scripts})
