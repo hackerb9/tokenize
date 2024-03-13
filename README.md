@@ -128,9 +128,8 @@ code](#abnormal-code) below.)
 ``` mermaid
 flowchart LR;
 m100-sanity ==> m100-tokenize
-m100-sanity ==> m100-jumps
-m100-jumps ==> m100-decomment
-m100-sanity ==> m100-decomment --> m100-crunch --> m100-tokenize
+m100-sanity ==> m100-jumps ==> m100-decomment
+m100-decomment --> m100-crunch --> m100-tokenize
 m100-decomment --> m100-tokenize
 ```
 
