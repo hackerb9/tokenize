@@ -75,11 +75,11 @@ cfiles: $(addsuffix .c, ${targets})
 thisdir := $(notdir $(shell pwd))
 
 artifacts: all cfiles
-	tar -C .. -zcf ../source.tar.gz \
+	tar -C .. -zcf ../tokenize-source.tar.gz \
 		--exclude='*reference*' --exclude='.git*' --exclude='*.tar.gz' \
 		${thisdir}
-	mv ../source.tar.gz .
-	tar -C .. -zcf linux-amd64.tar.gz \
+	mv ../tokenize-source.tar.gz .
+	tar -C .. -zcf tokenize-linux-amd64.tar.gz \
 		$(addprefix ${thisdir}/,  ${targets} bacmp ${scripts})
-	tar -C .. -zcf cfiles.tar.gz \
+	tar -C .. -zcf tokenize-cfiles.tar.gz \
 		$(addprefix ${thisdir}/,  $(addsuffix .c, ${targets}) m100-tokenize-main.c bacmp.c ${scripts})
