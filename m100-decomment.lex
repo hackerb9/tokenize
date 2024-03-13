@@ -60,25 +60,31 @@
 
 int main(int argc, char *argv[]) {
 
-  ++argv, --argc; 		/* skip over program name */
+    char *inputfile, *outputfile;
+    yyin = stdin; yyout = stdout;
 
-  /* First arg (if any) is input file name */
-  yyin = (argc>0) ? fopen( argv[0], "r" ) : stdin;
-  if (yyin == NULL) { perror(argv[0]); exit(1);  }
+    /* First arg (if any) is input file name */
+    if ( (argc>1) && strcmp(argv[1], "-")) {
+	inputfile=argv[1];
+	yyin = fopen( inputfile, "r" );
+	if (yyin == NULL) { perror(inputfile); exit(1);  }
+    }
 
-  /* Second arg (if any) is output file name */
-  ++argv, --argc;
-  yyout = (argc>0) ? fopen( argv[0], "w+" ) : stdout;
-  if (yyout == NULL) { perror(argv[0]); exit(1);  }
-  
-  while (argc>0) {
-      insert(jumps, atoi(argv[0]));
-      ++argv, --argc;
-  }
+    /* Second arg (if any) is output file name */
+    if ( (argc>2) && strcmp(argv[2], "-")) {
+	outputfile=argv[2];
+	yyout = fopen( outputfile, "w+" );
+	if (yyout == NULL) { perror(outputfile); exit(1);  }
+    }
 
-  while (yylex())
-    ;
-  return 0;
+    /* Remaining args are line numbers to keep (from m100-jumps.lex) */
+    for (int i=3; argc>i; i++) {
+	insert(jumps, atoi(argv[i]));
+    }
+
+    while (yylex())
+	;
+    return 0;
 }
 
 
