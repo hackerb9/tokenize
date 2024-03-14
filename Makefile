@@ -8,7 +8,7 @@ scripts := tokenize m100-sanity
 all: $(targets) bacmp
 
 # Use 'make debug' to compile with debugging and catch pointer errors.
-debug : CFLAGS+=-g -fsanitize=address
+debug : CFLAGS+=-g -fsanitize=address -Wall -Wno-unused-function
 debug : LDLIBS+=-lasan
 debug : all
 
