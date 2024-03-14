@@ -37,7 +37,7 @@ LINERANGE	{LINENUM}?[ \t]*-[ \t]*{LINENUM}?
     int parse_linelist(char *);
     int parse_linerange(char *);
     int parse_erl(char *);
-    int insert(int set[], int n);
+    void insert(int set[], int n);
     void print_set(int set[]);
     void print_intersection(int seta[], int setb[]);
 
@@ -50,10 +50,10 @@ LINERANGE	{LINENUM}?[ \t]*-[ \t]*{LINENUM}?
 
     /* Insert a number into the set, if it isn't already there. */
     /* Minor optimization: start at the end of the array since it is sorted. */
-    int insert(int set[], int n) {
+    void insert(int set[], int n) {
 	int i, len=set[0];
 	for (i=len; i>0; i--) {
-	    if (set[i] == n) return 0;
+	    if (set[i] == n) return;
 	    if (set[i] < n) break;
 	}
         i++;
