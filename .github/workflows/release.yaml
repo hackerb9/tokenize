@@ -6,22 +6,148 @@ on:
       - '*'
 
 jobs:
-  build_release:
+  create_release:
+    name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          draft: true
+          prerelease: false
+          generate_release_notes: false
+
+  build_release:
+    name: Build Release
+    needs: create_release
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            release_suffix: ubuntu
+          - os: macos-latest
+            release_suffix: mac
+          - os: windows-latest
+            release_suffix: windows
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Run Linux Build
+        if: matrix.os == 'ubuntu-latest'
+        run: echo "Ubuntu Latest" > release_ubuntu
+
+      - name: Run Mac Build
+        if: matrix.os == 'macos-latest'
+        run: echo "MacOS Latest" > release_mac
+        run: brew install flex
+        run: brew install gawk
+
+      - name: Run Windows Build
+        if: matrix.os == 'windows-latest'
+        run: echo "Windows Latest" > release_windows
+
       - name: Make
-        run: make 
+        run: make
       - name: Check
         run: make check
       - name: Create .tar.gz files
         run: make artifacts
+
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          tag_name: ${{ needs.create_release.outputs.tag-name }}
           files: |
             tokenize-source.tar.gz
             tokenize-cfiles.tar.gz
             tokenize-linux-amd64.tar.gz
+        with:
+          files: release_${{ matrix.release_suffix }}
+
+
+# jobs:
+#   build_release:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+#       - name: Make
+#         run: make
+#       - name: Check
+#         run: make check
+#       - name: Create .tar.gz files
+#         run: make artifacts
+#       - name: Release
+#         uses: softprops/action-gh-release@v2
+#         if: startsWith(github.ref, 'refs/tags/')
+#         with:
+#           files: |
+#             tokenize-source.tar.gz
+#             tokenize-cfiles.tar.gz
+#             tokenize-linux-amd64.tar.gz
+
+
+
+
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create_release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: false
+
+  build_release:
+    name: Build Release
+    needs: create_release
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            release_suffix: ubuntu
+          - os: macos-latest
+            release_suffix: mac
+          - os: windows-latest
+            release_suffix: windows
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Linux Build
+        if: matrix.os == 'ubuntu-latest'
+        run: echo "Ubuntu Latest" > release_ubuntu
+
+      - name: Run Mac Build
+        if: matrix.os == 'macos-latest'
+        run: echo "MacOS Latest" > release_mac
+
+      - name: Run Windows Build
+        if: matrix.os == 'windows-latest'
+        run: echo "Windows Latest" > release_windows
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.create_release.outputs.tag-name }}
+          files: release_${{ matrix.release_suffix }}
