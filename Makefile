@@ -16,14 +16,13 @@ debug : LDLIBS+=-lasan
 debug : all
 
 flex := flex
-ifeq ($(shell uname), Windows)
+ifeq (${OS},Windows_NT)
 	flex := win_flex
 endif
 
 # Rule to automatically run flex to create .c files from .lex.
 .SUFFIXES: .lex
 .lex.c:
-	echo "Output of uname is >"$(shell uname)"<"
 	$(flex) -o $@ $<
 
 # Utility targets are "PHONY" so they'll run even if a file exists
