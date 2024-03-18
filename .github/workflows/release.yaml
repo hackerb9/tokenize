@@ -58,7 +58,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           echo "Windows Latest" > release_windows
-          choco install winflexbison
+          choco install winflexbison -y
           make
           make check
           make artifacts
