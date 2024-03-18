@@ -115,15 +115,22 @@ test-m100-crunch: m100-crunch
 # Maybe useful for copying to projects without requiring a dependency on flex.
 cfiles: $(addsuffix .c, ${targets})
 
-# Dirname so we can create tar files that unpack into a directory
+
+####
+# thisdir, used to create tar files that unpack into a directory
 thisdir := $(notdir $(shell pwd))
+xform := --xform "s%^%${thisdir}/%"
+# platform, specify the machine os and architecture in the .tar.gz filename
+platform := $(shell uname -s)-$(shell uname -m)
 
 artifacts: all cfiles
 	tar -C .. -zcf ../tokenize-source.tar.gz \
 		--exclude='*reference*' --exclude='.git*' --exclude='*.tar.gz' \
 		${thisdir}
 	mv ../tokenize-source.tar.gz .
-	tar -C .. -zcf tokenize-linux-amd64.tar.gz \
-		$(addprefix ${thisdir}/,  ${targets} bacmp ${scripts})
-	tar -C .. -zcf tokenize-cfiles.tar.gz \
-		$(addprefix ${thisdir}/,  $(addsuffix .c, ${targets}) m100-tokenize-main.c bacmp.c ${scripts})
+	tar ${xform} -acf tokenize-${platform}.tar.gz \
+		${targets} ${scripts} bacmp
+	tar ${xform} -acf tokenize-cfiles.tar.gz \
+		$(addsuffix .c, ${targets}) \
+		m100-tokenize-main.c bacmp.c \
+		${scripts}
