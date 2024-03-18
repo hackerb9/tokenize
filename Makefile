@@ -116,7 +116,17 @@ test-m100-crunch: m100-crunch
 cfiles: $(addsuffix .c, ${targets})
 
 
-####
+################################################################
+# Machine dependent jank
+
+# GNU tar lets us easily store files into a subdirectory in the archive.
+# Unfortunately, MacOS is recalcitrant.
+UNAME := $(shell uname)
+ifeq ($(UNAME), Darwin)
+        export PATH := /usr/local/opt/gawk/libexec/gnubin:$(PATH)
+        export PATH := /usr/local/opt/gnu-tar/libexec/gnubin:$(PATH)
+endif
+
 # thisdir, used to create tar files that unpack into a directory
 thisdir := $(notdir $(shell pwd))
 xform := --xform "s%^%${thisdir}/%"
