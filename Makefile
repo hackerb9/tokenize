@@ -1,3 +1,6 @@
+# Use bash syntax for all shell commands
+SHELL := /bin/bash
+
 # Where to install.
 prefix ?= /usr/local
 
