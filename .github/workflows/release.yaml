@@ -39,25 +39,28 @@ jobs:
 
       - name: Run Linux Build
         if: matrix.os == 'ubuntu-latest'
-        run: echo "Ubuntu Latest" > release_ubuntu
+        run: |
+          echo "Ubuntu Latest" > release_ubuntu
+          make
+          make check
+          make artifacts
 
       - name: Run Mac Build
         if: matrix.os == 'macos-latest'
         run: |
           echo "MacOS Latest" > release_mac
-          brew install flex
           brew install gawk
+          make
+          make check
+          make artifacts
 
       - name: Run Windows Build
         if: matrix.os == 'windows-latest'
-        run: echo "Windows Latest" > release_windows
-
-      - name: Make
-        run: make
-      - name: Check
-        run: make check
-      - name: Create .tar.gz files
-        run: make artifacts
+        run: |
+          echo "Windows Latest" > release_windows
+          make
+          make check
+          make artifacts
 
       - name: Release
         uses: softprops/action-gh-release@v2
