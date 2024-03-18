@@ -68,9 +68,7 @@ jobs:
             tokenize-source.tar.gz
             tokenize-cfiles.tar.gz
             tokenize-linux-amd64.tar.gz
-        with:
-          files: release_${{ matrix.release_suffix }}
-
+            release_${{ matrix.release_suffix }}
 
 # jobs:
 #   build_release:
