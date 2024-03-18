@@ -15,10 +15,15 @@ debug : CFLAGS+=-g -fsanitize=address -Wall -Wno-unused-function
 debug : LDLIBS+=-lasan
 debug : all
 
+flex := flex
+ifeq ($(shell uname), Windows)
+	flex := win_flex
+endif
+
 # Rule to automatically run flex to create .c files from .lex.
 .SUFFIXES: .lex
 .lex.c:
-	flex -o $@ $<
+	$(flex) -o $@ $<
 
 # Utility targets are "PHONY" so they'll run even if a file exists
 # with the same name.
