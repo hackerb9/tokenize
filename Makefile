@@ -5,7 +5,6 @@ $(info ${SHELL})
 $(info ${PATH})
 $(info $(shell which gcc))
 $(info $(shell which cc))
-CC="cc"
 
 # Where to install.
 prefix ?= /usr/local
@@ -23,7 +22,7 @@ debug : all
 
 flex := flex
 ifeq (${OS},Windows_NT)
-	PATH := ${PATH}:"/c/Program Files/Git/usr/bin"
+	export PATH := ${PATH}:"/c/Program Files/Git/usr/bin"
 	$(info which ${CC})
 	flex := win_flex
 endif
