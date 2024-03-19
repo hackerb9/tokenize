@@ -1,6 +1,11 @@
 # Use bash syntax for all shell commands
 SHELL := /bin/bash
 
+$(info ${SHELL})
+$(info ${PATH})
+$(info "$$PATH")
+
+
 # Where to install.
 prefix ?= /usr/local
 
