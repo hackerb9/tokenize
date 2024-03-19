@@ -22,8 +22,8 @@ debug : all
 
 flex := flex
 ifeq (${OS},Windows_NT)
-	export PATH := ${PATH}:"/c/Program Files/Git/usr/bin"
-	$(info $(shell which ${CC}))
+	export PATH := ${PATH}:"C:/Program Files/Git/usr/bin"
+	$(info $(shell which cc))
 	flex := win_flex
 endif
 
