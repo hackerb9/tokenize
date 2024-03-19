@@ -24,6 +24,7 @@ endif
 .SUFFIXES: .lex
 .lex.c:
 	$(flex) -o $@ $<
+	ls -lctr
 
 # Utility targets are "PHONY" so they'll run even if a file exists
 # with the same name.
@@ -46,7 +47,6 @@ clean:
 	   *.o *~ core \
 	   input.do output.do output.ba \
 						2>/dev/null || true
-
 # Check that the program is building and running correctly
 check: all test-m100-tokenize test-m100-decomment test-m100-crunch  test-tokenize-script
 
