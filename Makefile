@@ -23,7 +23,8 @@ debug : all
 
 flex := flex
 ifeq (${OS},Windows_NT)
-	PATH := ${PATH}:/Program Files/Git/usr/bin
+	PATH := ${PATH}:"/c/Program Files/Git/usr/bin"
+	$(info which ${CC})
 	flex := win_flex
 endif
 
