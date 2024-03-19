@@ -2,8 +2,9 @@
 export SHELL := /bin/bash
 
 $(info ${SHELL})
-$(info $(shell type gcc))
-$(info $(shell type cc))
+$(info ${PATH})
+$(info $(shell which gcc))
+$(info $(shell which cc))
 CC="cc"
 
 # Where to install.
@@ -22,6 +23,7 @@ debug : all
 
 flex := flex
 ifeq (${OS},Windows_NT)
+	PATH := ${PATH}:/Program Files/Git/usr/bin
 	flex := win_flex
 endif
 
