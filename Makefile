@@ -2,8 +2,9 @@
 export SHELL := /bin/bash
 
 $(info ${SHELL})
-$(info $(shell type -a cc))
-#CC=gcc
+$(info $(shell type gcc))
+$(info $(shell type cc))
+CC="cc"
 
 # Where to install.
 prefix ?= /usr/local
