@@ -2,9 +2,8 @@
 SHELL := /bin/bash
 
 $(info ${SHELL})
-$(info ${PATH})
-$(info "$$PATH")
-
+$(info $(shell type -a cc))
+CC=gcc
 
 # Where to install.
 prefix ?= /usr/local
@@ -29,7 +28,6 @@ endif
 .SUFFIXES: .lex
 .lex.c:
 	$(flex) -o $@ $<
-	ls -lctr
 
 # Utility targets are "PHONY" so they'll run even if a file exists
 # with the same name.
