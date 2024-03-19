@@ -1,9 +1,9 @@
 # Use bash syntax for all shell commands
-SHELL := /bin/bash
+export SHELL := /bin/bash
 
 $(info ${SHELL})
 $(info $(shell type -a cc))
-CC=gcc
+#CC=gcc
 
 # Where to install.
 prefix ?= /usr/local
