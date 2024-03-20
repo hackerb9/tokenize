@@ -42,7 +42,6 @@ jobs:
       - name: Run Linux Build
         if: matrix.os == 'ubuntu-latest'
         run: |
-          echo "Ubuntu Latest" > release_ubuntu
           make
           make check
           make artifacts
@@ -50,7 +49,6 @@ jobs:
       - name: Run Mac Build
         if: matrix.os == 'macos-latest'
         run: |
-          echo "MacOS Latest" > release_mac
           brew install gawk
           make
           make check
@@ -59,21 +57,19 @@ jobs:
       - name: Run Windows Build
         if: matrix.os == 'windows-latest'
         run: |
-          echo "Windows Latest" > release_windows
           choco install winflexbison -y
           make
           make check
           make artifacts
 
-      - name: 'Get Previous tag'
-        id: previous_tag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-        with:
-          fallback: 0.0.0
+      # - name: 'Get Previous tag'
+      #   id: previous_tag
+      #   uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      #   with:
+      #     fallback: 0.0.0
 
       - name: Release
         uses: softprops/action-gh-release@v2
-#        if: startsWith(github.ref, 'refs/tags/')
         with:
           tag_name: draftbuild
 #          tag_name: ${{ steps.previous_tag.outputs.tag }}
