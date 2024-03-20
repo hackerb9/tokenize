@@ -62,6 +62,7 @@ jobs:
           make check
           make artifacts
 
+#
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
