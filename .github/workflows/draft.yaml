@@ -1,0 +1,83 @@
+name: release
+# Mostly from https://jon.sprig.gs/blog/post/2442
+
+on:
+  push:
+#    tags:
+#      - '*'
+
+jobs:
+  create_release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          draft: true
+          prerelease: false
+          generate_release_notes: false
+
+  build_release:
+    name: Build Release
+    needs: create_release
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            release_suffix: ubuntu
+          - os: macos-latest
+            release_suffix: mac
+          - os: windows-latest
+            release_suffix: windows
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Linux Build
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          echo "Ubuntu Latest" > release_ubuntu
+          make
+          make check
+          make artifacts
+
+      - name: Run Mac Build
+        if: matrix.os == 'macos-latest'
+        run: |
+          echo "MacOS Latest" > release_mac
+          brew install gawk
+          make
+          make check
+          make artifacts
+
+      - name: Run Windows Build
+        if: matrix.os == 'windows-latest'
+        run: |
+          echo "Windows Latest" > release_windows
+          choco install winflexbison -y
+          make
+          make check
+          make artifacts
+
+      - name: 'Get Previous tag'
+        id: previous_tag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        with:
+          fallback: 0.0.0
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+
+          tag_name: ${{ steps.previous_tag.outputs.tag }}
+          files: |
+            tokenize-*.tar.gz
+            release_${{ matrix.release_suffix }}
+
