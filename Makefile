@@ -1,11 +1,6 @@
 # Use bash syntax for all shell commands
 export SHELL := /bin/bash
 
-$(info ${SHELL})
-$(info ${PATH})
-$(info $(shell which gcc))
-$(info $(shell which cc))
-
 # Where to install.
 prefix ?= /usr/local
 
@@ -19,13 +14,6 @@ all: $(targets) bacmp
 debug : CFLAGS+=-g -fsanitize=address -Wall -Wno-unused-function
 debug : LDLIBS+=-lasan
 debug : all
-
-flex := flex
-ifeq (${OS},Windows_NT)
-	export PATH := ${PATH}:"C:/Program Files/Git/usr/bin"
-	$(info $(shell which cc))
-	flex := win_flex
-endif
 
 # Rule to automatically run flex to create .c files from .lex.
 .SUFFIXES: .lex
@@ -129,6 +117,12 @@ cfiles: $(addsuffix .c, ${targets})
 
 ################################################################
 # Machine dependent jank
+
+flex := flex
+ifeq (${OS},Windows_NT)
+	flex := win_flex
+	CC := gcc
+endif
 
 # GNU tar lets us easily store files into a subdirectory in the archive.
 # Unfortunately, MacOS is recalcitrant.
