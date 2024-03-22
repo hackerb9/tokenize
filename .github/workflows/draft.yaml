@@ -62,6 +62,10 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: softprops/action-gh-release@v2
         with:
+          name: draftbuild
+          draft: true
+          prerelease: false
+          generate_release_notes: false
           files: |
             tokenize.tar.gz
             cfiles.tar.gz
