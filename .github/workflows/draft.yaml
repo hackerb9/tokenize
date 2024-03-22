@@ -1,16 +1,14 @@
 name: draft
 # Mostly from https://jon.sprig.gs/blog/post/2442
+# Create a draft release on every push.
 
 on:
   push:
-#    tags:
-#      - '*'
 
 jobs:
 
   build_release:
     name: Build Release
-#    needs: create_release
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -50,7 +48,6 @@ jobs:
           make check
           make artifacts
 
-#
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
