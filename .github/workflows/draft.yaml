@@ -25,21 +25,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Mac Build
+      - name: Setup Mac build environment
         if: matrix.os == 'macos-latest'
         run: |
           brew install gawk
 
-      - name: Run Windows Build
+      - name: Setup Windows build environment
         if: matrix.os == 'windows-latest'
         run: |
           choco install winflexbison -y
 
       - name: Compile, verify, and create archives
         run: |
-          make
-          make check
-          make artifacts
+          make check artifacts
 
       - name: Machine dependent file upload
         uses: softprops/action-gh-release@v2
