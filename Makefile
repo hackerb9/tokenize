@@ -8,7 +8,7 @@ targets := m100-tokenize m100-decomment m100-jumps m100-crunch
 scripts := tokenize m100-sanity
 
 # By default, create m100-tokenize and friends (implicitly compiled from .lex)
-all: $(targets) bacmp
+all: ${targets} bacmp
 
 # Use 'make debug' to compile with debugging and catch pointer errors.
 debug : CFLAGS+=-g -fsanitize=address -Wall -Wno-unused-function
@@ -18,11 +18,11 @@ debug : all
 # Rule to automatically run flex to create .c files from .lex.
 .SUFFIXES: .lex
 .lex.c:
-	$(flex) -o $@ $<
+	${flex} -o $@ $<
 
 # Utility targets are "PHONY" so they'll run even if a file exists
 # with the same name.
-.PHONY: install uninstall clean test check distcheck cfiles artifacts
+.PHONY: all install uninstall clean test check distcheck artifacts
 
 install: ${targets} bacmp
 	cp -p $^ ${prefix}/bin/
@@ -110,13 +110,8 @@ test-m100-crunch: m100-crunch
 	done
 
 
-# Create the intermediate .c files from *.lex.
-# Maybe useful for copying to projects without requiring a dependency on flex.
-cfiles: $(addsuffix .c, ${targets})
-
-
 ################################################################
-# Machine dependent jank
+# Everything that follows is for creating the archive files 
 
 flex := flex
 ifeq (${OS},Windows_NT)
@@ -132,20 +127,34 @@ ifeq ($(UNAME), Darwin)
         export PATH := /usr/local/opt/gnu-tar/libexec/gnubin:$(PATH)
 endif
 
-# thisdir, used to create tar files that unpack into a directory
+# thisdir and xform are used to create tar files that unpack into a directory
 thisdir := $(notdir $(shell pwd))
 xform := --xform "s%^%${thisdir}/%"
+
 # platform, specify the machine os and architecture in the .tar.gz filename
 platform := $(shell uname -s)-$(shell uname -m)
 
-artifacts: all cfiles
-	tar -C .. -zcf ../tokenize-source.tar.gz \
+# The intermediate .c files from *.lex.
+cfiles=$(addsuffix .c, ${targets})
+cfiles: ${cfiles}
+
+# Create all tar files. 
+artifacts: tokenize.tar.gz tokenize-${platform}.tar.gz tokenize-cfiles.tar.gz
+
+# Entire project archive.
+tokenize.tar.gz: ${targets} ${cfiles}
+	tar -C .. -zcf ../$@ \
 		--exclude='*reference*' --exclude='.git*' --exclude='*.tar.gz' \
 		${thisdir}
-	mv ../tokenize-source.tar.gz .
-	tar ${xform} -acf tokenize-${platform}.tar.gz \
+	mv ../$@ .
+
+# Executable binaries for a specific platform
+tokenize-${platform}.tar.gz: ${targets} bacmp
+	tar ${xform} -acf $@ \
 		${targets} ${scripts} bacmp
-	tar ${xform} -acf tokenize-cfiles.tar.gz \
-		$(addsuffix .c, ${targets}) \
-		m100-tokenize-main.c bacmp.c \
-		${scripts}
+
+# Just the code needed to compile without flex 
+tokenize-cfiles.tar.gz: ${cfiles}
+	tar ${xform} -acf $@ \
+		${cfiles} m100-tokenize-main.c bacmp.c ${scripts} Makefile
+
