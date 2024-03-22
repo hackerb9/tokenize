@@ -15,7 +15,7 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          name: ${{ github.ref_name }}
+          name: draftbuild
           draft: true
           prerelease: false
           generate_release_notes: false
@@ -66,6 +66,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
+          draft: true
           tag_name: draftbuild
           files: |
             tokenize-*.tar.gz
