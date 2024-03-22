@@ -139,7 +139,7 @@ cfiles=$(addsuffix .c, ${targets})
 cfiles: ${cfiles}
 
 # Create all tar files. 
-artifacts: tokenize.tar.gz tokenize-${platform}.tar.gz tokenize-cfiles.tar.gz
+artifacts: tokenize.tar.gz bin-${platform}.tar.gz cfiles.tar.gz
 
 # Entire project archive.
 tokenize.tar.gz: ${targets} ${cfiles}
@@ -148,13 +148,12 @@ tokenize.tar.gz: ${targets} ${cfiles}
 		${thisdir}
 	mv ../$@ .
 
-# Executable binaries for a specific platform
-tokenize-${platform}.tar.gz: ${targets} bacmp
-	tar ${xform} -acf $@ \
-		${targets} ${scripts} bacmp
+# Executable binaries for a specific platform.
+bin-${platform}.tar.gz: ${targets} ${scripts} bacmp
+	tar ${xform} -acf $@ $^
 
-# Just the code needed to compile without flex 
-tokenize-cfiles.tar.gz: ${cfiles}
-	tar ${xform} -acf $@ \
-		${cfiles} m100-tokenize-main.c bacmp.c ${scripts} Makefile
+# Just the code needed to compile without flex. 
+cfiles.tar.gz: ${cfiles} m100-tokenize-main.c bacmp.c ${scripts} Makefile
+	tar ${xform} -acf $@ $^
 
+# Reminder to self: $@ is target, $^ is all prerequisites, $< is 1st prereq.
