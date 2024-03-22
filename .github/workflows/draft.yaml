@@ -25,25 +25,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Linux Build
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          make
-          make check
-          make artifacts
-
       - name: Run Mac Build
         if: matrix.os == 'macos-latest'
         run: |
           brew install gawk
-          make
-          make check
-          make artifacts
 
       - name: Run Windows Build
         if: matrix.os == 'windows-latest'
         run: |
           choco install winflexbison -y
+
+      - name: Compile, verify, and create archives
+        run: |
           make
           make check
           make artifacts
@@ -58,7 +51,7 @@ jobs:
           files: |
             bin-*.tar.gz
 
-      - name: Release file upload
+      - name: Source code upload
         if: matrix.os == 'ubuntu-latest'
         uses: softprops/action-gh-release@v2
         with:
