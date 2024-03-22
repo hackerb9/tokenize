@@ -51,7 +51,6 @@ jobs:
       - name: Machine dependent file upload
         uses: softprops/action-gh-release@v2
         with:
-          name: draftbuild
           draft: true
           prerelease: false
           generate_release_notes: false
@@ -62,7 +61,6 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: softprops/action-gh-release@v2
         with:
-          name: draftbuild
           draft: true
           prerelease: false
           generate_release_notes: false
