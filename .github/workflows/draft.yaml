@@ -51,9 +51,9 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: draftbuild
           draft: true
           prerelease: false
           generate_release_notes: false
           files: |
+            tokenize.tar.gz
             tokenize-*.tar.gz
