@@ -4,29 +4,60 @@ name: release
 on:
   push:
     tags:
-      - '*'
+      - 'v*.*'
 
 jobs:
+
   build_release:
-    runs-on: ubuntu-latest
+    name: Build Release
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            release_suffix: ubuntu
+          - os: macos-latest
+            release_suffix: mac
+          - os: windows-latest
+            release_suffix: windows
+    runs-on: ${{ matrix.os }}
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
-      - name: Make
-        run: make
-      - name: Check
-        run: make check
-      - name: Create .tar.gz files
-        run: make artifacts
-      - name: Release
+
+      - name: Setup Mac build environment
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install gawk
+
+      - name: Setup Windows build environment
+        if: matrix.os == 'windows-latest'
+        run: |
+          choco install winflexbison -y
+
+      - name: Compile, verify, and create archives
+        run: |
+          make check artifacts
+
+      - name: Machine dependent file upload
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
         with:
+          name: release
+          draft: false
+          prerelease: false
+          generate_release_notes: false
           files: |
-            tokenize-source.tar.gz
-            tokenize-cfiles.tar.gz
-            tokenize-linux-amd64.tar.gz
+            bin-*.tar.gz
 
-
-
-
+      - name: Source code upload
+        if: matrix.os == 'ubuntu-latest'
+        uses: softprops/action-gh-release@v2
+        with:
+          name: release
+          draft: false
+          prerelease: false
+          generate_release_notes: false
+          files: |
+            tokenize.tar.gz
+            cfiles.tar.gz
