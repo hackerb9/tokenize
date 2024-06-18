@@ -35,11 +35,6 @@ jobs:
         run: |
           choco install winflexbison -y
 
-- name: Add Msys64 to PATH for cc command
-        if: matrix.os == 'windows-latest'
-        run: echo "::add-path::/c/msys64/mingw64/bin:/c/msys64/usr/bin"
-        shell: bash
-
       - name: Compile, verify, and create archives
         run: |
           make check artifacts
