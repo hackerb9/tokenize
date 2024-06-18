@@ -116,7 +116,6 @@ test-m100-crunch: m100-crunch
 flex := flex
 ifeq (${OS},Windows_NT)
 	flex := win_flex
-	CC := gcc
 endif
 
 # GNU tar lets us easily store files into a subdirectory in the archive.
