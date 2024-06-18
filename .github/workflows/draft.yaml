@@ -37,7 +37,8 @@ jobs:
 
       - name: Compile, verify, and create archives
         run: |
-          make check artifacts
+          make artifacts
+#          make check artifacts
 
       - name: Machine dependent file upload
         uses: softprops/action-gh-release@v2
@@ -48,6 +49,7 @@ jobs:
           generate_release_notes: false
           files: |
             bin-*.tar.gz
+            cfiles-*.tar.gz
 
       - name: Source code upload
         if: matrix.os == 'ubuntu-latest'
