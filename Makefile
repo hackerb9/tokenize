@@ -22,7 +22,7 @@ debug : all
 
 # Utility targets are "PHONY" so they'll run even if a file exists
 # with the same name.
-.PHONY: all install uninstall clean test check distcheck artifacts cfiles-${platform}
+.PHONY: all install uninstall clean test check distcheck artifacts cfiles
 
 install: ${targets} bacmp
 	cp -p $^ ${prefix}/bin/
@@ -153,7 +153,8 @@ bin-${platform}.tar.gz: ${targets} ${scripts} bacmp
 	tar ${xform} -acf $@ $^
 
 # Just the code needed to compile without flex. 
-cfiles-${platform}.tar.gz: ${cfiles} m100-tokenize-main.c bacmp.c ${scripts} Makefile
+cfiles.tar.gz: ${cfiles} cfiles-${platform}.tar.gz
+cfiles-${platform}.tar.gz: m100-tokenize-main.c bacmp.c ${scripts} Makefile
 	tar ${xform} -acf $@ $^
 
 # Reminder to self: $@ is target, $^ is all prerequisites, $< is 1st prereq.
