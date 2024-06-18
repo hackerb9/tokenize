@@ -22,7 +22,7 @@ debug : all
 
 # Utility targets are "PHONY" so they'll run even if a file exists
 # with the same name.
-.PHONY: all install uninstall clean test check distcheck artifacts cfiles
+.PHONY: all install uninstall clean test check distcheck artifacts cfiles-${platform}
 
 install: ${targets} bacmp
 	cp -p $^ ${prefix}/bin/
