@@ -125,6 +125,9 @@ UNAME := $(shell uname)
 ifeq ($(UNAME), Darwin)
         export PATH := /usr/local/opt/gawk/libexec/gnubin:$(PATH)
         export PATH := /usr/local/opt/gnu-tar/libexec/gnubin:$(PATH)
+	tar := gtar
+else
+	tar := tar
 endif
 
 # thisdir and xform are used to create tar files that unpack into a directory
@@ -143,18 +146,18 @@ artifacts: tokenize.tar.gz bin-${platform}.tar.gz cfiles.tar.gz
 
 # Entire project archive.
 tokenize.tar.gz: ${targets} ${cfiles}
-	tar -C .. -zcf ../$@ \
+	${tar} -C .. -zcf ../$@ \
 		--exclude='*reference*' --exclude='.git*' --exclude='*.tar.gz' \
 		${thisdir}
 	mv ../$@ .
 
 # Executable binaries for a specific platform.
 bin-${platform}.tar.gz: ${targets} ${scripts} bacmp
-	tar ${xform} -acf $@ $^
+	${tar} ${xform} -acf $@ $^
 
 # Just the code needed to compile without flex. 
 cfiles.tar.gz: ${cfiles} cfiles-${platform}.tar.gz
 cfiles-${platform}.tar.gz: m100-tokenize-main.c bacmp.c ${scripts} Makefile
-	tar ${xform} -acf $@ $^
+	${tar} ${xform} -acf $@ $^
 
 # Reminder to self: $@ is target, $^ is all prerequisites, $< is 1st prereq.
