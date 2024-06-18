@@ -37,8 +37,7 @@ jobs:
 
       - name: Compile, verify, and create archives
         run: |
-          make artifacts
-#          make check artifacts
+          make check artifacts
 
       - name: Machine dependent file upload
         uses: softprops/action-gh-release@v2
