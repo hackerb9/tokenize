@@ -123,8 +123,6 @@ endif
 # Unfortunately, MacOS is recalcitrant.
 UNAME := $(shell uname)
 ifeq ($(UNAME), Darwin)
-        export PATH := /usr/local/opt/gawk/libexec/gnubin:$(PATH)
-        export PATH := /usr/local/opt/gnu-tar/libexec/gnubin:$(PATH)
 	tar := gtar
 else
 	tar := tar
