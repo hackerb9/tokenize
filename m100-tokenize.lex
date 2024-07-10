@@ -11,6 +11,8 @@
 /* Define states that simply copy text instead of lexing */  
 %x string
 %x remark
+%x data
+%x datastring
 
   /* Functions defined in m100-tokenize-main.c */
   int yyput(uint8_t);		/* putchar, but for yyout instead of stdout. */
@@ -34,8 +36,14 @@
 \"		yyput('"'); BEGIN(string);
 <string>\"	yyput('"'); BEGIN(INITIAL);
 
-   /* Newline matches <string> and <remark> start conditions. */
+<data>\"	yyput('"'); BEGIN(datastring);
+<datastring>\"	yyput('"'); BEGIN(data);
+
+   /* Newline ends <string>, <remark>, <data>, and <datastring> conditions. */
 <*>\r?\n		yyput('\0'); BEGIN(INITIAL);
+
+   /* DATA statements can be ended with a colon (if not quoted as a string) */
+<data>:			yyput(':'); BEGIN(INITIAL);
 
 <<EOF>>	{
     (lastput == '\0') || yyput('\0'); /* Handle EOF without preceding newline */
@@ -46,7 +54,7 @@
 END		yyput(128);
 FOR		yyput(129);
 NEXT		yyput(130);
-DATA		yyput(131);
+DATA		yyput(131); BEGIN(data);
 INPUT		yyput(132);
 DIM		yyput(133);
 READ		yyput(134);
