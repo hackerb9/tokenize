@@ -23,9 +23,12 @@
  */
 
 %option warn
+%option case-insensitive
 
 %x string
 %x remark
+%x data
+%x datastring
 
 LINENUM		[0-9]+
 LINELIST	([ \t,]*{LINENUM})+
@@ -70,12 +73,17 @@ LINERANGE	{LINENUM}?[ \t]*-[ \t]*{LINENUM}?
     BEGIN(remark);
 }
 
-  /* Skip over remset and strings  */
+  /* Skip over remarks, strings, and data statements  */
 (REM|\')	BEGIN(remark);
 \"		BEGIN(string);
 <string>\"      BEGIN(INITIAL);
 
-   /* Newline ends <string> and <remark> conditions. */
+DATA		BEGIN(data);
+<data>\"	BEGIN(datastring);
+<datastring>\"	BEGIN(data);
+<data>:		BEGIN(INITIAL);
+
+   /* Newline ends <string>, <remark>, and <data> conditions. */
 <*>\r?\n	BEGIN(INITIAL);
 
 
