@@ -1,11 +1,12 @@
 1 ' Test for m100-jumps.lex which 
 2 ' emits all lines which are targets
 3 ' of GOTO or similar commands.
-4 ' Line numbers <500 should be printed.                  >= 500 should not.
-5 ' 
-6 ' When testing m100-decommenter, 
-7 ' lines 500--1000 will be removed.
-8 '
+4 '
+5 ' Line numbers <500 should be printed.                  >= 500 should not.
+6 ' 
+7 ' When testing m100-decommenter, 
+8 ' lines 500--1000 will be removed.
+9 '
 10 REM ERL Equals
 20 REM ERL Less than
 30 REM ERL Less than or equal to
@@ -23,7 +24,8 @@
 150 REM ALL CATS ARE GREY
 160 REM RUN 160
 170 REM GOSUB 170
-180 REM ON A GO TO 1,2,3, 180, 4,5,6,7,8,9
+180 REM ON A GO TO 1,2,3, 180, 4,5,6
+190 REM ON COM GOSUB 1,2,3, 190, 7,8,9
 500 ' 
 510 REM DATA GOTO 510
 520 REM DATA "GOTO 520"
@@ -45,7 +47,8 @@
 1150 GOTO 150
 1160 RUN 160
 1170 GOSUB 170
-1170 ON A GO TO 1,2,3, 180, 4,5,6,7,8,9
+1180 ON A GO TO 1,2,3, 180, 4,5,6
+1190 ON COM GOSUB 1,2,3, 190, 7,8,9
 1500 '
 1510 DATA GOTO 510
 1520 DATA "GOTO 520"
