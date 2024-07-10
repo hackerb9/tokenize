@@ -6,7 +6,10 @@
  *			gcc lex.tokenize.c
  */
 
+  #include <ctype.h>		/* For toupper() */
+
 %option prefix="tokenize"
+%option case-insensitive
 
 /* Define states that simply copy text instead of lexing */  
 %x string
@@ -51,6 +54,7 @@
     yyterminate();
   }
 
+  /* Table of tokens, case-insensitive due to %option above. */
 END		yyput(128);
 FOR		yyput(129);
 NEXT		yyput(130);
@@ -180,6 +184,17 @@ ASC		yyput(249);
 "RIGHT$"	yyput(253);
 "MID$"		yyput(254);
 "'"		yyput(':'); yyput(0x8E); yyput(0xFF); BEGIN(remark);
+
+
+   /* Anything not yet matched is a variable name, so capitalize it. */
+<INITIAL>.	{
+    char *yptr = yytext;
+    while ( *yptr )
+       yyput( toupper( *yptr++ ) );
+}
+
+
+
 
 %%
 
