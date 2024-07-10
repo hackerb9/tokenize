@@ -33,7 +33,7 @@ jobs:
       - name: Setup Windows build environment
         if: matrix.os == 'windows-latest'
         run: |
-          choco install winflexbison -y
+          choco install -y winflexbison
 
       - name: Compile, verify, and create archives
         run: |
