@@ -96,17 +96,17 @@ function output_name() {
 
     # If original filename was ALL CAPS, then keep it so on output  
     if [[ $(basename "${f@U}") == $(basename "$f") ]]; then
-	dir=$(dirname "$f")
+	dir=$(dirname "$f"); [[ $dir != "." ]] || dir=""
 	base=$(basename "$g")
 	g="$dir${dir:+/}${base@U}"
     fi
 
     # Don't overwrite existing files by default
-    if [[ -e "$g" ]]; then
+    if [[ -e "$g" && "$g" -nt "$f" ]]; then
 	if ! tty -s; then
 	    mv "$g" "$g~" || return -1
 	else
-	    echo -n "Output file '$g' already exists. " >&2
+	    echo "Output file '$g' is newer than '$f'. " >&2
 	    read -e -p "Overwrite [yes/NO/rename]? " -n 1 >&2
 	    case ${REPLY@L} in
 		y)			# Yes
