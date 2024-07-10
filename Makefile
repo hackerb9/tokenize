@@ -21,7 +21,7 @@ debug : all
 # Rule to automatically run flex to create .c files from .lex.
 .SUFFIXES: .lex
 .lex.c:
-	${flex} -i -o $@ $<
+	${flex} -o $@ $<
 
 # Utility targets are "PHONY" so they'll run even if a file exists
 # with the same name.
