@@ -429,6 +429,13 @@ has followed suit.
 * Hackerb9 has documented the file format of tokenized BASIC at
   http://fileformats.archiveteam.org/wiki/Tandy_200_BASIC_tokenized_file
 
+## Known Bugs
+
+* Currently no attempt is made to change lowercase variable names to
+  UPPERCASE. The Model T computers cannot run programs with lowercase
+  variables (Syntax Error). One can use EDIT on such a program and
+  simply resave it to fix the case issue.
+
 ## Alternatives
 
 Here are some other ways that you can tokenize Model 100 BASIC when
