@@ -7,6 +7,9 @@ prefix ?= /usr/local
 targets := m100-tokenize m100-decomment m100-jumps m100-crunch
 scripts := tokenize m100-sanity
 
+m100-tokenize.o: m100-tokenize-main.c
+m100-decomment.o: m100-tokenize-main.c
+
 # By default, create m100-tokenize and friends (implicitly compiled from .lex)
 all: ${targets} bacmp
 
@@ -18,7 +21,7 @@ debug : all
 # Rule to automatically run flex to create .c files from .lex.
 .SUFFIXES: .lex
 .lex.c:
-	${flex} -o $@ $<
+	${flex} -i -o $@ $<
 
 # Utility targets are "PHONY" so they'll run even if a file exists
 # with the same name.
