@@ -1,9 +1,9 @@
 # Model 100 Tokenizer in C
 
-An external "tokenizer" for TRS-80 Model 100 (AKA "M100") BASIC
-language. Converts BASIC programs in ASCII text (`.DO`) to executable
-BASIC (`.BA`) on a host machine. Useful for large programs which the
-Model 100 cannot tokenize due to memory limitations.
+An external "tokenizer" for the TRS-80 Model 100 BASIC language.
+Converts BASIC programs in ASCII text (`.DO`) to executable BASIC
+(`.BA`) on a host machine. Useful for large programs which the Model
+100 cannot tokenize due to memory limitations.
 
 	$ cat FOO.DO
 	10 ?"Hello!"
