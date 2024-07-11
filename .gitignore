@@ -7,4 +7,5 @@ m100-jumps
 m100-crunch.c
 m100-crunch
 bacmp
+*.o
 *.tar.gz
