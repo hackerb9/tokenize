@@ -354,6 +354,10 @@ at a slightly different RAM location (0xA000 instead of 0x8000). This
 has no affect on compatibility between machines, but it does change
 the line number pointers in the .BA file.
 
+Since two `.BA` files can be the identical program despite having
+different checksums, this project includes the `bacmp` program,
+described below.
+
 ## Why Lex?
 
 This program is written in
