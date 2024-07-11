@@ -209,12 +209,13 @@ ERL[ \t]*[\<=\>]+[ \t]*{LINENUM}	parse_erl(yytext);
 	int i=1, j=1;
 	while( (i <= alen) && (j <= blen) ) {
 	    if ( a[i] == b[j] ) {
-		printf("%d\n", a[i]);
+		printf(" %d", a[i]);
 		i++; j++;
 	    }
 	    else if ( a[i] > b[j] ) { j++; }
 	    else { i++; }
 	}
+	if (i>1 || j>1) printf("\n");
     }
 
 
