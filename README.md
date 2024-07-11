@@ -1,50 +1,78 @@
-# Model 100 Tokenizer
+# Model 100 Tokenizer in C
 
-A tokenizer for TRS-80 Model 100 (AKA "M100") BASIC language. Converts
-`.DO` files to `.BA`.
+An external "tokenizer" for TRS-80 Model 100 (AKA "M100") BASIC
+language. Converts BASIC programs in ASCII text (`.DO`) to executable
+BASIC (`.BA`) on a host machine. Useful for large programs which the
+Model 100 cannot tokenize due to memory limitations.
 
-    tokenize FOO.DO FOO.BA
+	$ cat FOO.DO
+	10 ?"Hello!"
 
-Although, this documentation refers to the "Model 100", this program
-also works for the Tandy 102, Tandy 200, Kyocera Kyotronic-85, and
-Olivetti M10, which all have [identical
+	$ tokenize FOO.DO 
+	Tokenizing 'FOO.DO' into 'FOO.BA'
+
+	$ hd FOO.BA
+	00000000  0f 80 0a 00 a3 22 48 65  6c 6c 6f 21 22 00        |....."Hello!".|
+	0000000e
+
+![A screenshot of running the FOO.BA program on a Tandy 102 (emulated
+via Virtual T)](README.md.d/HELLO.gif "Running a .BA file on a Tandy 102 (Virtual T)")
+
+This program creates an executable BASIC file that works on the Model
+100, the Tandy 102, Tandy 200, Kyocera Kyotronic-85, and Olivetti M10.
+Those five machine have [identical
 tokenization](http://fileformats.archiveteam.org/wiki/Tandy_200_BASIC_tokenized_file).
+This does not (yet) work for the NEC PC-8201/8201A/8300 whose N82 BASIC
+has a different tokenization.
 
-_This does not work for the NEC PC-8201/8201A/8300 whose N82 BASIC has
-a different tokenization._
+Additionally, this project provides a decommenter and cruncher
+(whitespace remover) to save bytes in the tokenized output. This
+allows one to have both well-commented and easy to read source code
+and a small executable size. 
 
 ## Introduction
 
 The Tandy/Radio-Shack Model 100 portable computer can save its BASIC
-files in ASCII (plain text) or in a "tokenized" format where the
+files in ASCII (plain text) or in a _“tokenized”_ format where the
 keywords — such as `FOR`, `IF`, `PRINT`, `REM` — are converted to a
-single byte. Not only is this more compact, but it loads much faster.
+single byte. The Model 100 automatically tokenizes an ASCII program
+when it is `LOAD`ed so that it can be `RUN` or `SAVE`d. The tokenized
+format saves space and loads faster, but where it is tokenized can
+matter.
 
 ### The problem
 
-Programs for the Model 100 are generally distributed in ASCII format,
-but that has two downsides: ① the user must LOAD and re-SAVE the file
-on their machine to tokenize it as only tokenized BASIC can be run and
-② the machine may not have enough storage space to tokenize if the
-ASCII version is also in memory.
+Programs for the Model 100 are generally distributed in ASCII format
+which is good for portability and easy transfer. However, ASCII files
+have downsides: 
+
+1. `RUN`ning an ASCII program is quite slow because the Model 100 must
+   tokenize it first.
+
+1. Large programs can run out of memory (`?OM Error`) when tokenizing
+   on the Model 100 because both the ASCII and the tokenized versions
+   must be in memory simultaneously.
+
+![A screenshot of an OM Error after attempting to tokenize on
+a Tandy 102](README.md.d/OMerror.png "Out of Memory error when
+attempting to tokenize on a Tandy 102 (Virtual T)")
+
 
 ### The solution
 
-This program solves that problem by tokenizing on a host computer
-before downloading to the Model 100. Additionally, this project
-provides a decommenter and cruncher (whitespace remover) to save bytes
-in the tokenized output at the expense of readability.
+This program tokenizes on a host computer before downloading to the Model 100.
 
 ### File extension terminology
 
 Tokenized BASIC files use the extension `.BA`. ASCII formatted BASIC
 files should be given the extension `.DO` so that the Model 100 will
 see them as text documents, although people often misuse `.BA` for
-ASCII. 
+ASCII BASIC. 
 
 ## Programs in this project
 
-* **tokenize**: A shell script which ties together all the following.
+* **tokenize**: A shell script which ties together all the following
+  tools. Most people will only run this program directly.
 
 * **m100-tokenize**: Convert M100 BASIC program from ASCII (.DO)
   to executable .BA file.
@@ -110,13 +138,50 @@ The **-d** option decomments before tokenizing.
 The **-c** option decomments _and_ removes all optional
 whitespace before tokenizing.
 
-#### Example
+#### Example 1: Simplest usage: tokenize filename
+
+#### Example 2: Overwrite or rename
 
 ``` bash
 $ tokenize PROG.DO
-Output file 'PROG.BA' already exists. Overwrite [yes/No/rename]? R
+Output file 'PROG.BA' is newer than 'PROG.DO'. 
+Overwrite [yes/No/rename]? R
 Old file renamed to 'PROG.BA~'
 ```
+
+#### Example 3: Crunching to save space: tokenize -c
+
+``` bash
+$ wc -c M100LE.DO 
+17630 M100LE.DO
+
+$ tokenize M100LE.DO 
+Tokenizing 'M100LE.DO' into 'M100LE.BA'
+
+$ wc -c M100LE.BA
+15667 M100LE.BA
+
+$ tokenize -c M100LE.DO M100LE-crunched.BA
+Decommenting, crunching, and tokenizing 'M100LE.DO' into 'M100LE-crunched.BA'
+
+$ wc -c M100LE-crunched.BA
+6199 M100LE-crunched.BA
+```
+
+In this case, using `tokenize -c` reduced the BASIC executable from 16
+to 6 kibibytes, which is quite significant on a machine that might
+have only 24K of RAM. However, this is an extreme example from a well
+commented program. Many Model 100 programs have already been
+"decommented" and "crunched" by hand to save space.
+
+<ul>
+
+_Tip: When distributing a crunched program, it is a good idea to also
+include the original source code to make it easy for people to learn
+from, debug, and improve it._
+
+</ul>
+
 
 ### Running m100-tokenize and friends manually
 
@@ -247,33 +312,47 @@ If you find this to be a problem, please file an issue as it is
 potentially correctable using `open_memstream()`, but hackerb9 does
 not see the need.
 
-</details>
+</details> <!-- Running manually -->
 
 
 ## Machine compatibility
 
-Across the eight Kyotronic-85 Sisters, there are actually only
-two different tokenized formats. The first, which I call "M100
-BASIC" is supported by this program. The second, which is known
-as "N82 BASIC", is not yet supported.
+Across the eight Kyotronic-85 sisters, there are actually only two
+different tokenized formats: "M100 BASIC" and "N82 BASIC".
 
-The TRS-80 Models 100 and 102 and the Tandy 200 all share the same
-tokenized BASIC. While less commonly seen, the Kyocera Kyotronic-85
-and Olivetti M10 also use that tokenization, so one .BA program can
-work for any of them. However, the NEC family of portables -- the
-PC-8201, PC-8201A, and PC-8300 -- run N82 BASIC which has a different
-tokenization format.
+The three Radio-Shack portables (Models 100, 102 and 200) all share
+the same tokenized BASIC. While less commonly seen, the Kyocera
+Kyotronic-85 and Olivetti M10 also use that tokenization, so one .BA
+program can work for any of them. However, the NEC family of portables
+-- the PC-8201, PC-8201A, and PC-8300 -- run N82 BASIC which has a
+different tokenization format.
 
 ### Checksum differences are not a compatibility problem
 
 The .BA files generated by `tokenize` aim to be exactly the same, byte
-for byte, as the output from tokenizing on a Model 100. The Tandy 200
-stores the first BASIC program in RAM at a slightly different location
-(0xA000 instead of 0x8000). This has no affect on compatibility, but
-it does change the line number pointers in the .BA file. The pointers
-saved in the file are _never_ used as they are recalculated when the
-program is loaded into RAM.
+for byte, as the output from tokenizing on a Model 100 using `LOAD`
+and `SAVE`. There are some bytes, however, which can and do change but
+do not matter.
 
+An artifact of the `.BA` file format is that the saved file contains
+the pointer locations of where the program happened to be in memory on
+the computer from which it was saved. The pointers are _never_ used as
+they are recalculated when the program is loaded into RAM.
+
+Specifically, the output of this program is intended to be identical to:
+
+* A Model 100
+* that has been freshly reset
+* with no other BASIC programs on it
+* running `LOAD "COM:88N1"` and `SAVE "FOO"` while a host computer
+  sends the ASCII BASIC program over the serial port.
+
+I (hackerb9) believe the Tandy 102, Kyotronic-85, and M10 also output
+byte identical files, but the Tandy 200 does not. The 200 has more ROM
+than the other Model T computers, so it stores the first BASIC program
+at a slightly different RAM location (0xA000 instead of 0x8000). This
+has no affect on compatibility between machines, but it does change
+the line number pointers in the .BA file.
 
 ## Why Lex?
 
@@ -285,9 +364,9 @@ and the corresponding byte they should emit. Flex handles special
 cases, like quoted strings and REMarks, easily.
 
 The downside is that one must have flex installed to _modify_ the
-tokenizer. Flex is _not_ necessary to compile on a machine as flex can
-generate portable C code. See the tokenize-cfiles.tar.gz in the github
-release or run `make cfiles`.
+tokenizer. Flex is _not_ necessary to compile on a machine as flex
+generates portable C code. See the tokenize-cfiles.tar.gz in the
+github release or run `make cfiles`.
 
 ## Abnormal code
 
@@ -442,10 +521,8 @@ has followed suit.
 
 ## Known Bugs
 
-* Currently no attempt is made to change lowercase variable names to
-  UPPERCASE. The Model T computers cannot run programs with lowercase
-  variables (Syntax Error). One can use EDIT on such a program and
-  simply resave it to fix the case issue.
+* None known. Reports are gratefully accepted.
+
 
 ## Alternatives
 
