@@ -55,9 +55,13 @@ int yyput(uint8_t c) {
 
 int fixup_ptrs() {
   /* At EOF, rewrite the line pointers in the output file so that each
-     line points to the next. This is not actually necessary. */
+   * line points to the next. This is not actually necessary.
+   */
 
-  int offset = 0xA001;		/* Offset into memory for start of program */
+  /* Offset into RAM for start of the first BASIC program.
+     0x8001: Used by Model 100, Tandy 102, Kyocera-85, and Olivetti M10.
+     0xA001: Used by Tandy 200 (which has more ROM and less RAM). */
+  int offset = 0x8001;
 
   ptr[nlines++] = ftell(yyout);	/* Pointer to final NULL byte */
 
