@@ -22,13 +22,13 @@ This program creates an executable BASIC file that works on the Model
 100, the Tandy 102, Tandy 200, Kyocera Kyotronic-85, and Olivetti M10.
 Those five machine have [identical
 tokenization](http://fileformats.archiveteam.org/wiki/Tandy_200_BASIC_tokenized_file).
-This does not (yet) work for the NEC PC-8201/8201A/8300 whose N82 BASIC
+It does not (yet) work for the NEC PC-8201/8201A/8300 whose N82 BASIC
 has a different tokenization.
 
 Additionally, this project provides a decommenter and cruncher
 (whitespace remover) to save bytes in the tokenized output. This
-allows one to have both well-commented and easy to read source code
-and a small executable size. 
+allows one to have both well-commented, easy to read source code and a
+small executable size.
 
 ## Introduction
 
