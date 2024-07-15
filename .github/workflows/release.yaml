@@ -1,5 +1,6 @@
 name: release
 # Mostly from https://jon.sprig.gs/blog/post/2442
+# Create a new build release on a tag of the form "v1.0"
 
 on:
   push:
@@ -34,7 +35,7 @@ jobs:
       - name: Setup Windows build environment
         if: matrix.os == 'windows-latest'
         run: |
-          choco install winflexbison -y
+          choco install winflexbison3
 
       - name: Compile, verify, and create archives
         run: |
