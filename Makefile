@@ -45,7 +45,12 @@ clean:
 	   input.do output.do output.ba \
 						2>/dev/null || true
 # Check that the program is building and running correctly
-check: all test-m100-tokenize test-m100-decomment test-m100-crunch  test-tokenize-script
+check: foobar all test-m100-tokenize test-m100-decomment test-m100-crunch  test-tokenize-script
+
+foobar: foo bar
+	./foo | xxd
+	./bar | xxd
+
 
 # Check that the distribution will actually install, uninstall.
 distcheck: all
