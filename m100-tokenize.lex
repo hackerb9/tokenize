@@ -7,7 +7,6 @@
  */
 
   #include <ctype.h>		/* For toupper() */
-  #include <err.h>		/* For errx() */
 
 %option prefix="tokenize"
 %option case-insensitive
@@ -30,7 +29,10 @@
 %%
 
 ^[[:space:]]*[0-9]+[ ]?	{
-    if (ftell(yyout) >= 0x8000) errx(1, "Program too large to fit in 32K RAM");
+    if (ftell(yyout) >= 0x8000) {
+        fprintf(stderr, "Program too large to fit in 32K RAM");
+        exit(1);
+    }
     ptr[nlines++] = ftell(yyout);   /* Cache the location of the current line */
     yyput('*'); yyput('*');	    /* Dummy placeholder pointer to next line.*/
     uint16_t linenum=atoi(yytext);  /* BASIC line number. */
