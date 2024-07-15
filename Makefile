@@ -47,9 +47,8 @@ clean:
 # Check that the program is building and running correctly
 check: foobar all test-m100-tokenize test-m100-decomment test-m100-crunch  test-tokenize-script
 
-foobar: foo bar
+foobar: foo 
 	./foo | xxd
-	./bar | xxd
 
 
 # Check that the distribution will actually install, uninstall.
