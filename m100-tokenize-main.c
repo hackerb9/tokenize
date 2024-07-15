@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 
   /* Second arg (if any) is output file name */
   ++argv, --argc;
-  yyout = (argc>0) ? fopen( argv[0], "w+" ) : stdout;
+  yyout = (argc>0) ? fopen( argv[0], "wb+" ) : stdout;
   if (yyout == NULL) { perror(argv[0]); exit(1);  }
   
   while (yylex())
