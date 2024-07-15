@@ -84,7 +84,7 @@ test-m100-tokenize:	m100-tokenize bacmp
 	    [ -r "$$src" ] || continue; \
 	    ./m100-sanity "$$src" | ./m100-tokenize >output.ba; \
 	    echo -n "    m100-tokenize $$src: "; \
-	    if ./bacmp output.ba "$$f"; then echo "(pass)"; else : exit 1; echo ./m100-sanity "$$src"; echo; cat output.ba; echo; echo; fi; \
+	    if ./bacmp output.ba "$$f"; then echo "(pass)"; else true exit 1; echo ./m100-sanity "$$src"; echo; hd output.ba; echo; echo; fi; \
 	    rm output.ba; \
 	done
 
