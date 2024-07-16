@@ -23,16 +23,16 @@
 
 int main(int argc, char *argv[]) {
 
-  ++argv, --argc; 		/* skip over program name */
-
   /* First arg (if any) is input file name */
+  ++argv, --argc; 		/* skip over program name */
   yyin = (argc>0) ? fopen( argv[0], "r" ) : stdin;
   if (yyin == NULL) { perror(argv[0]); exit(1);  }
 
 
   /* Second arg (if any) is output file name */
   ++argv, --argc;
-  yyout = (argc>0) ? fopen( argv[0], "wb+" ) : stdout;
+  if (argc>0) stdout = freopen( argv[0], "wb+", stdout );
+  yyout = stdout;
   if (yyout == NULL) { perror(argv[0]); exit(1);  }
   
   while (yylex())
