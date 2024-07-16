@@ -1,7 +1,9 @@
 #include <stdio.h>
 main() {
-  FILE *fp;
-  fp = stdout;
+  FILE *fp = stdout;
+#ifdef _WIN32
+  setmode(fileno(stdout), O_BINARY)
+#endif
   fprintf(fp, "foo\nbar\n");
   fprintf(fp, "foo\012bar\012");
   if ( fp = freopen(NULL, "wb", stdout) ) {

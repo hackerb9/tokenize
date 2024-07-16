@@ -51,6 +51,7 @@ foobar: foo
 	./foo | xxd
 	xxd text
 	xxd binary
+	false
 
 # Check that the distribution will actually install, uninstall.
 distcheck: all
