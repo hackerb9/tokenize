@@ -1,8 +1,11 @@
 #include <stdio.h>
+#ifdef _WIN32
+  #include <io.h>
+#endif
 main() {
   FILE *fp = stdout;
 #ifdef _WIN32
-  setmode(fileno(stdout), O_BINARY)
+  _setmode(fileno(stdout), O_BINARY)
 #endif
   fprintf(fp, "foo\nbar\n");
   fprintf(fp, "foo\012bar\012");
