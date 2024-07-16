@@ -20,6 +20,11 @@
 
    */
 
+/* To be able to write '\n' to stdout as '\n' instead of '\n\r'. */
+#ifdef _WIN32
+  #include <fcntl.h>
+  #include <io.h>
+#endif
 
 int main(int argc, char *argv[]) {
 
@@ -34,7 +39,15 @@ int main(int argc, char *argv[]) {
   ++argv, --argc;
   yyout = (argc>0) ? fopen( argv[0], "wb+" ) : stdout;
   if (yyout == NULL) { perror(argv[0]); exit(1);  }
-  
+
+  /* MS-DOS & Windows prepend a CR before every LF */
+#ifdef _WIN32
+  if ( _setmode(fileno(stdout), O_BINARY) == -1 ) {
+    perror("_setmode to binary failed");
+    return(1);
+  }
+#endif
+
   while (yylex())
     ;
   return 0;
