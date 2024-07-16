@@ -11,19 +11,6 @@ int main() {
     return(1);
   }
 #endif
-  fprintf(fp, "foo\nbar\n");
-  fprintf(fp, "foo\012bar\012");
-  if ( fp = freopen(NULL, "wb", stdout) ) {
-    fprintf(fp, "foo\nbar\n");
-    fprintf(fp, "foo\012bar\012");
-  } else perror("stdout");
-  if ( fp = freopen("text", "w", fp) ) {
-    fprintf(fp, "foo\nbar\n");
-    fprintf(fp, "foo\012bar\012");
-  } else perror("text");
-  if ( fp = freopen("binary", "wb", fp) ) {
-    fprintf(fp, "foo\nbar\n");
-    fprintf(fp, "foo\012bar\012");
-  } else perror("binary");
+  printf("foo\nbar\n");
   return 0;
 }
