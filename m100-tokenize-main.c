@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 
   /* Second arg (if any) is output file name */
   ++argv, --argc;
-  if (argc>0) stdout = freopen( argv[0], "wb+", stdout );
+  if (argc>0) freopen( argv[0], "wb+", stdout );
   yyout = stdout;
   if (yyout == NULL) { perror(argv[0]); exit(1);  }
   
