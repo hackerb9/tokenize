@@ -49,7 +49,9 @@ check: foobar all test-m100-tokenize test-m100-decomment test-m100-crunch  test-
 
 foobar: foo 
 	./foo | xxd
-	xxd newline
+	xxd text
+	xxd binary
+	xxd binaryplus
 
 # Check that the distribution will actually install, uninstall.
 distcheck: all
