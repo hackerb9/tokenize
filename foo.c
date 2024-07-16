@@ -5,7 +5,10 @@
 main() {
   FILE *fp = stdout;
 #ifdef _WIN32
-  _setmode(fileno(stdout), O_BINARY)
+  if ( _setmode(fileno(stdout), O_BINARY) == -1 ) {
+    perror("_setmode to binary failed");
+    exit(1);
+  }
 #endif
   fprintf(fp, "foo\nbar\n");
   fprintf(fp, "foo\012bar\012");
