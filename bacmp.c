@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
   offset_b = cb1 + (cb2<<8);
   delta = offset_b - offset_a; 
 
-  while (ca1 != EOF && cb1 != EOF) {
+  while ( (ca1 != EOF) && (cb1 != EOF) ) {
     count++;
     ca0 = ca1; cb0 = cb1;	/* stash old value for lineptr check */
     ca1 = fgetc(fa);
@@ -86,11 +86,13 @@ int main(int argc, char *argv[]) {
     if (ca1 == cb1) continue;
 
     if ( ca1 == EOF ) {
-      fprintf(stderr, "EOF on %s after byte %d\n", argv[1], count-2);
+      fprintf(stderr, "EOF on %s after byte %d. %s has %c.\n",
+	      argv[1], count-2, argv[2], cb1);
       exit(1);
     }
     else if ( cb1 == EOF ) {
-      fprintf(stderr, "EOF on %s after byte %d\n", argv[2], count-2);
+      fprintf(stderr, "EOF on %s after byte %d. %s has %c.\n",
+	      argv[2], count-2, argv[1], ca1);
       exit(2);
     }
 
