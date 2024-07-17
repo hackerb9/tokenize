@@ -56,9 +56,9 @@ int main(int argc, char *argv[]) {
   }
 
   FILE *fa, *fb;
-  if ( (fa = fopen(argv[1], "r")) == NULL)
+  if ( (fa = fopen(argv[1], "rb")) == NULL)
     fprintf(stderr, "Could not open file: <%s>\n", argv[1]);
-  if ( (fb = fopen(argv[2], "r")) == NULL)
+  if ( (fb = fopen(argv[2], "rb")) == NULL)
     fprintf(stderr, "Could not open file: <%s>\n", argv[2]);
   if (fa == NULL || fb == NULL) {
     exit(1);
