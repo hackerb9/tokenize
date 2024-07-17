@@ -68,7 +68,7 @@ function main() {
     if [[ "$dflag" ]]; then
 	echo "Decommenting and tokenizing '$f' into '$g'"
 	jumps=$(m100-sanity "$f" | m100-jumps )
-	m100-sanity "$f" | m100-decomment /dev/stdin "$g" ${jumps}
+	m100-sanity "$f" | m100-decomment - "$g" ${jumps}
     elif [[ "$cflag" ]]; then
 	echo "Decommenting, crunching, and tokenizing '$f' into '$g'"
 	jumps=$(m100-sanity "$f" | m100-jumps )
