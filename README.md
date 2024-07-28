@@ -79,7 +79,8 @@ see them as text documents.
   | Olivetti M10         | `.M10.DO`   | `.B10`, `.M10.BA` |
   | Kyocera Kyotronic-85 | `.KYO.DO`   | `.B85`, `.KYO.BA` |
 
-  The primary two filename extensions are:
+The primary two filename extensions are:
+
   * **`.DO`** This is the extension the Model 100 uses for plain text
     BASIC files, but in general can mean any ASCII text document with
     CRLF[^2] line endings.
@@ -90,13 +91,13 @@ see them as text documents.
     files had to be renamed to .DO before downloading to a Model 100.
 
 
-  BASIC programs that use `PEEK`, `POKE`, or `CALL` typically only
-  work on one specific model of portable computer, even when the BASIC
-  language and tokenization is identical. The only two models which
-  have the same memory map are the Model 100 and and Tandy 102. Using
-  POKE or CALL on the wrong model can crash badly, possibly losing
-  files. To avoid this, when sharing BASIC programs over the network,
-  filename extensions can indicate which model a program will work on:
+BASIC programs that use `PEEK`, `POKE`, or `CALL` typically only work
+on one specific model of portable computer, even when the BASIC
+language and tokenization is identical. The only two models which have
+the same memory map are the Model 100 and and Tandy 102. Using POKE or
+CALL on the wrong model can crash badly, possibly losing files. To
+avoid this, when sharing BASIC programs over the network, filename
+extensions can indicate which model a program will work on:
 
   * `.100` An ASCII BASIC file that includes POKEs or CALLs specific
 	  to the Model 100 or Tandy 102.
@@ -109,15 +110,14 @@ see them as text documents.
   * `.BA0` (or `.NEC.BA`) A tokenized BASIC file specific to the NEC
     portables.
 
-  It is not yet clear what extensions are used to denote the
-  Kyotronic-85 and M10. Hackerb9 suggests:
+It is not yet clear what extensions are used to denote the
+Kyotronic-85 and M10. Hackerb9 suggests:
 
-    * `.KYO` or `.KYO.DO` An ASCII BASIC file that includes POKEs or
-      CALLs specific to the Kyocera Kyotronic-85.
-    * `.M10` or `.M10.DO` An ASCII BASIC file specific to the Olivetti M10.
-
-    * `.B85` or `.KYO.BA` A tokenized BASIC file specific to the Kyotronic-85.
-    * `.B10` or `.M10.BA` A tokenized BASIC file specific to the M10.
+  * `.KYO` or `.KYO.DO` An ASCII BASIC file that includes POKEs or
+    CALLs specific to the Kyocera Kyotronic-85.
+  * `.M10` or `.M10.DO` An ASCII BASIC file specific to the Olivetti M10.
+  * `.B85` or `.KYO.BA` A tokenized BASIC file specific to the Kyotronic-85.
+  * `.B10` or `.M10.BA` A tokenized BASIC file specific to the M10.
 
 </ul></details> <!-- Filename extensions -->
 
