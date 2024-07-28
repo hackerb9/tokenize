@@ -89,6 +89,7 @@ see them as text documents.
     tokenizers like this, one was expected to know that ASCII BASIC
     files had to be renamed to .DO before downloading to a Model 100.
 
+
   BASIC programs that use `PEEK`, `POKE`, or `CALL` typically only
   work on one specific model of portable computer, even when the BASIC
   language and tokenization is identical. The only two models which
@@ -110,9 +111,10 @@ see them as text documents.
 
   It is not yet clear what extensions are used to denote the
   Kyotronic-85 and M10. Hackerb9 suggests:
-	* `.KYO` or `.KYO.DO` An ASCII BASIC file that includes POKEs or
-	  CALLs specific to the Kyocera Kyotronic-85.
-	* `.M10` or `.M10.DO` An ASCII BASIC file specific to the Olivetti M10.
+
+    * `.KYO` or `.KYO.DO` An ASCII BASIC file that includes POKEs or
+      CALLs specific to the Kyocera Kyotronic-85.
+    * `.M10` or `.M10.DO` An ASCII BASIC file specific to the Olivetti M10.
 
     * `.B85` or `.KYO.BA` A tokenized BASIC file specific to the Kyotronic-85.
     * `.B10` or `.M10.BA` A tokenized BASIC file specific to the M10.
