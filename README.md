@@ -140,6 +140,12 @@ whitespace before tokenizing.
 
 #### Example 1: Simplest usage: tokenize filename
 
+
+``` bash
+$ tokenize PROG.DO
+Tokenizing 'PROG.DO' into 'PROG.BA'
+```
+
 #### Example 2: Overwrite or rename
 
 ``` bash
@@ -176,7 +182,7 @@ commented program. Many Model 100 programs have already been
 
 <ul>
 
-_Tip: When distributing a crunched program, it is a good idea to also
+_Tip: When distributing a crunched program, it may be a good idea to also
 include the original source code to make it easy for people to learn
 from, debug, and improve it._
 
@@ -185,7 +191,7 @@ from, debug, and improve it._
 
 ### Running m100-tokenize and friends manually
 
-Certain programs should _usually_ be run to process the input before
+If one decides to not use the `tokenize` script, certain programs should _usually_ be run to process the input before
 the final tokenization step, depending upon what is wanted.
 m100-sanity is strongly recommended. (See [Abnormal
 code](#abnormal-code) below.)
@@ -321,9 +327,9 @@ Across the eight Kyotronic-85 sisters, there are actually only two
 different tokenized formats: "M100 BASIC" and "N82 BASIC".
 
 The three Radio-Shack portables (Models 100, 102 and 200) all share
-the same tokenized BASIC. While less commonly seen, the Kyocera
+the same tokenized BASIC format. While less commonly seen, the Kyocera
 Kyotronic-85 and Olivetti M10 also use that tokenization, so one .BA
-program can work for any of them. However, the NEC family of portables
+program might work for any of those five, presuming the programs do not rely on CALL, PEEK, or POKE. However, the NEC family of portables
 -- the PC-8201, PC-8201A, and PC-8300 -- run N82 BASIC which has a
 different tokenization format.
 
@@ -334,24 +340,20 @@ for byte, as the output from tokenizing on a Model 100 using `LOAD`
 and `SAVE`. There are some bytes, however, which can and do change but
 do not matter.
 
-An artifact of the `.BA` file format is that the saved file contains
-the pointer locations of where the program happened to be in memory on
-the computer from which it was saved. The pointers are _never_ used as
-they are recalculated when the program is loaded into RAM.
+A peculiar artifact of the `.BA` file format is that it contains line-number pointer locations offset by where the program happened to be in memory when it was saved. The pointers in the file are _never_ used as they are recalculated when the program is loaded into RAM.
 
-Specifically, the output of this program is intended to be identical to:
+To account for this variance when testing, the output of this program is intended to be byte-for-byte identical to:
 
-* A Model 100
-* that has been freshly reset
-* with no other BASIC programs on it
-* running `LOAD "COM:88N1"` and `SAVE "FOO"` while a host computer
-  sends the ASCII BASIC program over the serial port.
+1. A Model 100
+2. that has been freshly reset
+3. with no other BASIC programs on it
+4. running `LOAD "COM:88N1"` and `SAVE "FOO"` while a host computer sends the ASCII BASIC program over the serial port.
 
-I (hackerb9) believe the Tandy 102, Kyotronic-85, and M10 also output
-byte identical files, but the Tandy 200 does not. The 200 has more ROM
+While the Tandy 102, Kyotronic-85, and M10 also output
+byte identical files to the Model 100,  the Tandy 200 does not. The 200 has more ROM
 than the other Model T computers, so it stores the first BASIC program
 at a slightly different RAM location (0xA000 instead of 0x8000). This
-has no affect on compatibility between machines, but it does change
+has no effect on compatibility between machines, but it does change
 the line number pointers in the .BA file.
 
 Since two `.BA` files can be the identical program despite having
