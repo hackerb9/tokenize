@@ -117,7 +117,7 @@ see them as text documents.
     * `.B85` or `.KYO.BA` A tokenized BASIC file specific to the Kyotronic-85.
     * `.B10` or `.M10.BA` A tokenized BASIC file specific to the M10.
 
-<ul><details>
+</ul></details> <!-- Filename extensions -->
 
 ## Programs in this project
 
