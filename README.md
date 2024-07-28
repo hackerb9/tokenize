@@ -66,8 +66,58 @@ This program tokenizes on a host computer before downloading to the Model 100.
 
 Tokenized BASIC files use the extension `.BA`. ASCII formatted BASIC
 files should be given the extension `.DO` so that the Model 100 will
-see them as text documents, although people often misuse `.BA` for
-ASCII BASIC. 
+see them as text documents.
+
+<details><summary>Click for details on filename extensions</summary><ul>
+
+  | Machine Memory Map   | ASCII BASIC | Tokenized BASIC   |
+  |----------------------|-------------|-------------------|
+  | Generic              | `.DO`       | `.BA`             |
+  | Model 100 / 102      | `.100`      | `.BA1`            |
+  | Tandy 200            | `.200`      | `.BA2`            |
+  | NEC PC-8201          | `.NEC.DO`   | `.BA0`, `.NEC.BA` |
+  | Olivetti M10         | `.M10.DO`   | `.B10`, `.M10.BA` |
+  | Kyocera Kyotronic-85 | `.KYO.DO`   | `.B85`, `.KYO.BA` |
+
+  The primary two filename extensions are:
+  * **`.DO`** This is the extension the Model 100 uses for plain text
+    BASIC files, but in general can mean any ASCII text document with
+    CRLF[^2] line endings.
+  * **`.BA`** On the Model 100, the .BA extension always means a
+    tokenized BASIC program. However, many ".BA" files found on the
+    Internet are actually in ASCII format. Before the existence of
+    tokenizers like this, one was expected to know that ASCII BASIC
+    files had to be renamed to .DO before downloading to a Model 100.
+
+  BASIC programs that use `PEEK`, `POKE`, or `CALL` typically only
+  work on one specific model of portable computer, even when the BASIC
+  language and tokenization is identical. The only two models which
+  have the same memory map are the Model 100 and and Tandy 102. Using
+  POKE or CALL on the wrong model can crash badly, possibly losing
+  files. To avoid this, when sharing BASIC programs over the network,
+  filename extensions can indicate which model a program will work on:
+
+  * `.100` An ASCII BASIC file that includes POKEs or CALLs specific
+	  to the Model 100 or Tandy 102.
+  * `.200` An ASCII BASIC file specific to the Tandy 200.
+  * `.NEC` (or `.NEC.DO`) An ASCII BASIC file specific to the NEC
+    PC-8201 portables.
+
+  * `.BA1` A tokenized BASIC file specific to the Model 100/102.
+  * `.BA2` A tokenized BASIC file specific to the Tandy 200.
+  * `.BA0` (or `.NEC.BA`) A tokenized BASIC file specific to the NEC
+    portables.
+
+  It is not yet clear what extensions are used to denote the
+  Kyotronic-85 and M10. Hackerb9 suggests:
+	* `.KYO` or `.KYO.DO` An ASCII BASIC file that includes POKEs or
+	  CALLs specific to the Kyocera Kyotronic-85.
+	* `.M10` or `.M10.DO` An ASCII BASIC file specific to the Olivetti M10.
+
+    * `.B85` or `.KYO.BA` A tokenized BASIC file specific to the Kyotronic-85.
+    * `.B10` or `.M10.BA` A tokenized BASIC file specific to the M10.
+
+<ul><details>
 
 ## Programs in this project
 
@@ -191,10 +241,10 @@ from, debug, and improve it._
 
 ### Running m100-tokenize and friends manually
 
-If one decides to not use the `tokenize` script, certain programs should _usually_ be run to process the input before
-the final tokenization step, depending upon what is wanted.
-m100-sanity is strongly recommended. (See [Abnormal
-code](#abnormal-code) below.)
+If one decides to not use the `tokenize` script, certain programs
+should _usually_ be run to process the input before the final
+tokenization step, depending upon what is wanted. m100-sanity is
+strongly recommended. (See [Abnormal code](#abnormal-code) below.)
 
 ``` mermaid
 flowchart LR;
@@ -324,14 +374,15 @@ not see the need.
 ## Machine compatibility
 
 Across the eight Kyotronic-85 sisters, there are actually only two
-different tokenized formats: "M100 BASIC" and "N82 BASIC".
+different tokenized formats: "M100 BASIC" and "N82 BASIC". This
+program (currently) works only for the former, not the latter.
 
-The three Radio-Shack portables (Models 100, 102 and 200) all share
-the same tokenized BASIC format. While less commonly seen, the Kyocera
-Kyotronic-85 and Olivetti M10 also use that tokenization, so one .BA
-program might work for any of those five, presuming the programs do not rely on CALL, PEEK, or POKE. However, the NEC family of portables
--- the PC-8201, PC-8201A, and PC-8300 -- run N82 BASIC which has a
-different tokenization format.
+The three Radio-Shack portables (Models 100, 102 and 200), the Kyocera
+Kyotronic-85, and the Olivetti M10 all share the same tokenized BASIC.
+That means one .BA program _might_ work for any of them, presuming the
+program do not rely on CALL, PEEK, or POKE. However, the NEC family of
+portables -- the PC-8201, PC-8201A, and PC-8300 -- run N82 BASIC which
+has a different tokenization format.
 
 ### Checksum differences are not a compatibility problem
 
@@ -340,25 +391,31 @@ for byte, as the output from tokenizing on a Model 100 using `LOAD`
 and `SAVE`. There are some bytes, however, which can and do change but
 do not matter.
 
-A peculiar artifact of the `.BA` file format is that it contains line-number pointer locations offset by where the program happened to be in memory when it was saved. The pointers in the file are _never_ used as they are recalculated when the program is loaded into RAM.
+A peculiar artifact of the [`.BA` file format][fileformat] is that it
+contains pointer locations offset by where the program happened to be
+in memory when it was saved. The pointers in the file are _never_ used
+as they are recalculated when the program is loaded into RAM.
 
-To account for this variance when testing, the output of this program is intended to be byte-for-byte identical to:
+To account for this variance when testing, the output of this program
+is intended to be byte-for-byte identical to:
 
 1. A Model 100
 2. that has been freshly reset
 3. with no other BASIC programs on it
 4. running `LOAD "COM:88N1"` and `SAVE "FOO"` while a host computer sends the ASCII BASIC program over the serial port.
 
-While the Tandy 102, Kyotronic-85, and M10 also output
-byte identical files to the Model 100,  the Tandy 200 does not. The 200 has more ROM
-than the other Model T computers, so it stores the first BASIC program
-at a slightly different RAM location (0xA000 instead of 0x8000). This
-has no effect on compatibility between machines, but it does change
-the line number pointers in the .BA file.
+While the Tandy 102, Kyotronic-85, and M10 also appear to output files
+identical to the Model 100, the Tandy 200 does not. The 200 has more
+ROM than the other Model T computers, so it stores the first BASIC
+program at a slightly different RAM location (0xA000 instead of
+0x8000). This has no effect on compatibility between machines, but it
+does change the pointer offset.
 
 Since two `.BA` files can be the identical program despite having
 different checksums, this project includes the `bacmp` program,
 described below.
+
+[fileformat]: http://fileformats.archiveteam.org/wiki/Tandy_200_BASIC_tokenized_file "Reverse engineered file format documentation"
 
 ## Why Lex?
 
@@ -449,41 +506,14 @@ which was created using m100-tokenizer.
   such as [TEENY](https://youtu.be/H0xx9cOe97s) which can transfer
   8-bit data.
 
-* Line endings in the input file can either be `CRLF` (standard for
-  a Model 100 text document) or simply `LF` (UNIX style).
-
-* Even when the tokenized format is the same, there exist a multitude
-  of filename extensions to signify to users that a program is
-  intended to run on a certain platform and warn that it may use
-  system specific features. 
-
-  Conventions for filename extensions vary. Here are just some of them:
-  * `.DO` This is the extension the Model 100 uses for plain text
-    BASIC files, but in general can mean any ASCII text document with
-    CRLF line endings.
-  * `.BA` All tokenized BASIC programs are named .BA on the Model 100,
-    but note that most .BA files found on the Internet are in ASCII
-    format. Before the existence of tokenizers like this, one was
-    expected to know that ASCII files had to be renamed to .DO when
-    downloading to a Model 100.
-  * Although the BASIC language and tokenization is the same, some
-    programs use POKEs or CALLs which work only one one model of
-    portable computer and will cause others to crash badly, possibly
-    losing files. To avoid this, some filename extensions are used:
-
-  * `.100` An ASCII BASIC file that includes POKEs or CALLs specific
-	  to the Model 100/102.
-  * `.200` An ASCII BASIC file specific to the Tandy 200.
-  * `.BA1` A tokenized BASIC file specific to the Model 100/102.	
-  * `.BA2` A tokenized BASIC file specific to the Tandy 200.
-  * The `.BA0` and `.NEC.BA` extension signify a tokenized BASIC file
-    specific to the NEC portables. This is a different tokenization
-    format than any of the above and is not yet supported.
-
 * To save in ASCII format on the Model 100, append `, A`:
   ```BASIC
   save "FOO", A
   ```
+
+* This program accepts line endings as either `CRLF` (standard for a
+  Model 100 text document) or simply `LF` (UNIX style).
+
 
 ## Testing
 
@@ -562,3 +592,5 @@ RAM.
   
 * The VirtualT emulator can be scripted to tokenize a program through telnet.
   https://sourceforge.net/projects/virtualt/
+
+[^2]: CRLF means Carriage Return, Line Feed. That is, `0x0D 0x0A`.
