@@ -437,11 +437,17 @@ Here is an extreme example.
 9 PRINT "pre-tokenized GOTO10.BA."
 ```
 
-To run this on a Model 100, download
-[GOTO10.BA](https://github.com/hackerb9/tokenize/raw/main/degenerate/GOTO10.BA)
-which was created using m100-tokenizer.
+To run this on a Model 100, one must download the tokenized BASIC file,
+[GOTO10.BA](https://github.com/hackerb9/tokenize/raw/main/degenerate/GOTO10.BA),
+which is created from 
+[GOTO10.DO](https://github.com/hackerb9/tokenize/raw/main/degenerate/GOTO10.DO)
+like so:
 
-</ul></details>
+``` bash
+m100-tokenize GOTO10.DO
+```
+
+</ul></details> <!-- Abnormal code -->
 
 
 ## Machine compatibility
@@ -513,7 +519,7 @@ github release or run `make cfiles`.
 
 ## Miscellaneous notes
 
-* Tokenized BASIC files are binary files, not ASCII and as such cannot
+c* Tokenized BASIC files are binary files, not ASCII and as such cannot
   be transferred easily using the builtin TELCOM program or the `LOAD
   "COM:"` or `SAVE "COM:"` commands. Instead, one must use a program
   such as [TEENY](https://youtu.be/H0xx9cOe97s) which can transfer
