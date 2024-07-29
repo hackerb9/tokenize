@@ -540,20 +540,21 @@ github release or run `make cfiles`.
 
 ## Testing
 
-Run `make check` to try out the tokenizer on some [sample Model 100
-programs](https://github.com/hackerb9/tokenize/tree/main/samples) and
-some strange ones designed specifically to exercise peculiar syntax.
-The program `bacmp` is used to compare the generated .BA file with one
-created on hackerb9's Tandy 200.
+Run `make check` to test this tokenizer on some [sample Model 100
+programs](https://github.com/hackerb9/tokenize/tree/main/samples)
+including some strange ones designed specifically to exercise peculiar
+syntax. The program `bacmp` is used to compare the generated .BA file
+with one created on hackerb9's Tandy 200.
 
-Note that without m100-sanity, the SCRAMB.DO test, whose input is
-scrambled and redundant, would fail.
+For example, 
+[SCRAMB.DO](https://github.com/hackerb9/tokenize/blob/main/samples/SCRAMB.DO) 
+has input that is scrambled and redundant to check if m100-sanity is
+working correctly. 
 
 ``` BASIC
 20 GOTO 10
 10 GOTO 10
 10 PRINT "!dlroW ,olleH"
-
 ```
 
 ## bacmp: BASIC comparator
