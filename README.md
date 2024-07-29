@@ -383,7 +383,7 @@ not see the need.
 
 The `tokenize` script always uses the m100-sanity program to clean up
 the source code, but one can run m100-tokenize directly to
-purposefully create abnormal, but valid, `.BA` files. These programs
+purposefully create abnormal, yet valid, `.BA` files. These programs
 cannot be created on genuine hardware, but **will** run.
 
 Here is an extreme example.
@@ -523,7 +523,7 @@ github release or run `make cfiles`.
 
 ## Miscellaneous notes
 
-c* Tokenized BASIC files are binary files, not ASCII and as such cannot
+* Tokenized BASIC files are binary files, not ASCII and as such cannot
   be transferred easily using the builtin TELCOM program or the `LOAD
   "COM:"` or `SAVE "COM:"` commands. Instead, one must use a program
   such as [TEENY](https://youtu.be/H0xx9cOe97s) which can transfer
