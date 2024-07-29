@@ -180,6 +180,7 @@ same, byte for byte, as a .BA file created on actual hardware.
 
 #### Synopsis
 
+<ul>
 **tokenize** _INPUT.DO_ [ _OUTPUT.BA_ ]<br/>
 **tokenize** [ **-d** | **--decomment** ] _INPUT.DO_ [ _OUTPUT.BA_ ]<br/>
 **tokenize** [ **-c** | **--crunch** ] _INPUT.DO_ [ _OUTPUT.BA_ ]
@@ -188,6 +189,8 @@ The **-d** option decomments before tokenizing.
 
 The **-c** option decomments _and_ removes all optional
 whitespace before tokenizing.
+
+</ul>
 
 #### Example 1: Simplest usage: tokenize filename
 
