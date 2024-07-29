@@ -563,10 +563,11 @@ The included
 [bacmp.c](https://github.com/hackerb9/tokenize/blob/main/bacmp.c)
 program may be useful for others who wish to discover if two tokenized
 BASIC files are identical. Because of the way the Model 100 works, a
-normal `cmp` test will fail. There are pointers from each BASIC line
-to the next which change based upon where the program happens to be in
-memory. The `bacmp` program handles that by allowing line pointers to
-differ as long as they are offset by a constant amount.
+normal [`cmp`](https://manpages.debian.org/cmp) test will fail. There
+are pointers from each BASIC line to the next which change based upon
+where the program happens to be in memory. The `bacmp` program handles
+that by allowing line pointers to differ as long as they are offset by
+a constant amount.
 
 Note that generating correct line pointers is actually unnecessary in
 a tokenizer; they could be any arbitrary values. The Model 100 always
@@ -581,7 +582,8 @@ has followed suit.
 
 ## Known Bugs
 
-* None known. Reports are gratefully accepted.
+* None known. [Reports](https://github.com/hackerb9/tokenize/issues/new)
+  are gratefully accepted.
 
 
 ## Alternatives
