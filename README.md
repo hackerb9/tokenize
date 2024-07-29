@@ -383,12 +383,12 @@ program (currently) works only for the former, not the latter.
 
 The three Radio-Shack portables (Models 100, 102 and 200), the Kyocera
 Kyotronic-85, and the Olivetti M10 all share the same tokenized BASIC.
-That means one tokenize .BA file _might_ work for any of those,
-presuming the program does not use CALL, PEEK, or POKE. However, the
-NEC family of portables -- the PC-8201, PC-8201A, and PC-8300 -- run
-N82 BASIC, which has a different tokenization format. A tokenized N82
-BASIC file cannot run on an M100 computer and vice versa, even for
-programs which share the same ASCII BASIC source code.
+That means a single tokenized BASIC file _might_ work for any of
+those, presuming the program does not use CALL, PEEK, or POKE.
+However, the NEC family of portables -- the PC-8201, PC-8201A, and
+PC-8300 -- run N82 BASIC, which has a different tokenization format. A
+tokenized N82 BASIC file cannot run on an M100 computer and vice
+versa, even for programs which share the same ASCII BASIC source code.
 
 ### Checksum differences are not a compatibility problem
 
