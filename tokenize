@@ -79,10 +79,14 @@ function main() {
 	m100-sanity "$f" | m100-tokenize > "$g"   || fail=1
     fi
 
-    echo fail is $fail
     if [[ $fail -gt 0 ]]; then
-	echo "Error detected, removing '$g'" >&2
-	rm "$g"
+	echo -n "Error detected"
+	if [[ $g != "-" ]]; then
+	    echo ", removing '$g'" >&2
+	    rm "$g"
+	else
+	    echo
+	fi
 	exit 1
     fi
 }
