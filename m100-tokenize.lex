@@ -30,7 +30,7 @@
 
 ^[[:space:]]*[0-9]+[ ]?	{
     if (ftell(yyout) >= 0x8000) {
-        fprintf(stderr, "Program too large to fit in 32K RAM");
+        fprintf(stderr, "Program too large to fit in 32K RAM\n");
         exit(1);
     }
     ptr[nlines++] = ftell(yyout);   /* Cache the location of the current line */
