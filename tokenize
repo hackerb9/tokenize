@@ -65,17 +65,25 @@ function main() {
     # Look first for the m100-tokenize binary in same dir as this script.
     PATH=$(dirname "$0"):"$PATH"
 
+    local fail=0
     if [[ "$dflag" ]]; then
 	echo "Decommenting and tokenizing '$f' into '$g'"
 	jumps=$(m100-sanity "$f" | m100-jumps )
-	m100-sanity "$f" | m100-decomment - "$g" ${jumps}
+	m100-sanity "$f" | m100-decomment - "$g" ${jumps}   || fail=1
     elif [[ "$cflag" ]]; then
 	echo "Decommenting, crunching, and tokenizing '$f' into '$g'"
 	jumps=$(m100-sanity "$f" | m100-jumps )
-	m100-sanity "$f" | m100-decomment - - ${jumps} | m100-crunch | m100-tokenize > $g
+	m100-sanity "$f" | m100-decomment - - ${jumps} | m100-crunch | m100-tokenize > $g   || fail=1
     else
 	echo "Tokenizing '$f' into '$g'"
-	m100-sanity "$f" | m100-tokenize > "$g"
+	m100-sanity "$f" | m100-tokenize > "$g"   || fail=1
+    fi
+
+    echo fail is $fail
+    if [[ $fail -gt 0 ]]; then
+	echo "Error detected, removing '$g'" >&2
+	rm "$g"
+	exit 1
     fi
 }
 
@@ -102,7 +110,7 @@ function output_name() {
     fi
 
     # Don't overwrite existing files by default
-    if [[ -e "$g" && "$g" -nt "$f" ]]; then
+    if [[ -s "$g" && "$g" -nt "$f" ]]; then
 	if ! tty -s; then
 	    mv "$g" "$g~" || return -1
 	else
