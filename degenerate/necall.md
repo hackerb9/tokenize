@@ -136,3 +136,20 @@
 | EOF     |    ff a7 |                                      |
 | LOC     |    ff a8 |                                      |
 | LOF     |    ff a9 |                                      |
+
+# Special Symbols following Variable Names:
+| Symbol          | Format | Variable type                   | Limits                                    |
+|-----------------|--------|---------------------------------|-------------------------------------------|
+| Percent (%)     | _var_% | Integer                         | -32768 to 32767                           |
+| Exclamation (!) | _var_! | Real Number<br>Single Precision | Magnitude: 7 digits<br>Exponent: -38 to 38  |
+| Pound (#)       | _var_# | Real Number<br>Double Precision | Magnitude: 8 to 17 digits<br>Exponent: -38 to 38 |
+| Dollar ($)      | _var_$ | Character String                | 255 characters                            |
+
+# Numbers in N82-Basic
+
+## Example Real Numbers
+
+|                  | Fixed decimal | Floating decimal |
+|------------------|---------------|------------------|
+| Single Precision | 100000!       | 1E6              |
+| Double Precision | 100000#       | 1D6              |
