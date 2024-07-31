@@ -80,20 +80,19 @@ int fixup_ptrs() {
   ptr[nlines++] = filesize;
 
   /* Double-check size of .BA file */
-  fprintf(stderr, "file size is 0x%x\n", filesize);
   if ( filesize >= 0x10000 ) {
-    fprintf(stderr, "Fatal Error. Program too large to fit in 64K RAM.\n");
-    fprintf(stderr, "Due to 16-bit pointers in BASIC, this cannot work.\n");
+    fprintf(stderr, "Fatal Error. %'d bytes is too large to fit in 64K RAM.\n", filesize);
+    fprintf(stderr, "Due to 16-bit pointers in BASIC, this can never work.\n");
     exit(1);
   }
   else if ( filesize >= 0x8000 ) {
-    fprintf(stderr, "Warning. Program too large to fit in 32K RAM.\n");
+    fprintf(stderr, "Warning. %'d bytes is too large to fit in 32K RAM.\n", filesize);
     fprintf(stderr, "The output cannot run on any standard hardware.\n");
     if ( filesize+offset >= 0x10000 )
       offset=0;
   }
   else if ( filesize >= 0x6000 ) {
-    fprintf(stderr, "Notice. Program too large to fit in 24K RAM.\n");
+    fprintf(stderr, "Notice. %'d bytes is too large to fit in 24K RAM.\n", filesize);
     fprintf(stderr, "The output cannot run on a standard Tandy 200.\n");
     if ( filesize+offset >= 0x10000 )
       offset=0x8001;
