@@ -7,11 +7,11 @@ prefix ?= /usr/local
 targets := m100-tokenize m100-decomment m100-jumps m100-crunch
 scripts := tokenize m100-sanity
 
-m100-tokenize.o: m100-tokenize-main.c
-m100-decomment.o: m100-tokenize-main.c
-
 # By default, create m100-tokenize and friends (implicitly compiled from .lex)
 all: ${targets} bacmp
+
+m100-tokenize.o: m100-tokenize-main.c
+m100-decomment.o: m100-tokenize-main.c
 
 # Use 'make debug' to compile with debugging and catch pointer errors.
 debug : CFLAGS+=-g -fsanitize=address -Wall -Wno-unused-function
