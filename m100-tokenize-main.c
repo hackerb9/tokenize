@@ -74,9 +74,30 @@ int fixup_ptrs() {
   /* Offset into RAM for start of the first BASIC program.
      0x8001: Used by Model 100, Tandy 102, Kyocera-85, and Olivetti M10.
      0xA001: Used by Tandy 200 (which has more ROM and less RAM). */
-  int offset = 0x8001;
+  long offset = 0x8001;
 
-  ptr[nlines++] = ftell(yyout);	/* Pointer to final NULL byte */
+  long filesize = ftell(yyout);	/* Pointer to final NULL byte */
+  ptr[nlines++] = filesize;
+
+  /* Double-check size of .BA file */
+  fprintf(stderr, "file size is 0x%x\n", filesize);
+  if ( filesize >= 0x10000 ) {
+    fprintf(stderr, "Fatal Error. Program too large to fit in 64K RAM.\n");
+    fprintf(stderr, "Due to 16-bit pointers in BASIC, this cannot work.\n");
+    exit(1);
+  }
+  else if ( filesize >= 0x8000 ) {
+    fprintf(stderr, "Warning. Program too large to fit in 32K RAM.\n");
+    fprintf(stderr, "The output cannot run on any standard hardware.\n");
+    if ( filesize+offset >= 0x10000 )
+      offset=0;
+  }
+  else if ( filesize >= 0x6000 ) {
+    fprintf(stderr, "Notice. Program too large to fit in 24K RAM.\n");
+    fprintf(stderr, "The output cannot run on a standard Tandy 200.\n");
+    if ( filesize+offset >= 0x10000 )
+      offset=0x8001;
+  }    
 
   if (fseek(yyout, 0L, SEEK_SET) != 0) {
     perror("fseek");
