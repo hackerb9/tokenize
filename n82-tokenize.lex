@@ -42,10 +42,11 @@
 <data>\"	yyput('"'); BEGIN(datastring);
 <datastring>\"	yyput('"'); BEGIN(data);
 
-//xxxxx need to handle literal numeric expressions here. Not just ASCII.
-// 0 = 0x11 = 17
-// 1 = 0x12 = 18
-// -1 = 0xF4 0x12 = -18
+  //xxxxx need to handle literal numeric expressions here. Not just ASCII.
+-?[0-9.]+([%#!]|[DE][-+]?[0-9]+    if ( yytext[0] == '-')
+			        yyput(0xF1);
+			    yyput(atoi(yytext) + 0x11);
+			    BEGIN(INITIAL)
 
    /* Newline ends <string>, <remark>, <data>, and <datastring> conditions. */
 <*>\r?\n		yyput('\0'); BEGIN(INITIAL);
@@ -213,3 +214,71 @@ LOF             yyput(0xff); yyput(0xa9);
 
 /* The main() routine, yyput(), fixup_ptrs() */
     #include "m100-tokenize-main.c"
+
+/* Literal number handling routine */
+int tokenize_number(char *s) {
+    int len = strlen(s);
+    if (len == 0) return 1;
+    int sign = (s[0] == '-');
+    if (sign) s++, len--;
+    
+
+
+    return 0;
+ }
+
+  // xxx this is not finished yet. xxxx
+  // N82 integers can only range from -32768 to 32767 
+  /* Single digit integers are efficiently encoded as 0 = 0x11 to 9 = 0x1A. */
+  // 0 = 0x11
+  // 1 = 0x12
+  // 9 = 0x1A
+
+  /* Minus sign is encoded as 0xF4 */
+  // -1 = 0xF4 0x12
+	  
+  /* Numbers from 10 to 255 are encoded with an ID of 0F */ 
+  // 10  = 0x0F0A
+  // 255 = 0x0FFF 
+
+  /* Numbers 256 to 32767 are encoded with an ID of 1C */
+  //	256		1C 00 01
+  //	257		1C 01 01
+  //	512		1C 00 02
+  //	32767		1C FF 7F
+
+  /* Single precision floating point. 1D B0 B1 B2 EX */
+  //	32768		1D 00 00 00 90
+  // 	32769		1D 00 01 00 90
+  // 	65534		1D 00 FE 7F 90
+  //	65535		1D 00 FF 7F 90
+  //   131071		1D 80 FF 7F 91	
+  //   131072		1D 00 00 00 92
+
+  /* Double-precision floating point. ID: 1F */
+  // 	1F 00 00 00 00 00 00 00 7E	 .125#	              2^-3
+  //	1F 00 00 00 00 00 00 00 7F	 .25#	       2^-2
+  //	1F 00 00 00 00 00 00 00 80	 .5#	2^-1
+  //	1F 00 00 00 00 00 00 20 80	 .625#	2^-1     +    2^-3
+  //	1F 00 00 00 00 00 00 40 80	 .75#	2^-1 + 2^-2
+  //	1F 00 00 00 00 00 00 60 80	 .875#	2^-1 + 2^-2 + 2^-3
+  //	1F 80 00 00 00 00 00 00 FF	8.507059173023492D+37	-> (same)
+
+    /*******************************************************************/
+    /* Microsoft Binary Format (MBF) for 64-bit floating point numbers */
+    /* Tokenized as nine bytes:                                        */
+    /* ID B0 B1 B2 B3 B4 B5 B6 EX                                      */
+    /*                                                                 */
+    /* ID is 1F for double-precision floating point                    */
+    /* Value is (-1)^Signbit x  Mantissa ^ Exponent                    */
+    /* 8-bit Exponent is EX-128                                        */
+    /* Signbit is high bit of B6. (B6 is left with only 7 bits)        */
+    /* 55-bit Mantissa is B6 B5 B4 B3 B2 B1 B0                         */
+    /* 						                       */
+    /* There is an implicit "1" bit at the start of the mantissa.      */
+    /* Note that the implicit 1 is AFTER the decimal point.	       */
+    /* 						                       */
+    /*******************************************************************/
+
+
+	  
