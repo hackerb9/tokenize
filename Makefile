@@ -158,6 +158,8 @@ bin-${platform}.tar.gz: ${targets} ${scripts} bacmp
 
 # Just the code needed to compile without flex. 
 cfiles.tar.gz: ${cfiles} cfiles-${platform}.tar.gz
+	${tar} ${xform} -acf $@ $^
+
 cfiles-${platform}.tar.gz: m100-tokenize-main.c bacmp.c ${scripts} Makefile
 	${tar} ${xform} -acf $@ $^
 
